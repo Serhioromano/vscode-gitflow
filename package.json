@@ -1,0 +1,211 @@
+{
+    "name": "vscode-gitflow",
+    "displayName": "Git-Flow",
+    "description": "Git-Flow support for VS Code",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.63.0"
+    },
+    "keywords": [
+        "git flow",
+        "gitflow",
+        "git-flow",
+        "git"
+    ],
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onView:gitflowExplorer"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "configuration": {
+            "title": "GitFlow",
+            "properties": {
+                "gitflow.master": {
+                    "type": "string",
+                    "default": "master",
+                    "description": "Default master branch for git-flow"
+                },
+                "gitflow.develop": {
+                    "type": "string",
+                    "default": "develop",
+                    "description": "Default develop branch for git-flow"
+                },
+                "gitflow.release": {
+                    "type": "string",
+                    "default": "release",
+                    "description": "Default release branch for git-flow"
+                },
+                "gitflow.feature": {
+                    "type": "string",
+                    "default": "feature",
+                    "description": "Default feature branch for git-flow"
+                },
+                "gitflow.hotfix": {
+                    "type": "string",
+                    "default": "hotfix",
+                    "description": "Default hotfix branch for git-flow"
+                }
+            }
+        },
+        "commands": [
+            {
+                "command": "gitflow.refresh",
+                "title": "Refresh view",
+                "category": "Git-Flow",
+                "icon": {
+                    "dark": "resources/dark/refresh.svg",
+                    "light": "resources/light/refresh.svg"
+                }
+            },
+            {
+                "command": "gitflow.pushTags",
+                "title": "Push all tags to origin",
+                "category": "Git-Flow",
+                "icon": {
+                    "dark": "resources/dark/arrow-up.svg",
+                    "light": "resources/light/arrow-up.svg"
+                }
+            },
+            {
+                "command": "gitflow.fetchAllBranches",
+                "title": "Pull all remote branches",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.newFeature",
+                "title": "Feature - Start",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.checkoutFeature",
+                "title": "Feature - Checkout",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.finishFeature",
+                "title": "Feature - Finish",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.publishFeature",
+                "title": "Feature - Publish",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.pullFeature",
+                "title": "Feature - pull",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.rebaseFeature",
+                "title": "Feature - Rebase",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.newRelease",
+                "title": "Start Release",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.newHotfix",
+                "title": "Start Hotfix",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.init",
+                "title": "Init Git Flow",
+                "category": "Git-Flow"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "git-glow-explorer",
+                    "title": "Git-Flow",
+                    "icon": "media/flow.svg"
+                }
+            ]
+        },
+        "views": {
+            "git-glow-explorer": [
+                {
+                    "id": "gitflowExplorer",
+                    "name": "Explorer"
+                },
+                {
+                    "id": "gitflowTags",
+                    "name": "Tags"
+                }
+            ]
+        },
+        "menus": {
+            "view/title": [
+                {
+                    "command": "gitflow.refresh",
+                    "when": "view == gitflowExplorer",
+                    "group": "navigation"
+                },
+                {
+                    "command": "gitflow.refresh",
+                    "when": "view == gitflowExplorer"
+                },
+                {
+                    "command": "gitflow.newRelease",
+                    "when": "view == gitflowExplorer"
+                },
+                {
+                    "command": "gitflow.newFeature",
+                    "when": "view == gitflowExplorer"
+                },
+                {
+                    "command": "gitflow.newHotfix",
+                    "when": "view == gitflowExplorer"
+                },
+                {
+                    "command": "gitflow.refresh",
+                    "when": "view == gitflowTags",
+                    "group": "navigation"
+                },
+                {
+                    "command": "gitflow.pushTags",
+                    "when": "view == gitflowTags",
+                    "group": "navigation"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "gitflow.checkoutFeature",
+                    "when": "view == gitflowExplorer"
+                },
+                {
+                    "command": "gitflow.finishFeature",
+                    "when": "view == gitflowExplorer"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.63.0",
+        "@types/glob": "^7.2.0",
+        "@types/mocha": "^9.0.0",
+        "@types/node": "14.x",
+        "@typescript-eslint/eslint-plugin": "^5.9.1",
+        "@typescript-eslint/parser": "^5.9.1",
+        "eslint": "^8.6.0",
+        "glob": "^7.2.0",
+        "mocha": "^9.1.3",
+        "typescript": "^4.5.4",
+        "@vscode/test-electron": "^2.0.3"
+    }
+}
