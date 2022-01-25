@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { Util } from './Util';
 
-export class GitflowTreeView implements vscode.TreeDataProvider<Flow> {
+export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     private _onDidChangeTreeData: vscode.EventEmitter<Flow | undefined | null | void> = new vscode.EventEmitter<Flow | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<Flow | undefined | null | void> = this._onDidChangeTreeData.event;
     private curBranch: string = '';
@@ -80,15 +80,16 @@ export class GitflowTreeView implements vscode.TreeDataProvider<Flow> {
                 ));
             }
         });
-        // console.log(element);
 
         return Promise.resolve(tree);
     }
-    fetchAllBranches(){
+    fetchAllBranches() {
         this.util.execCb("git pull --all", s => {
             this._onDidChangeTreeData.fire();
         });
     }
+
+    /* #region Features */
     async startFeature() {
         let name = await vscode.window.showInputBox({ title: "Enter feature name [a-zA-Z0-9-]*" });
         if (name?.length === 0) { return }
@@ -104,24 +105,58 @@ export class GitflowTreeView implements vscode.TreeDataProvider<Flow> {
             this._onDidChangeTreeData.fire();
         });
     }
-    async finishFeature() { }
-    async rebaseFeature() {
-        let name = await vscode.window.showQuickPick(
-            this.listBranches.filter(el => el.search('feature/') !== -1),
-            { title: "Select feature to rebase" }
-        );
+    async finishFeature(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search('feature/') !== -1),
+                { title: "Select feature" }
+            );
+        }
 
         let options = await vscode.window.showQuickPick(
-            ["An interactive rebase", "Preserve merges"], { title: "Select options", canPickMany: true }
+            [
+                "[-F] Fetch from origin before performing finish",
+                "[-r] Rebase before merging",
+                "[-p] Preserve merges while rebasing",
+                "[--push] Push to origin after performing finish",
+                "[-k] Keep branch after performing finish",
+                "[--keepremote] Keep the remote branch",
+                "[--keeplocal] Keep the local branch",
+                "[-D] Force delete feature branch after finish",
+                "[-S] Squash feature during merge",
+                "[--no-ff] Never fast-forward during the merge"
+            ], { title: "Select options", canPickMany: true }
         );
         let option = options?.map(el => {
-            switch (el.toLowerCase().replace(" ", "")) {
-                case "aninteractiverebase":
-                    return "-i";
-                case "preservemerges":
-                    return "-p";
-            }
+            let m = el.match(/\[([^\]]*)\]/);
+            return m === null ? '' : m[1];
+        }).join(" ");
+
+        let cmd = `git flow feature finish ${option} ${name?.split("/")[1]}`;
+
+        this.util.execCb(cmd, s => {
+            vscode.window.showInformationMessage(`Feature ${name} have been finished successfuly!`);
+            this._onDidChangeTreeData.fire();
         });
+
+    }
+    async rebaseFeature(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search('feature/') !== -1),
+                { title: "Select feature" }
+            );
+        }
+
+        let options = await vscode.window.showQuickPick(
+            ["[-i] An interactive rebase", "[-p] Preserve merges"], { title: "Select options", canPickMany: true }
+        );
+        let option = options?.map(el => {
+            let m = el.match(/\[([^\]]*)\]/);
+            return m === null ? '' : m[1];
+        }).join(" ");
 
         let base = await vscode.window.showQuickPick(
             ["develop", "masert"],
@@ -139,11 +174,14 @@ export class GitflowTreeView implements vscode.TreeDataProvider<Flow> {
             this._onDidChangeTreeData.fire();
         });
     }
-    async publishFeature() {
-        let name = await vscode.window.showQuickPick(
-            this.listBranches.filter(el => el.search('feature/') !== -1),
-            { title: "Select feature" }
-        );
+    async publishFeature(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search('feature/') !== -1),
+                { title: "Select feature" }
+            );
+        }
 
         let cmd = `git flow feature publish ${name?.split("/")[1]}`;
 
@@ -152,11 +190,38 @@ export class GitflowTreeView implements vscode.TreeDataProvider<Flow> {
             this._onDidChangeTreeData.fire();
         });
     }
-    async checkoutFeature() {
-        let name = await vscode.window.showQuickPick(
-            this.listBranches.filter(el => el.search('feature/') !== -1),
-            { title: "Select feature" }
+    async deleteFeature(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search('feature/') !== -1),
+                { title: "Select feature" }
+            );
+        }
+
+        let options = await vscode.window.showQuickPick(
+            ["[-f] Force deletion", "[-r] Delete remote branch"], { title: "Select options", canPickMany: true }
         );
+        let option = options?.map(el => {
+            let m = el.match(/\[([^\]]*)\]/);
+            return m === null ? '' : m[1];
+        }).join(" ");
+
+        let cmd = `git flow feature delete ${option} ${name?.split("/")[1]}`;
+
+        this.util.execCb(cmd, s => {
+            vscode.window.showInformationMessage(`Feature ${name} have been published or updated successfuly!`);
+            this._onDidChangeTreeData.fire();
+        });
+    }
+    async checkoutFeature(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search('feature/') !== -1),
+                { title: "Select feature" }
+            );
+        }
 
         let cmd = `git flow feature checkout ${name?.split("/")[1]}`;
 
@@ -165,6 +230,7 @@ export class GitflowTreeView implements vscode.TreeDataProvider<Flow> {
             this._onDidChangeTreeData.fire();
         });
     }
+    /* #endregion */
 
 
     async startRelease() {
@@ -182,6 +248,7 @@ export class GitflowTreeView implements vscode.TreeDataProvider<Flow> {
             this._onDidChangeTreeData.fire();
         });
     }
+
     _isCurrent(name: string | undefined): boolean {
         return name?.replace("* ", "") === this.curBranch.replace("* ", "");
     }
@@ -203,18 +270,11 @@ export class GitflowTreeView implements vscode.TreeDataProvider<Flow> {
 
     init() {
         vscode.window.showInformationMessage("Please, open a terminal and run `git flow init` command");
-        // vscode.window.showInputBox({title: "Enter this", value: "master"}); 
-        // let o = gft.exec(`git flow init --feature ${vscode.workspace.getConfiguration().get('gitflow.feature')} --hotfix ${vscode.workspace.getConfiguration().get('gitflow.hotfix')} --release ${vscode.workspace.getConfiguration().get('gitflow.release')} `);
-        // if (o.toLowerCase().search('fatal:') || o.toLowerCase().search('error:')) {
-        //     vscode.window.showWarningMessage(o);
-        // } else {
-        //     vscode.window.showInformationMessage(o);
-        // }
     }
 
 }
 
-class Flow extends vscode.TreeItem {
+export class Flow extends vscode.TreeItem {
     constructor(
         public full: string,
         public readonly label: string,
@@ -225,6 +285,7 @@ class Flow extends vscode.TreeItem {
     ) {
         super(label, collapsibleState);
         this.description = current ? 'Current' : '';
+        this.contextValue = full.split("/").length > 1 ? full.replace("* ", "").split("/")[0] : '';
     }
 
     iconPath = new vscode.ThemeIcon(this.icon);

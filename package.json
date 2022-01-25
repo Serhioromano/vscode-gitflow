@@ -16,7 +16,8 @@
         "Other"
     ],
     "activationEvents": [
-        "onView:gitflowExplorer"
+        "onView:gitflowExplorer",
+        "onView:gitflowTags"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -52,8 +53,17 @@
         },
         "commands": [
             {
-                "command": "gitflow.refresh",
-                "title": "Refresh view",
+                "command": "gitflow.refreshB",
+                "title": "Refresh branches",
+                "category": "Git-Flow",
+                "icon": {
+                    "dark": "resources/dark/refresh.svg",
+                    "light": "resources/light/refresh.svg"
+                }
+            },
+            {
+                "command": "gitflow.refreshT",
+                "title": "Refresh versions",
                 "category": "Git-Flow",
                 "icon": {
                     "dark": "resources/dark/refresh.svg",
@@ -70,9 +80,22 @@
                 }
             },
             {
+                "command": "gitflow.pushTag",
+                "title": "Push tag to origin",
+                "category": "Git-Flow",
+                "icon": {
+                    "dark": "resources/dark/arrow-up.svg",
+                    "light": "resources/light/arrow-up.svg"
+                }
+            },
+            {
                 "command": "gitflow.fetchAllBranches",
                 "title": "Pull all remote branches",
-                "category": "Git-Flow"
+                "category": "Git-Flow",
+                "icon": {
+                    "dark": "resources/dark/arrow-down.svg",
+                    "light": "resources/light/arrow-down.svg"
+                }
             },
             {
                 "command": "gitflow.newFeature",
@@ -102,6 +125,11 @@
             {
                 "command": "gitflow.rebaseFeature",
                 "title": "Feature - Rebase",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.deleteFeature",
+                "title": "Feature - Delete",
                 "category": "Git-Flow"
             },
             {
@@ -144,13 +172,14 @@
         "menus": {
             "view/title": [
                 {
-                    "command": "gitflow.refresh",
+                    "command": "gitflow.refreshB",
                     "when": "view == gitflowExplorer",
                     "group": "navigation"
                 },
                 {
-                    "command": "gitflow.refresh",
-                    "when": "view == gitflowExplorer"
+                    "command": "gitflow.fetchAllBranches",
+                    "when": "view == gitflowExplorer",
+                    "group": "navigation"
                 },
                 {
                     "command": "gitflow.newRelease",
@@ -165,24 +194,46 @@
                     "when": "view == gitflowExplorer"
                 },
                 {
-                    "command": "gitflow.refresh",
+                    "command": "gitflow.refreshT",
                     "when": "view == gitflowTags",
                     "group": "navigation"
                 },
                 {
                     "command": "gitflow.pushTags",
                     "when": "view == gitflowTags",
-                    "group": "navigation"
+                    "group": "navigation"                
                 }
             ],
             "view/item/context": [
                 {
+                    "command": "gitflow.pushTag",
+                    "when": "view == gitflowTags && viewItem == local",
+                    "group": "inline"
+                },
+
+                {
                     "command": "gitflow.checkoutFeature",
-                    "when": "view == gitflowExplorer"
+                    "when": "view == gitflowExplorer && viewItem == feature"
+                },
+                {
+                    "command": "gitflow.publishFeature",
+                    "when": "view == gitflowExplorer && viewItem == feature"
+                },
+                {
+                    "command": "gitflow.pullFeature",
+                    "when": "view == gitflowExplorer && viewItem == feature"
+                },
+                {
+                    "command": "gitflow.rebaseFeature",
+                    "when": "view == gitflowExplorer && viewItem == feature"
                 },
                 {
                     "command": "gitflow.finishFeature",
-                    "when": "view == gitflowExplorer"
+                    "when": "view == gitflowExplorer && viewItem == feature"
+                },
+                {
+                    "command": "gitflow.deleteFeature",
+                    "when": "view == gitflowExplorer && viewItem == feature"
                 }
             ]
         }

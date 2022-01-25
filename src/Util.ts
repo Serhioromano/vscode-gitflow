@@ -16,14 +16,13 @@ export class Util {
         console.log(cmd);
         try {
             exec(cmd, { cwd: this.workspaceRoot }, (err, stdout, stderr) => {
-                console.log(err, stdout, stderr);
                 
                 if (err) {
                     vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
                     return;
                 }
                 cb(stdout);
-                // vscode.window.showInformationMessage(`${stdout}`);
+                vscode.window.showInformationMessage(`${stdout}`);
             });
         }
         catch (e) {

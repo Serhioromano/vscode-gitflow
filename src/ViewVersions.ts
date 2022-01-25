@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { Util } from './Util';
 
-export class GitflowTagsView implements vscode.TreeDataProvider<Tag> {
+export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     private _onDidChangeTreeData: vscode.EventEmitter<Tag | undefined | null | void> = new vscode.EventEmitter<Tag | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<Tag | undefined | null | void> = this._onDidChangeTreeData.event;
     private util: Util;
@@ -57,9 +57,11 @@ export class Tag extends vscode.TreeItem {
     constructor(
         public readonly label: string,
         private descr: boolean = false
+
     ) {
         super(label, vscode.TreeItemCollapsibleState.None);
         this.label = label;
+        this.contextValue = descr ? 'local' : '';
         this.description = descr ? 'local' : '';
     }
 
