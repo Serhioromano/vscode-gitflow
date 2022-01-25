@@ -18,6 +18,23 @@ export function activate(context: vscode.ExtensionContext) {
         viewBranches.init();
     }));
     
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.newRelease', () => {
+        viewBranches.startRelease();
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.publishRelease', (node?: Flow) => {
+        viewBranches.publishRelease(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.deleteRelease', (node?: Flow) => {
+        viewBranches.deleteRelease(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.finishRelease', (node?: Flow) => {
+        viewBranches.finishRelease(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.trackRelease', (node?: Flow) => {
+        viewBranches.trackRelease(node);
+    }));
+
+
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.newFeature', () => {
         viewBranches.startFeature();
     }));
@@ -32,6 +49,9 @@ export function activate(context: vscode.ExtensionContext) {
     }));
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.rebaseFeature', (node?: Flow) => {
         viewBranches.rebaseFeature(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.trackFeature', (node?: Flow) => {
+        viewBranches.trackFeature(node);
     }));
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.finishFeature', (node?: Flow) => {
         viewBranches.finishFeature(node);

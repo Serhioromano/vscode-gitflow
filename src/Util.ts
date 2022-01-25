@@ -12,18 +12,18 @@ export class Util {
             return '' + e;
         }
     }
-    public execCb(cmd: string, cb:(s:string) => void): void {
+    public execCb(cmd: string, cb: (s: string) => void): void {
         console.log(cmd);
+        exec(cmd, { cwd: this.workspaceRoot }, (err, stdout, stderr) => {
+
+            if (err) {
+                vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
+                return;
+            }
+            cb(stdout);
+            vscode.window.showInformationMessage(`${stdout}`);
+        });
         try {
-            exec(cmd, { cwd: this.workspaceRoot }, (err, stdout, stderr) => {
-                
-                if (err) {
-                    vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
-                    return;
-                }
-                cb(stdout);
-                vscode.window.showInformationMessage(`${stdout}`);
-            });
         }
         catch (e) {
             vscode.window.showErrorMessage(`Error executing: ${cmd}`);

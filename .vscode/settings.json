@@ -10,5 +10,6 @@
     "typescript.tsc.autoDetect": "off",
     "cSpell.words": [
         "gitflow"
-    ]
+    ],
+    "workbench.colorTheme": "Atom One Light"
 }

@@ -90,7 +90,7 @@
             },
             {
                 "command": "gitflow.fetchAllBranches",
-                "title": "Pull all remote branches",
+                "title": "Fetch all remote branches",
                 "category": "Git-Flow",
                 "icon": {
                     "dark": "resources/dark/arrow-down.svg",
@@ -100,7 +100,21 @@
             {
                 "command": "gitflow.newFeature",
                 "title": "Feature - Start",
-                "category": "Git-Flow"
+                "category": "Git-Flow",
+                "icon": {
+                    "dark": "resources/dark/add.svg",
+                    "light": "resources/light/add.svg"
+                }
+
+            },
+            {
+                "command": "gitflow.trackFeature",
+                "title": "Feature - Track",
+                "category": "Git-Flow",
+                "icon": {
+                    "dark": "resources/dark/cloud-download.svg",
+                    "light": "resources/light/cloud-download.svg"
+                }
             },
             {
                 "command": "gitflow.checkoutFeature",
@@ -119,7 +133,7 @@
             },
             {
                 "command": "gitflow.pullFeature",
-                "title": "Feature - pull",
+                "title": "Feature - Pull",
                 "category": "Git-Flow"
             },
             {
@@ -132,15 +146,49 @@
                 "title": "Feature - Delete",
                 "category": "Git-Flow"
             },
+            
+            {
+                "command": "gitflow.trackRelease",
+                "title": "Release - Track",
+                "category": "Git-Flow",
+                "icon": {
+                    "dark": "resources/dark/cloud-download.svg",
+                    "light": "resources/light/cloud-download.svg"
+                }
+            },
             {
                 "command": "gitflow.newRelease",
-                "title": "Start Release",
+                "title": "Release - Start",
+                "category": "Git-Flow",
+                "icon": {
+                    "dark": "resources/dark/add.svg",
+                    "light": "resources/light/add.svg"
+                }
+            },
+            {
+                "command": "gitflow.publishRelease",
+                "title": "Release - Publish",
                 "category": "Git-Flow"
             },
             {
+                "command": "gitflow.deleteRelease",
+                "title": "Release - Delete",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.finishRelease",
+                "title": "Release - Finish",
+                "category": "Git-Flow"
+            },
+
+            {
                 "command": "gitflow.newHotfix",
                 "title": "Start Hotfix",
-                "category": "Git-Flow"
+                "category": "Git-Flow",
+                "icon": {
+                    "dark": "resources/dark/add.svg",
+                    "light": "resources/light/add.svg"
+                }
             },
             {
                 "command": "gitflow.init",
@@ -212,8 +260,50 @@
                 },
 
                 {
-                    "command": "gitflow.checkoutFeature",
-                    "when": "view == gitflowExplorer && viewItem == feature"
+                    "command": "gitflow.newFeature",
+                    "when": "view == gitflowExplorer && viewItem == f"
+                },
+                {
+                    "command": "gitflow.newRelease",
+                    "when": "view == gitflowExplorer && viewItem == r"
+                },
+                {
+                    "command": "gitflow.newHotfix",
+                    "when": "view == gitflowExplorer && viewItem == h"
+                },
+                {
+                    "command": "gitflow.newFeature",
+                    "when": "view == gitflowExplorer && viewItem == f",
+                    "group": "inline"
+                },
+                {
+                    "command": "gitflow.newRelease",
+                    "when": "view == gitflowExplorer && viewItem == r",
+                    "group": "inline"
+                },
+                {
+                    "command": "gitflow.newHotfix",
+                    "when": "view == gitflowExplorer && viewItem == h",
+                    "group": "inline"
+                },
+                
+                {
+                    "command": "gitflow.trackFeature",
+                    "when": "view == gitflowExplorer && viewItem == origin_feature"
+                },
+                {
+                    "command": "gitflow.trackFeature",
+                    "when": "view == gitflowExplorer && viewItem == origin_feature",
+                    "group": "inline"
+                },
+                {
+                    "command": "gitflow.trackRelease",
+                    "when": "view == gitflowExplorer && viewItem == origin_release"
+                },
+                {
+                    "command": "gitflow.trackRelease",
+                    "when": "view == gitflowExplorer && viewItem == origin_release",
+                    "group": "inline"
                 },
                 {
                     "command": "gitflow.publishFeature",
@@ -234,6 +324,19 @@
                 {
                     "command": "gitflow.deleteFeature",
                     "when": "view == gitflowExplorer && viewItem == feature"
+                },
+
+                {
+                    "command": "gitflow.publishRelease",
+                    "when": "view == gitflowExplorer && viewItem == release"
+                },
+                {
+                    "command": "gitflow.finishRelease",
+                    "when": "view == gitflowExplorer && viewItem == release"
+                },
+                {
+                    "command": "gitflow.deleteRelease",
+                    "when": "view == gitflowExplorer && viewItem == release"
                 }
             ]
         }
