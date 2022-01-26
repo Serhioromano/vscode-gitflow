@@ -8,6 +8,7 @@
     },
     "publisher": "Serhioromano",
     "author": "Sergey Romanov",
+    "preview": true,
     "keywords": [
         "git flow",
         "gitflow",
