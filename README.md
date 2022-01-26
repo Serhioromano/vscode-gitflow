@@ -1,6 +1,6 @@
-# GitFLow Support for VS Code [PREVIEW]
+# Git FLow Support for VS Code [PREVIEW]
 
-Git Flow support for VS Code based on [Git Flow AVH](https://github.com/petervanderdoes/gitflow-avh).
+GitFlow support for VS Code based on [Git Flow AVH](https://github.com/petervanderdoes/gitflow-avh).
 
 [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph) complements this extension.
 
