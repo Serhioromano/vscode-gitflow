@@ -6,6 +6,8 @@
     "engines": {
         "vscode": "^1.63.0"
     },
+    "publisher": "Serhioromano",
+    "author": "Sergey Romanov",
     "keywords": [
         "git flow",
         "gitflow",
@@ -25,6 +27,7 @@
         "type": "git",
         "url": "https://github.com/Serhioromano/vscode-gitflow"
     },
+    "homepage": "https://github.com/Serhioromano/vscode-gitflow#readme",
     "main": "./out/extension.js",
     "contributes": {
         "configuration": {
