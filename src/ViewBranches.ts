@@ -31,7 +31,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
         if (element === undefined) {
             let list = this.util.exec("git flow config list");
-            
+
             if (list.toLowerCase().search('not a gitflow-enabled repo yet') > 0) {
                 let initLink = 'Init';
                 vscode.window
@@ -161,9 +161,13 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
         let cmd = `git flow feature finish ${option} ${name?.split("/")[1]}`;
 
-        this.util.execCb(cmd, s => {
-            this._onDidChangeTreeData.fire();
-        });
+        if (this.listRemoteBranches.includes(`${name}`) && !options?.includes("[--keepremote] Keep the remote branch")) {
+            this._runTerminal(cmd);
+        } else {
+            this.util.execCb(cmd, s => {
+                this._onDidChangeTreeData.fire();
+            });
+        }
 
     }
     async rebaseFeature(node: Flow | undefined) {
@@ -424,7 +428,13 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
         let cmd = `git flow hotfix finish -m"New hotfix: ${version}" -T ${version} ${option} ${name?.split("/")[1]}`;
 
-        this._runTerminal(cmd);
+        if (this.listRemoteBranches.includes(`${name}`) && !options?.includes("[--keepremote] Keep the remote branch")) {
+            this._runTerminal(cmd);
+        } else {
+            this.util.execCb(cmd, s => {
+                this._onDidChangeTreeData.fire();
+            });
+        }
 
         // this.util.execCb(cmd, s => {
         //     this._onDidChangeTreeData.fire();
@@ -567,13 +577,14 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
         let cmd = `git flow release finish -m"New release: ${version}" -T ${version} ${option} ${name?.split("/")[1]}`;
 
-        // this._runTerminal(cmd);
-
-        this.util.execCb(cmd, s => {
-            this._onDidChangeTreeData.fire();
-            vscode.commands.executeCommand('gitflow.refreshT');
-        });
-
+        if (this.listRemoteBranches.includes(`${name}`) && !options?.includes("[--keepremote] Keep the remote branch")) {
+            this._runTerminal(cmd);
+        } else {
+            this.util.execCb(cmd, s => {
+                this._onDidChangeTreeData.fire();
+                vscode.commands.executeCommand('gitflow.refreshT');
+            });
+        }
     }
     async rebaseRelease(node: Flow | undefined) {
         let name = node?.full;
