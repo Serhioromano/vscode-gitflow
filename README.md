@@ -2,7 +2,7 @@
 
 I know! It is 2022 and there is no good Git Flow extension. How that can be a reality? We are not in a Matrix and I cannot bend spoons, but this is my attempt to chane our relaity. Meet a neat Git Flow extension.
 
-![ext](./media/ss.png)
+![ext](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/media/ss.png)
 
 > There are some problems with `exec` inside VS Code, and some commands are transfered to terminal. If so, you have to update муц after command finish executing.
 
