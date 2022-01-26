@@ -1,6 +1,6 @@
 {
     "name": "vscode-gitflow",
-    "displayName": "Git-Flow",
+    "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
     "version": "0.1.5",
     "engines": {
