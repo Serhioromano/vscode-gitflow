@@ -1,6 +1,23 @@
 import * as vscode from 'vscode';
 import { execSync, exec } from "child_process";
 
+export function sys(cmd: string, workspaceRoot: string, cb: (s: string) => void) {
+    console.log(cmd);
+    try {
+        exec(cmd, { cwd: workspaceRoot }, (err, stdout, stderr) => {
+
+            if (err) {
+                vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
+                return;
+            }
+            cb(stdout);
+            vscode.window.showInformationMessage(`${stdout}`);
+        });
+    }
+    catch (e) {
+        vscode.window.showErrorMessage(`Error executing: ${cmd}`);
+    }
+}
 export class Util {
     constructor(private workspaceRoot: string) { };
 
@@ -14,16 +31,16 @@ export class Util {
     }
     public execCb(cmd: string, cb: (s: string) => void): void {
         console.log(cmd);
-        exec(cmd, { cwd: this.workspaceRoot }, (err, stdout, stderr) => {
-
-            if (err) {
-                vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
-                return;
-            }
-            cb(stdout);
-            vscode.window.showInformationMessage(`${stdout}`);
-        });
         try {
+            exec(cmd, { cwd: this.workspaceRoot }, (err, stdout, stderr) => {
+
+                if (err) {
+                    vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
+                    return;
+                }
+                cb(stdout);
+                vscode.window.showInformationMessage(`${stdout}`);
+            });
         }
         catch (e) {
             vscode.window.showErrorMessage(`Error executing: ${cmd}`);

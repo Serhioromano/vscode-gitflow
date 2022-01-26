@@ -2,7 +2,7 @@
     "name": "vscode-gitflow",
     "displayName": "Git-Flow",
     "description": "Git-Flow support for VS Code",
-    "version": "0.0.1",
+    "version": "0.1.0-beta",
     "engines": {
         "vscode": "^1.63.0"
     },
@@ -13,8 +13,10 @@
         "git"
     ],
     "categories": [
-        "Other"
+        "Other",
+        "SCM Providers"
     ],
+    "icon": "media/icon.png",
     "activationEvents": [
         "onView:gitflowExplorer",
         "onView:gitflowTags"
@@ -52,6 +54,11 @@
             }
         },
         "commands": [
+            {
+                "command": "gitflow.test",
+                "title": "Test",
+                "category": "Git-Flow"
+            },
             {
                 "command": "gitflow.refreshB",
                 "title": "Refresh branches",
@@ -105,7 +112,6 @@
                     "dark": "resources/dark/add.svg",
                     "light": "resources/light/add.svg"
                 }
-
             },
             {
                 "command": "gitflow.trackFeature",
@@ -132,11 +138,6 @@
                 "category": "Git-Flow"
             },
             {
-                "command": "gitflow.pullFeature",
-                "title": "Feature - Pull",
-                "category": "Git-Flow"
-            },
-            {
                 "command": "gitflow.rebaseFeature",
                 "title": "Feature - Rebase",
                 "category": "Git-Flow"
@@ -146,16 +147,6 @@
                 "title": "Feature - Delete",
                 "category": "Git-Flow"
             },
-            
-            {
-                "command": "gitflow.trackRelease",
-                "title": "Release - Track",
-                "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/cloud-download.svg",
-                    "light": "resources/light/cloud-download.svg"
-                }
-            },
             {
                 "command": "gitflow.newRelease",
                 "title": "Release - Start",
@@ -163,6 +154,15 @@
                 "icon": {
                     "dark": "resources/dark/add.svg",
                     "light": "resources/light/add.svg"
+                }
+            },
+            {
+                "command": "gitflow.trackRelease",
+                "title": "Release - Track",
+                "category": "Git-Flow",
+                "icon": {
+                    "dark": "resources/dark/cloud-download.svg",
+                    "light": "resources/light/cloud-download.svg"
                 }
             },
             {
@@ -180,10 +180,14 @@
                 "title": "Release - Finish",
                 "category": "Git-Flow"
             },
-
+            {
+                "command": "gitflow.rebaseRelease",
+                "title": "Release - Rebase",
+                "category": "Git-Flow"
+            },
             {
                 "command": "gitflow.newHotfix",
-                "title": "Start Hotfix",
+                "title": "Hotfix - Start",
                 "category": "Git-Flow",
                 "icon": {
                     "dark": "resources/dark/add.svg",
@@ -191,29 +195,40 @@
                 }
             },
             {
+                "command": "gitflow.finishHotfix",
+                "title": "Hotfix - Finish",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.publishHotfix",
+                "title": "Hotfix - Publish",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.deleteHotfix",
+                "title": "Hotfix - Delete",
+                "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.rebaseHotfix",
+                "title": "Hotfix - Rebase",
+                "category": "Git-Flow"
+            },
+            {
                 "command": "gitflow.init",
                 "title": "Init Git Flow",
                 "category": "Git-Flow"
             }
         ],
-        "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "git-glow-explorer",
-                    "title": "Git-Flow",
-                    "icon": "media/flow.svg"
-                }
-            ]
-        },
         "views": {
-            "git-glow-explorer": [
+            "scm": [
                 {
                     "id": "gitflowExplorer",
-                    "name": "Explorer"
+                    "name": "Gitflow"
                 },
                 {
                     "id": "gitflowTags",
-                    "name": "Tags"
+                    "name": "Versions"
                 }
             ]
         },
@@ -228,6 +243,18 @@
                     "command": "gitflow.fetchAllBranches",
                     "when": "view == gitflowExplorer",
                     "group": "navigation"
+                },
+                {
+                    "command": "gitflow.refreshB",
+                    "when": "view == gitflowExplorer"
+                },
+                {
+                    "command": "gitflow.fetchAllBranches",
+                    "when": "view == gitflowExplorer"
+                },
+                {
+                    "command": "gitflow.init",
+                    "when": "view == gitflowExplorer"
                 },
                 {
                     "command": "gitflow.newRelease",
@@ -249,7 +276,7 @@
                 {
                     "command": "gitflow.pushTags",
                     "when": "view == gitflowTags",
-                    "group": "navigation"                
+                    "group": "navigation"
                 }
             ],
             "view/item/context": [
@@ -258,7 +285,6 @@
                     "when": "view == gitflowTags && viewItem == local",
                     "group": "inline"
                 },
-
                 {
                     "command": "gitflow.newFeature",
                     "when": "view == gitflowExplorer && viewItem == f"
@@ -286,7 +312,6 @@
                     "when": "view == gitflowExplorer && viewItem == h",
                     "group": "inline"
                 },
-                
                 {
                     "command": "gitflow.trackFeature",
                     "when": "view == gitflowExplorer && viewItem == origin_feature"
@@ -306,37 +331,52 @@
                     "group": "inline"
                 },
                 {
-                    "command": "gitflow.publishFeature",
-                    "when": "view == gitflowExplorer && viewItem == feature"
+                    "command": "gitflow.publishHotfix",
+                    "when": "view == gitflowExplorer && viewItem == hotfix_local"
                 },
                 {
-                    "command": "gitflow.pullFeature",
-                    "when": "view == gitflowExplorer && viewItem == feature"
+                    "command": "gitflow.rebaseHotfix",
+                    "when": "view == gitflowExplorer && viewItem == hotfix ||  viewItem == hotfix_local"
+                },
+                {
+                    "command": "gitflow.finishHotfix",
+                    "when": "view == gitflowExplorer && viewItem == hotfix ||  viewItem == hotfix_local"
+                },
+                {
+                    "command": "gitflow.deleteHotfix",
+                    "when": "view == gitflowExplorer && viewItem == hotfix ||  viewItem == hotfix_local"
+                },
+                {
+                    "command": "gitflow.publishFeature",
+                    "when": "view == gitflowExplorer && viewItem == feature_local"
                 },
                 {
                     "command": "gitflow.rebaseFeature",
-                    "when": "view == gitflowExplorer && viewItem == feature"
+                    "when": "view == gitflowExplorer && viewItem == feature ||  viewItem == feature_local"
                 },
                 {
                     "command": "gitflow.finishFeature",
-                    "when": "view == gitflowExplorer && viewItem == feature"
+                    "when": "view == gitflowExplorer && viewItem == feature ||  viewItem == feature_local"
                 },
                 {
                     "command": "gitflow.deleteFeature",
-                    "when": "view == gitflowExplorer && viewItem == feature"
+                    "when": "view == gitflowExplorer && viewItem == feature ||  viewItem == feature_local"
                 },
-
                 {
                     "command": "gitflow.publishRelease",
-                    "when": "view == gitflowExplorer && viewItem == release"
+                    "when": "view == gitflowExplorer && viewItem == release_local"
+                },
+                {
+                    "command": "gitflow.rebaseRelease",
+                    "when": "view == gitflowExplorer && viewItem == release_local"
                 },
                 {
                     "command": "gitflow.finishRelease",
-                    "when": "view == gitflowExplorer && viewItem == release"
+                    "when": "view == gitflowExplorer && viewItem == release ||  viewItem == release_local"
                 },
                 {
                     "command": "gitflow.deleteRelease",
-                    "when": "view == gitflowExplorer && viewItem == release"
+                    "when": "view == gitflowExplorer && viewItem == release ||  viewItem == release_local"
                 }
             ]
         }
