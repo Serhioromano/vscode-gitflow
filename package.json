@@ -20,7 +20,7 @@
         "Other",
         "SCM Providers"
     ],
-    "icon": "media/icon.png",
+    "icon": "resources/media/icon.png",
     "activationEvents": [
         "onView:gitflowExplorer",
         "onView:gitflowTags"
@@ -29,7 +29,7 @@
         "type": "git",
         "url": "https://github.com/Serhioromano/vscode-gitflow"
     },
-    "homepage": "https://github.com/Serhioromano/vscode-gitflow#readme",
+    "homepage": "https://marketplace.visualstudio.com/items?itemName=serhioromano.vscode-gitflow",
     "main": "./out/extension.js",
     "contributes": {
         "configuration": {
