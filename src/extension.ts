@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { sys } from './Util';
 import { Flow, TreeViewBranches } from './ViewBranches';
 import { TreeViewVersions, Tag } from './ViewVersions';
 
