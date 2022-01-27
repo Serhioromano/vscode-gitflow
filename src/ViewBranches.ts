@@ -73,9 +73,10 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     ));
                 });
 
-            tree.push(new Flow('feature', 'Features', 'test-view-icon', vscode.TreeItemCollapsibleState.Expanded, false, 'f'));
             tree.push(new Flow('release', 'Releases', 'tag', vscode.TreeItemCollapsibleState.Expanded, false, 'r'));
-            tree.push(new Flow('hotfix', 'HotFixes', 'callstack-view-session', vscode.TreeItemCollapsibleState.Expanded, false, 'h'));
+            tree.push(new Flow('feature', 'Features', 'test-view-icon', vscode.TreeItemCollapsibleState.Expanded, false, 'f'));
+            tree.push(new Flow('bugfix', 'BugFixes',  'callstack-view-session', vscode.TreeItemCollapsibleState.Expanded, false, 'b'));
+            tree.push(new Flow('hotfix', 'HotFixes',  'flame', vscode.TreeItemCollapsibleState.Expanded, false, 'h'));
             return Promise.resolve(tree);
         }
 
@@ -111,6 +112,171 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             this._onDidChangeTreeData.fire();
         });
     }
+
+    //#region Bugfix
+    async startBugfix() {
+        let name = await vscode.window.showInputBox({ title: "Enter Bugfix name [a-zA-Z0-9-]*" });
+        if (name?.length === 0) { return; }
+        if (name?.match(/^([a-zA-Z0-9\-]*)$/) === null) {
+            vscode.window.showErrorMessage("Feature name have to match [a-zA-Z0-9\\-]*");
+            return;
+        }
+
+        if (name === undefined) {
+            return;
+        }
+
+        let cmd = `git flow bugfix start -F ${name}`;
+
+        this.util.exec(cmd, false, s => {
+            this._onDidChangeTreeData.fire();
+        });
+    }
+    async finishBugfix(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search('bugfix/') !== -1),
+                { title: "Select bugfix" }
+            );
+        }
+        let options = await vscode.window.showQuickPick(
+            [
+                "[-F] Fetch from origin before performing finish",
+                "[-r] Rebase before merging",
+                "[-p] Preserve merges while rebasing",
+                "[-k] Keep branch after performing finish",
+                "[--keepremote] Keep the remote branch",
+                "[--keeplocal] Keep the local branch",
+                "[-D] Force delete bugfix branch after finish",
+                "[-S] Squash bugfix during merge",
+                "[--no-ff] Never fast-forward during the merge"
+            ], { title: "Select options", canPickMany: true }
+        );
+        let option = options?.map(el => {
+            let m = el.match(/\[([^\]]*)\]/);
+            return m === null ? '' : m[1];
+        }).join(" ");
+
+        let cmd = `git flow bugfix finish ${option} ${name?.split("/")[1]}`;
+
+        this.util.exec(cmd,
+            (this.listRemoteBranches.includes(`${name}`) && !options?.includes("[--keepremote] Keep the remote branch")),
+            s => {
+                this._onDidChangeTreeData.fire();
+            });
+
+    }
+    async rebaseBugfix(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search('bugfix/') !== -1),
+                { title: "Select bugfix" }
+            );
+        }
+
+        let options = await vscode.window.showQuickPick(
+            ["[-i] An interactive rebase", "[-p] Preserve merges"], { title: "Select options", canPickMany: true }
+        );
+        let option = options?.map(el => {
+            let m = el.match(/\[([^\]]*)\]/);
+            return m === null ? '' : m[1];
+        }).join(" ");
+
+        let base = await vscode.window.showQuickPick(
+            this.listBranches.filter(el => el.split("/").length < 2),
+            { title: "Select base branch" }
+        );
+
+        if (name === undefined || base === undefined) {
+            return;
+        }
+
+        let cmd = `git flow bugfix rebase ${option} ${name?.split("/")[1]} ${base}`;
+
+        this.util.exec(cmd, false, s => {
+            this._onDidChangeTreeData.fire();
+        });
+    }
+    async publishBugfix(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches
+                    .filter(el => el.search('bugfix/') !== -1 && !this.listRemoteBranches.includes(el)),
+                { title: "Select local Bugfix that is not on ORIGIN" }
+            );
+        }
+
+        let cmd = `git flow bugfix publish ${name?.split("/")[1]}`;
+
+        this.util.exec(cmd, true, s => {
+            this._onDidChangeTreeData.fire();
+        });
+    }
+    async deleteBugfix(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search('bugfix/') !== -1),
+                { title: "Select bugfix" }
+            );
+        }
+        let list: string[] = ["[-f] Force deletion"];
+        if (this.listRemoteBranches.includes(`${name}`)) {
+            list.push("[-r] Delete remote branch");
+        }
+        let options = await vscode.window.showQuickPick(
+            list, { title: "Select options", canPickMany: true }
+        );
+        let option = options?.map(el => {
+            let m = el.match(/\[([^\]]*)\]/);
+            return m === null ? '' : m[1];
+        }).join(" ");
+
+        let cmd = `git flow bugfix delete ${option} ${name?.split("/")[1]}`;
+
+        this.util.exec(cmd,
+            !!(options?.includes("[-r] Delete remote branch")),
+            s => {
+                this._onDidChangeTreeData.fire();
+            });
+    }
+    async checkoutBugfix(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search('bugfix/') !== -1),
+                { title: "Select bugfix" }
+            );
+        }
+
+        let cmd = `git flow bugfix checkout ${name?.split("/")[1]}`;
+
+        this.util.exec(cmd, false, s => {
+            this._onDidChangeTreeData.fire();
+        });
+    }
+    async trackBugfix(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listRemoteBranches.filter(el => el.search('bugfix/') !== -1),
+                { title: "Select remote bugfix" }
+            );
+        }
+        if (name === undefined) {
+            return;
+        }
+
+        let cmd = `git flow bugfix track ${name?.split("/")[1]}`;
+
+        this.util.exec(cmd, true, s => {
+            this._onDidChangeTreeData.fire();
+        });
+    }
+    //#endregion
 
     //#region Features
     async startFeature() {
@@ -186,7 +352,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         }).join(" ");
 
         let base = await vscode.window.showQuickPick(
-            ["develop", "masert"],
+            this.listBranches.filter(el => el.split("/").length < 2),
             { title: "Select base branch" }
         );
 
@@ -369,7 +535,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         }).join(" ");
 
         let base = await vscode.window.showQuickPick(
-            ["develop", "masert"],
+            this.listBranches.filter(el => el.split("/").length < 2),
             { title: "Select base branch" }
         );
 
@@ -575,7 +741,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         }).join(" ");
 
         let base = await vscode.window.showQuickPick(
-            ["develop", "masert"],
+            this.listBranches.filter(el => el.split("/").length < 2),
             { title: "Select base branch" }
         );
 

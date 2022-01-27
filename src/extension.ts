@@ -79,6 +79,28 @@ export function activate(context: vscode.ExtensionContext) {
         viewBranches.finishFeature(node);
     }));
 
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.newBugfix', () => {
+        viewBranches.startBugfix();
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.checkoutBugfix', (node?: Flow) => {
+        viewBranches.checkoutBugfix(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.publishBugfix', (node?: Flow) => {
+        viewBranches.publishBugfix(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.deleteBugfix', (node?: Flow) => {
+        viewBranches.deleteBugfix(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.rebaseBugfix', (node?: Flow) => {
+        viewBranches.rebaseBugfix(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.trackBugfix', (node?: Flow) => {
+        viewBranches.trackBugfix(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.finishBugfix', (node?: Flow) => {
+        viewBranches.finishBugfix(node);
+    }));
+
 
     const viewVersions = new TreeViewVersions(rootPath);
     vscode.window.createTreeView('gitflowTags', {

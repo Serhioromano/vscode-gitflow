@@ -36,7 +36,7 @@ GitFlow support for VS Code based on [Git Flow AVH](https://github.com/petervand
 
    GitHub CLI will automatically store your Git credentials for you when you choose HTTPS as your preferred protocol for Git operations and answer "yes" to the prompt asking if you would like to authenticate to Git with your GitHub credentials.
 
-   - Install GitHub CLI on macOS, Windows, or Linux.
+   - [Install GitHub CLI](https://cli.github.com/manual/installation) on macOS, Windows, or Linux.
    - In the command line, enter `gh auth login`, then follow the prompts.
 
 ## How to use
@@ -49,7 +49,8 @@ When You install it, in standard SCM side bar, 2 new views will appear, GITFLOW 
 
 ## Features
 
-- Feature (Start, Finish, Checkout, Delete, Rebase, Track)
+- Feature (Start, Finish, Checkout, Delete, Rebase, Publish, Track)
+- Bugfix (Start, Finish, Checkout, Delete, Rebase, Publish, Track)
 - Release (Start, Finish, Publish, Track, Delete, Rebase)
 - Hotfix (Start, Finish, Publish, Rebase, Delete)
 
@@ -57,6 +58,9 @@ When You install it, in standard SCM side bar, 2 new views will appear, GITFLOW 
 
 - 0.2.2
   - add - progress bas during process
+  - add - icons to menu elements
+  - add - bugfix support
+  - delete - configurations
   - fix - git commands with remote
   - update - README    
 - 0.1.0 - Initial release of ...
