@@ -46,7 +46,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
             return;
         }
 
-        this.util.exec(`git push origin :refs/tags/${name}`, true, (s) => {
+        this.util.exec(`git push origin ${name}`, true, (s) => {
             this._onDidChangeTreeData.fire();
         });
     }
