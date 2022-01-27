@@ -18,7 +18,7 @@ GitFlow support for VS Code based on [Git Flow AVH](https://github.com/petervand
 
    Then you need to add SSH key. Read [this article](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).
 
-   basicaly what you have to do is to generate key with 
+   basically what you have to do is to generate key with 
 
    ```
    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
@@ -26,26 +26,26 @@ GitFlow support for VS Code based on [Git Flow AVH](https://github.com/petervand
 
    Then go to `~/.ssh` folder and look for `id_rsa.pub` file and copy it's content. Last go to https://github.com/settings/keys and add SSH Key there.
 
-   This should autenticate all `git` commands to your repository.
+   This should authenticate all `git` commands to your repository.
 
    #### HTTPS
 
    If you want git over HTTPS, you need setup [credentials caching](https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git).
 
-   Basicaly you need to install GitHub CLI
+   Basically you need to install GitHub CLI
 
    GitHub CLI will automatically store your Git credentials for you when you choose HTTPS as your preferred protocol for Git operations and answer "yes" to the prompt asking if you would like to authenticate to Git with your GitHub credentials.
 
    - Install GitHub CLI on macOS, Windows, or Linux.
    - In the command line, enter `gh auth login`, then follow the prompts.
 
-
-
-![ext](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/ss.png)
+## How to use
 
 > [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph) complements this extension.
 
 When You install it, in standard SCM side bar, 2 new views will appear, GITFLOW and VERSIONS. Versions are simple tags.
+
+![ext](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/ss.png)
 
 ## Features
 

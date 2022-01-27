@@ -2,8 +2,6 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
 ## [0.2.0] - 01/27/22
 
 - fix - Git authenticated commands to remote
