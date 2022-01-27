@@ -2,7 +2,7 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [0.2.0] - 01/27/22
+## [0.2.2] - 01/27/22
 
 - fix - Git authenticated commands to remote
 - add - progress notification during process

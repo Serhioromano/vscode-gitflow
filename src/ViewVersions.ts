@@ -12,7 +12,6 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
         this.terminal = null;
     }
 
-
     refresh(): void {
         this._onDidChangeTreeData.fire();
     }
@@ -47,36 +46,14 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
             return;
         }
 
-        this._runTerminal(`git push origin ${name}`);
-
-        // this.util.execCb(`git push origin :refs/tags/${name}`, (s) => {
-        //     this._onDidChangeTreeData.fire();
-        // });
+        this.util.exec(`git push origin :refs/tags/${name}`, true, (s) => {
+            this._onDidChangeTreeData.fire();
+        });
     }
     pushTags() {
-        this._runTerminal(`git push origin --tags`);
-        // this.util.execCb(`git push origin --tags`, (s) => {
-        //     this._onDidChangeTreeData.fire();
-        // });
-    }
-    _initTerminal() {
-        let terminal: vscode.Terminal | null = null;
-        const terminals = <vscode.Terminal[]>(<any>vscode.window).terminals;
-        terminals.forEach(t => {
-            if (t.name === 'GitFlow') {
-                terminal = t;
-            }
+        this.util.exec(`git push origin --tags`, true, (s) => {
+            this._onDidChangeTreeData.fire();
         });
-        if (terminal === null) {
-            this.terminal = vscode.window.createTerminal(`GitFlow`);
-        } else {
-            this.terminal = terminal;
-        }
-    }
-    _runTerminal(cmd: string): void {
-        this._initTerminal();
-        this.terminal?.show();
-        this.terminal?.sendText(cmd);
     }
 }
 

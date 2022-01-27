@@ -55,7 +55,7 @@ When You install it, in standard SCM side bar, 2 new views will appear, GITFLOW 
 
 ### Changelog
 
-- 0.2.0
+- 0.2.2
   - add - progress bas during process
   - fix - git commands with remote
   - update - README    
