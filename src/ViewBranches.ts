@@ -75,8 +75,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
             tree.push(new Flow('release', 'Releases', 'tag', vscode.TreeItemCollapsibleState.Expanded, false, 'r'));
             tree.push(new Flow('feature', 'Features', 'test-view-icon', vscode.TreeItemCollapsibleState.Expanded, false, 'f'));
-            tree.push(new Flow('bugfix', 'BugFix', 'callstack-view-session', vscode.TreeItemCollapsibleState.Expanded, false, 'b'));
-            tree.push(new Flow('hotfix', 'HotFixes', 'trackBugfix', vscode.TreeItemCollapsibleState.Expanded, false, 'h'));
+            tree.push(new Flow('bugfix', 'BugFixes',  'callstack-view-session', vscode.TreeItemCollapsibleState.Expanded, false, 'b'));
+            tree.push(new Flow('hotfix', 'HotFixes',  'flame', vscode.TreeItemCollapsibleState.Expanded, false, 'h'));
             return Promise.resolve(tree);
         }
 
