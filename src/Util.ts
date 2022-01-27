@@ -1,11 +1,103 @@
 import * as vscode from 'vscode';
-import { execSync, exec } from "child_process";
+import { execSync, exec, spawn, SpawnOptions } from "child_process";
 
-export function sys(cmd: string, workspaceRoot: string, cb: (s: string) => void) {
-    console.log(cmd);
-    try {
-        exec(cmd, { cwd: workspaceRoot }, (err, stdout, stderr) => {
+type CmdResult = {
+    retc: number | null,
+    stdout: string[],
+    stderr: string[]
+};
 
+export class Util {
+    constructor(private workspaceRoot: string) { };
+
+    // public cmd(cmd: string, args?: string[]): Promise<CmdResult> {
+    //     let options: SpawnOptions = {};
+    //     options.cwd = this.workspaceRoot;
+    //     //options.shell = true;
+    //     //options.stdio = ['inherit', 'inherit', 'inherit'];
+    //     options.detached = true;
+
+    //     return new Promise((resolve, reject) => {
+    //         console.log(cmd, args?.join(' '));
+    //         const child = spawn(cmd, args || [], options);
+    //         child.on('error', err => { reject(err); });
+
+    //         let stdout: string[] = [];
+    //         let stderr: string[] = [];
+
+    //         child.stdout?.on('data', (data: Uint8Array) => {
+    //             console.log(`Stdout: ${data}`);
+    //             stdout.push(data.toString());
+    //         });
+    //         child.stderr?.on('data', (data: Uint8Array) => {
+    //             console.log(`Stderr: ${data}`);
+    //             stderr.push(data.toString());
+    //         });
+    //         child.on('error', err => {
+    //             console.error(`${cmd} ${args?.join(" ")}" returned`, err);
+    //         });
+    //         child.on('spawm', err => {
+    //             console.log(`Spawn: "${cmd} ${args?.join(" ")}" returned`, err);
+    //         });
+    //         child.on('exit', code => {
+    //             console.log(`Exit: "${cmd} ${args?.join(" ")} exited`, code);
+    //         });
+    //         child.on('close', retc => {
+    //             console.log(`Close: "${cmd}" returned code ${retc}:`, stderr, stdout);
+    //             //resolve({ retc: retc, stdout: stdout, stderr: stderr });
+    //         });
+    //     });
+    // }
+
+    // async cmdCb(cmd: string, args?: string[], cb?: (res: CmdResult) => void) {
+    //     let result = await this.cmd(cmd, args);
+    //     if (result.retc !== 0) {
+    //         vscode.window.showErrorMessage(`Error: ${cmd} ${args?.join(" ")} : ${result.stderr.join("\n")}`);
+    //         return;
+    //     }
+    //     if (typeof cb === 'function' && result.retc === 0) {
+    //         vscode.window.showInformationMessage(`Success:${result.stdout.join("\n")}`);
+    //         cb(result);
+    //     }
+    // }
+
+    private progress(cmd: string, cb: (s: string) => void) {
+        vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: `Executing ${cmd}`,
+            cancellable: false
+        }, (progress, token) => {
+            let num = 0;
+            const p = new Promise<void>(resolve => {
+                this.execCb(cmd, res => {
+                    cb(res);
+                    resolve();
+                });
+            });
+
+            return p;
+        });
+    }
+
+    public exec(cmd: string, progress:boolean, cb: (s: string) => void): void {
+        console.log(cmd);
+        if(progress) {
+            this.progress(cmd, cb);
+        } else {
+            this.execCb(cmd, cb);
+        }
+    }
+
+    public execSync(cmd: string): string {
+        try {
+            return execSync(cmd, { cwd: this.workspaceRoot }).toString();
+        }
+        catch (e) {
+            return '' + e;
+        }
+    }
+    private execCb(cmd: string, cb: (s: string) => void): void {
+        exec(cmd, { cwd: this.workspaceRoot }, (err, stdout, stderr) => {
             if (err) {
                 vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
                 return;
@@ -14,45 +106,13 @@ export function sys(cmd: string, workspaceRoot: string, cb: (s: string) => void)
             vscode.window.showInformationMessage(`${stdout}`);
         });
     }
-    catch (e) {
-        vscode.window.showErrorMessage(`Error executing: ${cmd}`);
-    }
-}
-export class Util {
-    constructor(private workspaceRoot: string) { };
-
-    public exec(cmd: string): string {
-        try {
-            return execSync(cmd, { cwd: this.workspaceRoot }).toString();
-        }
-        catch (e) {
-            return '' + e;
-        }
-    }
-    public execCb(cmd: string, cb: (s: string) => void): void {
-        console.log(cmd);
-        try {
-            exec(cmd, { cwd: this.workspaceRoot }, (err, stdout, stderr) => {
-
-                if (err) {
-                    vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
-                    return;
-                }
-                cb(stdout);
-                vscode.window.showInformationMessage(`${stdout}`);
-            });
-        }
-        catch (e) {
-            vscode.window.showErrorMessage(`Error executing: ${cmd}`);
-        }
-    }
 
     public check(): boolean {
         if (!this.workspaceRoot) {
             vscode.window.showInformationMessage('Empty workspace');
             return false;
         }
-        let status = this.exec("git status").toLowerCase();
+        let status = this.execSync("git status").toLowerCase();
 
         if (status.search('not recognized') > 0 || status.search('not found') > 0
         ) {
@@ -64,7 +124,7 @@ export class Util {
             return false;
         }
 
-        if (this.exec('git flow').toLowerCase().search('is not a git command') > 0) {
+        if (this.execSync('git flow').toLowerCase().search('is not a git command') > 0) {
             let installLink = 'Install';
             vscode.window
                 .showWarningMessage('To use GitFlow extension please install Git flow.', installLink)

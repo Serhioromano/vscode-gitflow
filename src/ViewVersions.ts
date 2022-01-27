@@ -22,12 +22,12 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     }
 
     getChildren(element?: Tag): Thenable<Tag[]> {
-        let remotes = this.util.exec('git ls-remote --tags origin')
+        let remotes = this.util.execSync('git ls-remote --tags origin')
             .split("\n")
             .filter(el => el.trim().search("refs/tags/") > 0)
             .map(el => el.split("/")[2].replace("^{}", ""));
 
-        let tags = this.util.exec('git tag --sort=-v:refname').split("\n").map(el => el.trim()).filter(el => el !== '');
+        let tags = this.util.execSync('git tag --sort=-v:refname').split("\n").map(el => el.trim()).filter(el => el !== '');
         let list: Tag[] = [];
         tags.forEach(el => {
             list.push(new Tag(el, !remotes.includes(el)));
@@ -39,7 +39,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     async pushTag(node: Tag | undefined) {
         let name = node?.label;
         if (node === undefined) {
-            let tags = this.util.exec('git tag --sort=-v:refname')
+            let tags = this.util.execSync('git tag --sort=-v:refname')
                 .split("\n").map(el => el.trim()).filter(el => el !== '');
             name = await vscode.window.showQuickPick(tags, {});
         }
