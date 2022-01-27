@@ -58,6 +58,9 @@ When You install it, in standard SCM side bar, 2 new views will appear, GITFLOW 
 
 - 0.2.2
   - add - progress bas during process
+  - add - icons to menu elements
+  - add - bugfix support
+  - delete - configurations
   - fix - git commands with remote
   - update - README    
 - 0.1.0 - Initial release of ...
