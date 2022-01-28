@@ -617,11 +617,12 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "publish": "vsce publish",
+        "publish": "vsce package && gh release create $(node -pe \"require('./package.json')['version']\") --generate-notes \"./vscode-gitflow-$(node -pe \"require('./package.json')['version']\").vsix\" && vsce publish",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
+        "vars": "env | grep npm_package_",
         "test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
