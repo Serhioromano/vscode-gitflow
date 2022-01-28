@@ -19,5 +19,5 @@ jobs:
         ref: ${{ github.event.push.ref }}
     - name: Publish extension
       uses: sigma/vsce-publish-action@v0.0.2
-        with:
-          vsce_token: ${{ secrets.VSCE_TOKEN }}  
+      with:
+        vsce_token: ${{ secrets.VSCE_TOKEN }}  
