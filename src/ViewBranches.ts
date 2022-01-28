@@ -112,6 +112,21 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             this._onDidChangeTreeData.fire();
         });
     }
+
+    syncAll() {
+        vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: `Sync all root branches`,
+            cancellable: false
+        }, (progress, token) => {
+            const p = new Promise<void>(resolve => {
+                this.listBranches.filter(el => el.split("/").length < 2).forEach(el => {
+                    
+                })
+            });
+            return p;
+        });
+    }
     async checkoutBranch(node: Flow | undefined) {
         let name = node?.full;
         if (name === undefined) {

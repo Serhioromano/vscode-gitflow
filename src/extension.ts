@@ -22,6 +22,9 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.checkoutBranch', (node?: Flow) => {
         viewBranches.checkoutBranch(node);
     }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.syncAll', () => {
+        viewBranches.syncAll();
+    }));
 
 
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.newHotfix', () => {

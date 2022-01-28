@@ -48,8 +48,17 @@
                 }
             },
             {
+                "command": "gitflow.syncAll",
+                "title": "Sync all root branches",
+                "category": "Git-Flow",
+                "icon": {
+                    "dark": "resources/dark/sync.svg",
+                    "light": "resources/light/sync.svg"
+                }
+            },
+            {
                 "command": "gitflow.refreshB",
-                "title": "Refresh branches",
+                "title": "Refresh branches view",
                 "category": "Git-Flow",
                 "icon": {
                     "dark": "resources/dark/refresh.svg",
@@ -58,7 +67,7 @@
             },
             {
                 "command": "gitflow.refreshT",
-                "title": "Refresh versions",
+                "title": "Refresh versions view",
                 "category": "Git-Flow",
                 "icon": {
                     "dark": "resources/dark/refresh.svg",
@@ -70,8 +79,8 @@
                 "title": "Push all tags to origin",
                 "category": "Git-Flow",
                 "icon": {
-                    "dark": "resources/dark/arrow-up.svg",
-                    "light": "resources/light/arrow-up.svg"
+                    "dark": "resources/dark/cloud-upload.svg",
+                    "light": "resources/light/cloud-upload.svg"
                 }
             },
             {
@@ -79,8 +88,8 @@
                 "title": "Push tag to origin",
                 "category": "Git-Flow",
                 "icon": {
-                    "dark": "resources/dark/arrow-up.svg",
-                    "light": "resources/light/arrow-up.svg"
+                    "dark": "resources/dark/cloud-upload.svg",
+                    "light": "resources/light/cloud-upload.svg"
                 }
             },
             {
@@ -88,8 +97,8 @@
                 "title": "Fetch all remote branches",
                 "category": "Git-Flow",
                 "icon": {
-                    "dark": "resources/dark/arrow-down.svg",
-                    "light": "resources/light/arrow-down.svg"
+                    "dark": "resources/dark/cloud-download.svg",
+                    "light": "resources/light/cloud-download.svg"
                 }
             },
             {
@@ -349,6 +358,16 @@
                     "when": "view == gitflowExplorer",
                     "group": "navigation"
                 },
+                {
+                    "command": "gitflow.syncAll",
+                    "when": "view == gitflowExplorer",
+                    "group": "navigation"
+                },
+                {
+                    "command": "gitflow.syncAll",
+                    "when": "view == gitflowExplorer"
+                },
+
                 {
                     "command": "gitflow.refreshB",
                     "when": "view == gitflowExplorer"
