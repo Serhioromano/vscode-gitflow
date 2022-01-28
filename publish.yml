@@ -1,0 +1,16 @@
+name: Publish extension
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  publish:
+    name: Publish extension
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: vsce publish
+      uses: sigma/vsce-publish-action@v0.0.2
+      with:
+        vsce_token: ${{ secrets.VSCE_TOKEN }}
