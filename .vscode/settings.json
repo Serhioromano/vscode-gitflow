@@ -15,10 +15,12 @@
         "keeplocal",
         "keepremote",
         "nodevelopmerge",
+        "outfile",
         "pushdevelop",
         "pushproduction",
         "pushtag",
-        "retc"
+        "retc",
+        "vsix"
     ],
     "workbench.colorTheme": "Atom One Light"
 }
