@@ -79,6 +79,10 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
+- 0.2.9
+  - add - single command to sync all root branches (develop and master ot main)
+  - add - command to checkout root branches
+  - enhance - better icons
 - 0.2.2
   - add - progress bas during process
   - add - icons to menu elements

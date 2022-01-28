@@ -88,7 +88,7 @@ export class Util {
         }
     }
 
-    public execSync(cmd: string): string {
+    public      execSync(cmd: string): string {
         try {
             return execSync(cmd, { cwd: this.workspaceRoot }).toString();
         }

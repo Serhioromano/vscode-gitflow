@@ -169,8 +169,6 @@
                     "light": "resources/light/trash.svg"
                 }
             },
-
-
             {
                 "command": "gitflow.newRelease",
                 "title": "Release - Start",
@@ -367,7 +365,6 @@
                     "command": "gitflow.syncAll",
                     "when": "view == gitflowExplorer"
                 },
-
                 {
                     "command": "gitflow.refreshB",
                     "when": "view == gitflowExplorer"
@@ -417,7 +414,7 @@
                 {
                     "command": "gitflow.checkoutBranch",
                     "when": "view == gitflowExplorer && viewItem == branch"
-                }
+                },
                 {
                     "command": "gitflow.newFeature",
                     "when": "view == gitflowExplorer && viewItem == f"
@@ -454,7 +451,6 @@
                     "when": "view == gitflowExplorer && viewItem == b",
                     "group": "inline"
                 },
-
                 {
                     "command": "gitflow.trackFeature",
                     "when": "view == gitflowExplorer && viewItem == origin_feature"
@@ -482,7 +478,6 @@
                     "when": "view == gitflowExplorer && viewItem == origin_bugfix",
                     "group": "inline"
                 },
-                
                 {
                     "command": "gitflow.publishHotfix",
                     "when": "view == gitflowExplorer && viewItem == hotfix_local"
@@ -519,7 +514,6 @@
                     "when": "view == gitflowExplorer && viewItem == hotfix ||  viewItem == hotfix_local",
                     "group": "inline"
                 },
-
                 {
                     "command": "gitflow.publishFeature",
                     "when": "view == gitflowExplorer && viewItem == feature_local"
@@ -540,7 +534,6 @@
                     "command": "gitflow.deleteFeature",
                     "when": "view == gitflowExplorer && viewItem == feature ||  viewItem == feature_local"
                 },
-
                 {
                     "command": "gitflow.publishFeature",
                     "when": "view == gitflowExplorer && viewItem == feature_local",
@@ -566,7 +559,6 @@
                     "when": "view == gitflowExplorer && viewItem == feature ||  viewItem == feature_local",
                     "group": "inline"
                 },
-
                 {
                     "command": "gitflow.publishBugfix",
                     "when": "view == gitflowExplorer && viewItem == bugfix_local"
@@ -612,7 +604,6 @@
                     "when": "view == gitflowExplorer && viewItem == bugfix ||  viewItem == bugfix_local",
                     "group": "inline"
                 },
-
                 {
                     "command": "gitflow.publishRelease",
                     "when": "view == gitflowExplorer && viewItem == release_local"
@@ -657,11 +648,10 @@
         "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
         "esbuild": "npm run esbuild-base -- --sourcemap",
         "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-
-        "_vscode:prepublish": "npm run compile",
-        "publish": "vsce package && gh release create $(node -pe \"require('./package.json')['version']\") --generate-notes \"./vscode-gitflow-$(node -pe \"require('./package.json')['version']\").vsix\" && vsce publish",
-        "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
+        "publish": "vsce package && gh release create $(node -pe \"require('./package.json')['version']\") --generate-notes \"./vscode-gitflow-$(node -pe \"require('./package.json')['version']\").vsix\" && vsce publish",
+        "_vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
         "vars": "env | grep npm_package_",

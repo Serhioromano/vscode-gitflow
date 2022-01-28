@@ -69,14 +69,14 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 .forEach(el => {
                     tree.push(new Flow(el,
                         el, 'git-branch', vscode.TreeItemCollapsibleState.None,
-                        this._isCurrent(el)
+                        this._isCurrent(el), 'branch'
                     ));
                 });
 
             tree.push(new Flow('release', 'Releases', 'tag', vscode.TreeItemCollapsibleState.Expanded, false, 'r'));
             tree.push(new Flow('feature', 'Features', 'test-view-icon', vscode.TreeItemCollapsibleState.Expanded, false, 'f'));
-            tree.push(new Flow('bugfix', 'BugFixes',  'callstack-view-session', vscode.TreeItemCollapsibleState.Expanded, false, 'b'));
-            tree.push(new Flow('hotfix', 'HotFixes',  'flame', vscode.TreeItemCollapsibleState.Expanded, false, 'h'));
+            tree.push(new Flow('bugfix', 'BugFixes', 'callstack-view-session', vscode.TreeItemCollapsibleState.Expanded, false, 'b'));
+            tree.push(new Flow('hotfix', 'HotFixes', 'flame', vscode.TreeItemCollapsibleState.Expanded, false, 'h'));
             return Promise.resolve(tree);
         }
 
@@ -118,19 +118,17 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             location: vscode.ProgressLocation.Notification,
             title: `Sync all root branches`,
             cancellable: false
-        }, (progress, token) => {
-            const p = new Promise<void>(resolve => {
-                this.listBranches.filter(el => el.split("/").length < 2 ).forEach(el => {
-                    if(this.listRemoteBranches.includes(el)) {
-                        this.util.execSync(`git pull --tags origin ${el}`);
+        }, (progress, token) => new Promise<void>(resolve => {
+            setTimeout(() => {
+                this.listBranches.filter(el => el.split("/").length < 2).forEach(el => {
+                    if (this.listRemoteBranches.includes(el)) {
+                        this.util.execSync(`git pull origin ${el}`);
                     }
                     this.util.execSync(`git push origin ${el}:${el}`);
                 });
                 resolve();
-            });
-            return p;
-        }).then(m => {
-            vscode.window.showInformationMessage("Sync OK!");
+            }, 100);
+        })).then(() => {
             this._onDidChangeTreeData.fire();
         });
     }
@@ -143,7 +141,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             );
         }
 
-        let cmd = `git checkout -q ${name?.split("/")[1]}`;
+        let cmd = `git checkout -q ${name}`;
 
         this.util.exec(cmd, false, s => {
             this._onDidChangeTreeData.fire();
