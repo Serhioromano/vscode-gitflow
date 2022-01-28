@@ -120,11 +120,18 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             cancellable: false
         }, (progress, token) => {
             const p = new Promise<void>(resolve => {
-                this.listBranches.filter(el => el.split("/").length < 2).forEach(el => {
-                    
-                })
+                this.listBranches.filter(el => el.split("/").length < 2 ).forEach(el => {
+                    if(this.listRemoteBranches.includes(el)) {
+                        this.util.execSync(`git pull --tags origin ${el}`);
+                    }
+                    this.util.execSync(`git push origin ${el}:${el}`);
+                });
+                resolve();
             });
             return p;
+        }).then(m => {
+            vscode.window.showInformationMessage("Sync OK!");
+            this._onDidChangeTreeData.fire();
         });
     }
     async checkoutBranch(node: Flow | undefined) {

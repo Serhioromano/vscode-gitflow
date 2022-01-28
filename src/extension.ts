@@ -125,14 +125,6 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.fetchAllBranches', () => {
         viewBranches.fetchAllBranches();
     }));
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('gitflow.newRelese', () => {
-            viewBranches.startRelease();
-        })
-    );
-
-
 }
 
 export function deactivate() { }
