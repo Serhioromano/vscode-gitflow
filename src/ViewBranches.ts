@@ -112,6 +112,21 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             this._onDidChangeTreeData.fire();
         });
     }
+    async checkoutBranch(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.split("/").length < 2),
+                { title: "Select branch" }
+            );
+        }
+
+        let cmd = `git checkout -q ${name?.split("/")[1]}`;
+
+        this.util.exec(cmd, false, s => {
+            this._onDidChangeTreeData.fire();
+        });
+    }
 
     //#region Bugfix
     async startBugfix() {
