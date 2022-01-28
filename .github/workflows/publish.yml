@@ -1,0 +1,23 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: VSCE Publish
+
+on:
+  push:
+    tags: 
+      - v*
+
+jobs:
+  publish:
+    name: Publish Extension
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.push.ref }}
+    - name: Publish extension
+      uses: sigma/vsce-publish-action@v0.0.2
+        with:
+          vsce_token: ${{ secrets.VSCE_TOKEN }}  
