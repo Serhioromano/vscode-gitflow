@@ -2,7 +2,7 @@
     "name": "vscode-gitflow",
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
-    "version": "0.2.10",
+    "version": "0.2.11",
     "engines": {
         "vscode": "^1.63.0"
     },
@@ -347,6 +347,16 @@
         "menus": {
             "view/title": [
                 {
+                    "command": "gitflow.refreshT",
+                    "when": "view == gitflowTags",
+                    "group": "navigation"
+                },
+                {
+                    "command": "gitflow.pushTags",
+                    "when": "view == gitflowTags",
+                    "group": "navigation"
+                },
+                {
                     "command": "gitflow.refreshB",
                     "when": "view == gitflowExplorer",
                     "group": "navigation"
@@ -361,6 +371,7 @@
                     "when": "view == gitflowExplorer",
                     "group": "navigation"
                 },
+
                 {
                     "command": "gitflow.syncAll",
                     "when": "view == gitflowExplorer"
@@ -386,18 +397,12 @@
                     "when": "view == gitflowExplorer"
                 },
                 {
-                    "command": "gitflow.newHotfix",
+                    "command": "gitflow.newBugfix",
                     "when": "view == gitflowExplorer"
                 },
                 {
-                    "command": "gitflow.refreshT",
-                    "when": "view == gitflowTags",
-                    "group": "navigation"
-                },
-                {
-                    "command": "gitflow.pushTags",
-                    "when": "view == gitflowTags",
-                    "group": "navigation"
+                    "command": "gitflow.newHotfix",
+                    "when": "view == gitflowExplorer"
                 }
             ],
             "view/item/context": [
