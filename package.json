@@ -42,64 +42,43 @@
                 "command": "gitflow.checkoutBranch",
                 "title": "Checkout",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/checkout.svg",
-                    "light": "resources/light/checkout.svg"
-                }
+                "icon": "$(plug)"
             },
             {
                 "command": "gitflow.syncAll",
                 "title": "Sync all root branches",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/sync.svg",
-                    "light": "resources/light/sync.svg"
-                }
+                "icon": "$(repo-sync)"
             },
             {
                 "command": "gitflow.refreshB",
                 "title": "Refresh branches view",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/refresh.svg",
-                    "light": "resources/light/refresh.svg"
-                }
+                "icon": "$(refresh)"
             },
             {
                 "command": "gitflow.refreshT",
                 "title": "Refresh versions view",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/refresh.svg",
-                    "light": "resources/light/refresh.svg"
-                }
+                "icon": "$(refresh)"
             },
             {
                 "command": "gitflow.pushTags",
                 "title": "Push all tags to origin",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/cloud-upload.svg",
-                    "light": "resources/light/cloud-upload.svg"
-                }
+                "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.pushTag",
                 "title": "Push tag to origin",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/cloud-upload.svg",
-                    "light": "resources/light/cloud-upload.svg"
-                }
+                "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.fetchAllBranches",
                 "title": "Fetch all remote branches",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/cloud-download.svg",
-                    "light": "resources/light/cloud-download.svg"
-                }
+                "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.init",
@@ -110,226 +89,151 @@
                 "command": "gitflow.newFeature",
                 "title": "Feature - Start",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/start.svg",
-                    "light": "resources/light/start.svg"
-                }
+                "icon": "$(debug-start)"
             },
             {
                 "command": "gitflow.trackFeature",
                 "title": "Feature - Track",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/cloud-download.svg",
-                    "light": "resources/light/cloud-download.svg"
-                }
+                "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.checkoutFeature",
                 "title": "Feature - Checkout",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/checkout.svg",
-                    "light": "resources/light/checkout.svg"
-                }
+                "icon": "$(plug)"
             },
             {
                 "command": "gitflow.finishFeature",
                 "title": "Feature - Finish",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/stop.svg",
-                    "light": "resources/light/stop.svg"
-                }
+                "icon": "$(debug-stop)"
             },
             {
                 "command": "gitflow.publishFeature",
                 "title": "Feature - Publish",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/cloud-upload.svg",
-                    "light": "resources/light/cloud-upload.svg"
-                }
+                "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.rebaseFeature",
                 "title": "Feature - Rebase",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/rebase.svg",
-                    "light": "resources/light/rebase.svg"
-                }
+                "icon": "$(git-merge)"
             },
             {
                 "command": "gitflow.deleteFeature",
                 "title": "Feature - Delete",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/trash.svg",
-                    "light": "resources/light/trash.svg"
-                }
+                "icon": "$(trash)"
             },
             {
                 "command": "gitflow.newRelease",
                 "title": "Release - Start",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/start.svg",
-                    "light": "resources/light/start.svg"
-                }
+                "icon": "$(debug-start)"
             },
             {
                 "command": "gitflow.trackRelease",
                 "title": "Release - Track",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/cloud-download.svg",
-                    "light": "resources/light/cloud-download.svg"
-                }
+                "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.publishRelease",
                 "title": "Release - Publish",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/cloud-upload.svg",
-                    "light": "resources/light/cloud-upload.svg"
-                }
+                "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.deleteRelease",
                 "title": "Release - Delete",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/trash.svg",
-                    "light": "resources/light/trash.svg"
-                }
+                "icon": "$(trash)"
             },
             {
                 "command": "gitflow.finishRelease",
                 "title": "Release - Finish",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/stop.svg",
-                    "light": "resources/light/stop.svg"
-                }
+                "icon": "$(debug-stop)"
             },
             {
                 "command": "gitflow.rebaseRelease",
                 "title": "Release - Rebase",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/rebase.svg",
-                    "light": "resources/light/rebase.svg"
-                }
+                "icon": "$(git-merge)"
             },
             {
                 "command": "gitflow.newHotfix",
                 "title": "Hotfix - Start",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/start.svg",
-                    "light": "resources/light/start.svg"
-                }
+                "icon": "$(debug-start)"
             },
             {
                 "command": "gitflow.finishHotfix",
                 "title": "Hotfix - Finish",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/stop.svg",
-                    "light": "resources/light/stop.svg"
-                }
+                "icon": "$(debug-stop)"
             },
             {
                 "command": "gitflow.publishHotfix",
                 "title": "Hotfix - Publish",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/cloud-upload.svg",
-                    "light": "resources/light/cloud-upload.svg"
-                }
+                "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.deleteHotfix",
                 "title": "Hotfix - Delete",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/trash.svg",
-                    "light": "resources/light/trash.svg"
-                }
+                "icon": "$(trash)"
             },
             {
                 "command": "gitflow.rebaseHotfix",
                 "title": "Hotfix - Rebase",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/rebase.svg",
-                    "light": "resources/light/rebase.svg"
-                }
+                "icon": "$(git-merge)"
             },
             {
                 "command": "gitflow.newBugfix",
                 "title": "Bugfix - Start",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/start.svg",
-                    "light": "resources/light/start.svg"
-                }
+                "icon": "$(debug-start)"
             },
             {
                 "command": "gitflow.trackBugfix",
                 "title": "Bugfix - Track",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/cloud-download.svg",
-                    "light": "resources/light/cloud-download.svg"
-                }
+                "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.checkoutBugfix",
                 "title": "Bugfix - Checkout",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/checkout.svg",
-                    "light": "resources/light/checkout.svg"
-                }
+                "icon": "$(plug)"
             },
             {
                 "command": "gitflow.finishBugfix",
                 "title": "Bugfix - Finish",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/stop.svg",
-                    "light": "resources/light/stop.svg"
-                }
+                "icon": "$(debug-stop)"
             },
             {
                 "command": "gitflow.publishBugfix",
                 "title": "Bugfix - Publish",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/cloud-upload.svg",
-                    "light": "resources/light/cloud-upload.svg"
-                }
+                "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.deleteBugfix",
                 "title": "Bugfix - Delete",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/trash.svg",
-                    "light": "resources/light/trash.svg"
-                }
+                "icon": "$(trash)"
             },
             {
                 "command": "gitflow.rebaseBugfix",
                 "title": "Bugfix - Rebase",
                 "category": "Git-Flow",
-                "icon": {
-                    "dark": "resources/dark/rebase.svg",
-                    "light": "resources/light/rebase.svg"
-                }
+                "icon": "$(git-merge)"
             }
         ],
         "views": {
@@ -374,35 +278,43 @@
 
                 {
                     "command": "gitflow.syncAll",
-                    "when": "view == gitflowExplorer"
+                    "when": "view == gitflowExplorer",
+                    "group": "mygr@1"
                 },
                 {
                     "command": "gitflow.refreshB",
-                    "when": "view == gitflowExplorer"
+                    "when": "view == gitflowExplorer",
+                    "group": "mygr@2"
                 },
                 {
                     "command": "gitflow.fetchAllBranches",
-                    "when": "view == gitflowExplorer"
+                    "when": "view == gitflowExplorer",
+                    "group": "mygr@3"
                 },
                 {
                     "command": "gitflow.init",
-                    "when": "view == gitflowExplorer"
+                    "when": "view == gitflowExplorer",
+                    "group": "mygr@4"
                 },
                 {
                     "command": "gitflow.newRelease",
-                    "when": "view == gitflowExplorer"
+                    "when": "view == gitflowExplorer",
+                    "group": "mygr1@5"
                 },
                 {
                     "command": "gitflow.newFeature",
-                    "when": "view == gitflowExplorer"
+                    "when": "view == gitflowExplorer",
+                    "group": "mygr1@6"
                 },
                 {
                     "command": "gitflow.newBugfix",
-                    "when": "view == gitflowExplorer"
+                    "when": "view == gitflowExplorer",
+                    "group": "mygr1@7"
                 },
                 {
                     "command": "gitflow.newHotfix",
-                    "when": "view == gitflowExplorer"
+                    "when": "view == gitflowExplorer",
+                    "group": "mygr1@8"
                 }
             ],
             "view/item/context": [
