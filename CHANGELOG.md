@@ -2,6 +2,11 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [0.2.12] 01/31/22 
+
+- enhance -  use VS Code theme icons instead of SVG. This will apply Product icons theme to this extension too.
+- enhance - not related to features of this extension, but CI flow was created for fast delivery of new versions.
+
 ## [0.2.11] 01/30/22 
 
 - fix - take name of flow branches from configuration

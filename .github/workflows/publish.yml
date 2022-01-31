@@ -22,8 +22,15 @@ jobs:
       with:
         node-version: '16'
         cache: 'npm'
-    - run: npm i
-    - name: Publish extension
-      uses: sigma/vsce-publish-action@v0.0.2
-      with:
-        vsce_token: ${{ secrets.VSCE_TOKEN }}  
+    - name: Install NPM Packages
+      run: |
+        npm ci
+        npm install -g vsce
+    - run: vsce publish -p ${{ secrets.VSCE_TOKEN }}
+    - name: Generate Package and Create Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        vsce package
+        file=$(realpath $(ls -t *.vsix | head -1))
+        gh release create '${{ github.ref_name }}' -n "See [Changelog](https://github.com/Serhioromano/vscode-st/blob/master/CHANGELOG.md) for details."  $file
