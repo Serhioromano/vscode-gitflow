@@ -79,6 +79,7 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
+- 0.2.12 - enhance -  use VS Code theme icons instead of SVG. CI flow was created for fast delivery of new versions. 
 - 0.2.11 
   - fix - take name of flow branches from configuration
   - fix - ui buttons
