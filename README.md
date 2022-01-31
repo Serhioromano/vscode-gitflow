@@ -31,6 +31,13 @@ All basic operations you need to do in a single place.
 - Push all versions (tags)
 - Push local version (tag)
 
+## Roadmap
+
+< 30 February 2022
+
+- Multiple folder workspace
+- Status bar button to finish current branch
+
 ## How to setup:
 
 ### Work locally
