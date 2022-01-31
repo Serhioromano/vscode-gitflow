@@ -13,10 +13,23 @@ When You install it, in standard SCM side bar, 2 new views will appear, GITFLOW 
 
 ## Features
 
+All basic operations you need to do in a single place.
+
+### Gitflow
+
+- Init git flow
 - Feature (Start, Finish, Checkout, Delete, Rebase, Publish, Track)
 - Bugfix (Start, Finish, Checkout, Delete, Rebase, Publish, Track)
 - Release (Start, Finish, Publish, Track, Delete, Rebase)
 - Hotfix (Start, Finish, Publish, Rebase, Delete)
+
+### Additional
+
+- Checkout root branches
+- Sync all root branches
+- Fetch from origin
+- Push all versions (tags)
+- Push local version (tag)
 
 ## How to setup:
 
@@ -79,7 +92,10 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
-- 0.2.12 - enhance -  use VS Code theme icons instead of SVG. CI flow was created for fast delivery of new versions. 
+- 0.2.13 
+  - enhance - Order and group context menu elements. 
+  - enhance - use VS Code theme icons instead of SVG. 
+  - enhance - CI flow was created for fast delivery of new versions. 
 - 0.2.11 
   - fix - take name of flow branches from configuration
   - fix - ui buttons
