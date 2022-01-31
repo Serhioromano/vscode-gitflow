@@ -2,11 +2,12 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [0.2.13] 01/31/22 
+## [0.2.14] 01/31/22 
 
 - enhance - Order and group context menu elements. 
 - enhance -  use VS Code theme icons instead of SVG. This will apply Product icons theme to this extension too.
 - enhance - not related to features of this extension, but CI flow was created for fast delivery of new versions.
+- enhance - README overview updated with new features and new picture.
 
 ## [0.2.11] 01/30/22 
 
