@@ -33,4 +33,4 @@ jobs:
       run: |
         vsce package
         file=$(realpath $(ls -t *.vsix | head -1))
-        gh release create '${{ github.ref_name }}' -n "See [Changelog](https://github.com/Serhioromano/vscode-st/blob/master/CHANGELOG.md) for details."  $file
+        gh release create '${{ github.ref_name }}' -n "See [Changelog](https://github.com/Serhioromano/vscode-gitflow/blob/master/CHANGELOG.md) for details."  $file
