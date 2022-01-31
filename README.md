@@ -92,7 +92,7 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
-- 0.2.13 
+- 0.2.14 
   - enhance - Order and group context menu elements. 
   - enhance - use VS Code theme icons instead of SVG. 
   - enhance - CI flow was created for fast delivery of new versions. 
