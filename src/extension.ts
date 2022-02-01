@@ -7,7 +7,6 @@ export function activate(context: vscode.ExtensionContext) {
     const rootPath: string = (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 0))
     ? vscode.workspace.workspaceFolders[0].uri.fsPath : "";
     
-    
     let disposables: vscode.Disposable[] = [];
     let git = vscode.extensions.getExtension<GitExtension>('vscode.git')!.exports;
     let gitAPI: GitAPI | undefined = git.getAPI(1);
@@ -32,6 +31,19 @@ export function activate(context: vscode.ExtensionContext) {
         viewBranches.syncAll();
     }));
 
+
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.newSupport', () => {
+        viewBranches.startSupport();
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.checkoutSupport', (node?: Flow) => {
+        viewBranches.checkoutSupport(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.deleteSupport', (node?: Flow) => {
+        viewBranches.deleteSupport(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.rebaseSupport', (node?: Flow) => {
+        viewBranches.rebaseSupport(node);
+    }));
 
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.newHotfix', () => {
         viewBranches.startHotfix();

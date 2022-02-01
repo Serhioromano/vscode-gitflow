@@ -27,7 +27,7 @@
     ],
     "extensionDependencies": [
         "vscode.git"
-      ],
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/Serhioromano/vscode-gitflow"
@@ -87,6 +87,30 @@
                 "command": "gitflow.init",
                 "title": "Init Git Flow",
                 "category": "Git-Flow"
+            },
+            {
+                "command": "gitflow.newSupport",
+                "title": "Support - Start",
+                "category": "Git-Flow",
+                "icon": "$(debug-start)"
+            },
+            {
+                "command": "gitflow.rebaseSupport",
+                "title": "Support - Rebase",
+                "category": "Git-Flow",
+                "icon": "$(git-merge)"
+            },
+            {
+                "command": "gitflow.deleteSupport",
+                "title": "Support - Delete",
+                "category": "Git-Flow",
+                "icon": "$(trash)"
+            },
+            {
+                "command": "gitflow.checkoutSupport",
+                "title": "Support - Checkout",
+                "category": "Git-Flow",
+                "icon": "$(plug)"
             },
             {
                 "command": "gitflow.newFeature",
@@ -278,7 +302,6 @@
                     "when": "view == gitflowExplorer",
                     "group": "navigation"
                 },
-
                 {
                     "command": "gitflow.syncAll",
                     "when": "view == gitflowExplorer",
@@ -352,6 +375,10 @@
                     "when": "view == gitflowExplorer && viewItem == b"
                 },
                 {
+                    "command": "gitflow.newSupport",
+                    "when": "view == gitflowExplorer && viewItem == s"
+                },
+                {
                     "command": "gitflow.newFeature",
                     "when": "view == gitflowExplorer && viewItem == f",
                     "group": "inline"
@@ -369,6 +396,11 @@
                 {
                     "command": "gitflow.newBugfix",
                     "when": "view == gitflowExplorer && viewItem == b",
+                    "group": "inline"
+                },
+                {
+                    "command": "gitflow.newSupport",
+                    "when": "view == gitflowExplorer && viewItem == s",
                     "group": "inline"
                 },
                 {
@@ -398,6 +430,20 @@
                     "when": "view == gitflowExplorer && viewItem == origin_bugfix",
                     "group": "inline"
                 },
+
+                {
+                    "command": "gitflow.rebaseSupport",
+                    "when": "view == gitflowExplorer && viewItem == support ||  viewItem == support_local"
+                },
+                {
+                    "command": "gitflow.deleteSupport",
+                    "when": "view == gitflowExplorer && viewItem == support ||  viewItem == support_local"
+                },
+                {
+                    "command": "gitflow.checkoutSupport",
+                    "when": "view == gitflowExplorer && viewItem == support || viewItem == support_local"
+                },
+
                 {
                     "command": "gitflow.publishHotfix",
                     "when": "view == gitflowExplorer && viewItem == hotfix_local"

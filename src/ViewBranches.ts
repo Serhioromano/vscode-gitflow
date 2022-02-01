@@ -11,7 +11,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     private listRemoteBranches: string[] = [];
     private listRemotes: string[] = [];
     private util;
-    private brunchNames : {[key: string]: string} = {};
+    private brunchNames: { [key: string]: string } = {};
     private terminal: vscode.Terminal | null;
 
     constructor(private workspaceRoot: string) {
@@ -84,6 +84,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             tree.push(new Flow('feature', 'Features', 'test-view-icon', vscode.TreeItemCollapsibleState.Expanded, false, 'f'));
             tree.push(new Flow('bugfix', 'BugFixes', 'callstack-view-session', vscode.TreeItemCollapsibleState.Expanded, false, 'b'));
             tree.push(new Flow('hotfix', 'HotFixes', 'flame', vscode.TreeItemCollapsibleState.Expanded, false, 'h'));
+            tree.push(new Flow('support', 'Support', 'history', vscode.TreeItemCollapsibleState.Expanded, false, 's'));
             return Promise.resolve(tree);
         }
 
@@ -154,6 +155,115 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             this._onDidChangeTreeData.fire();
         });
     }
+
+    //#region Support
+    async startSupport() {
+        let base = await vscode.window.showQuickPick(
+            this.util.execSync('git tag --sort=-v:refname').split("\n").map(el => el.trim().replace("* ", "")).filter(el => el !== ''),
+            { title: "Start support branch based on a tag" }
+        );
+        if (base === undefined) {
+            return;
+        }
+
+        let name = await vscode.window.showInputBox({
+            title: "Enter Support name [a-zA-Z0-9-]*", value: base.split(".")[0]
+        });
+        if (name === undefined) {
+            return;
+        }
+        if (name?.match(/^([a-zA-Z0-9\-]*)$/) === null) {
+            vscode.window.showErrorMessage("Support name have to match [a-zA-Z0-9\\-]*");
+            return;
+        }
+
+        let cmd = `git flow support start '${name}' refs/tags/${base}`;
+
+        this.util.exec(cmd, false, s => {
+            this._onDidChangeTreeData.fire();
+        });
+    }
+    async rebaseSupport(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search(this.brunchNames.support) !== -1),
+                { title: "Select support branch" }
+            );
+        }
+        if (name === undefined) {
+            return;
+        }
+
+        let options = await vscode.window.showQuickPick(
+            ["[-i] An interactive rebase", "[-p] Preserve merges"], { title: "Select options", canPickMany: true }
+        );
+        let option = options?.map(el => {
+            let m = el.match(/\[([^\]]*)\]/);
+            return m === null ? '' : m[1];
+        }).join(" ");
+
+        let root = this.listBranches.filter(el => el.split("/").length < 2);
+        let tags = this.util.execSync('git tag --sort=-v:refname').split("\n").map(el => el.trim().replace("* ", "")).filter(el => el !== '');
+        let base = await vscode.window.showQuickPick(
+            [...root, ...tags],
+            { title: "Select base branch" }
+        );
+
+        if (base === undefined) {
+            return;
+        }
+
+        let cmd = `git flow support rebase ${option} ${name?.split("/")[1]} ${base}`;
+
+        this.util.exec(cmd, false, s => {
+            this._onDidChangeTreeData.fire();
+        });
+    }
+    async deleteSupport(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search(this.brunchNames.support) !== -1),
+                { title: "Select bugfix" }
+            );
+        }
+        if (name === undefined) {
+            return;
+        }
+
+        let list: string[] = ["[-f] Force deletion"];
+        if (this.listRemoteBranches.includes(`${name}`)) {
+            list.push("[-r] Delete remote branch");
+        }
+        let options = await vscode.window.showQuickPick(
+            list, { title: "Select options", canPickMany: true }
+        );
+        let option = options?.includes("[-f] Force deletion") ? "-D" : "-d";
+        this.util.execSync(`git branch ${option} ${name}`);
+
+        if (options?.includes("[-r] Delete remote branch")) {
+            this.util.execSync(`git push --delete origin ${name}`);
+        }
+
+        this._onDidChangeTreeData.fire();
+    }
+    async checkoutSupport(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search(this.brunchNames.support) !== -1),
+                { title: "Select support branch" }
+            );
+        }
+        let cmd = `git checkout -q ${name}`;
+
+        this.util.exec(cmd, false, s => {
+            this._onDidChangeTreeData.fire();
+        });
+    }
+
+    //#endregion
 
     //#region Bugfix
     async startBugfix() {
