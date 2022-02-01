@@ -7,7 +7,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     private util: Util;
     private terminal: vscode.Terminal | null;
 
-    constructor(private workspaceRoot: string) {
+    constructor(public workspaceRoot: string) {
         this.util = new Util(workspaceRoot);
         this.terminal = null;
     }
@@ -21,6 +21,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     }
 
     getChildren(element?: Tag): Thenable<Tag[]> {
+        this.util = new Util(this.workspaceRoot);
         let remotes = this.util.execSync('git ls-remote --tags origin')
             .split("\n")
             .filter(el => el.trim().search("refs/tags/") > 0)

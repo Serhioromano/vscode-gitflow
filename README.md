@@ -32,6 +32,12 @@ All basic operations you need to do in a single place.
 - Push all versions (tags)
 - Push local version (tag)
 
+### Multiple Folder Workspace
+
+Multiple folder workspace was long waited feature of VS Code by many people. It would be a shame not to support it.
+
+![ext](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/mfw.png)
+
 ## Roadmap
 
 < 30 February 2022
@@ -127,7 +133,8 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 - In the command line, enter `gh auth login`, then follow the prompts.
 
 ## Changelog
-- 0.3.0
+- 0.4.0 - Multiple folder workspaces
+- 0.3.1
   - add - Support (Start, Checkout, Rebase, Delete)
   - add - Release checkout
   - add - Hotfix checkout

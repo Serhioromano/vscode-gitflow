@@ -2,6 +2,10 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [0.4.0] 02/01/22 
+
+- add - Support for multiple folder workspaces
+
 ## [0.3.0] 02/01/22 
 
 - add - Support (Start, Checkout, Rebase, Delete)
