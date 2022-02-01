@@ -71,7 +71,7 @@ export class Util {
                 this.execCb(cmd, res => {
                     cb(res);
                     resolve();
-                });
+                }, resolve);
             }, 100);
         }));
     }
@@ -93,13 +93,16 @@ export class Util {
             return '' + e;
         }
     }
-    private execCb(cmd: string, cb: (s: string) => void): void {
+    private execCb(cmd: string, cb: (s: string) => void, resolve?:any): void {
         console.log(this.workspaceRoot);
         exec(cmd, {
             cwd: this.workspaceRoot
         }, (err, stdout, stderr) => {
             if (err) {
                 vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
+                if(resolve !== undefined) {
+                    resolve();
+                }
                 return;
             }
             cb(stdout);

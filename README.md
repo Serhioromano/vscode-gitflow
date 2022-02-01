@@ -133,7 +133,9 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 - In the command line, enter `gh auth login`, then follow the prompts.
 
 ## Changelog
-- 0.4.0 - Multiple folder workspaces
+- 0.4.1
+  - add - Multiple folder workspaces
+  - fix - Progress notification not resolving
 - 0.3.1
   - add - Support (Start, Checkout, Rebase, Delete)
   - add - Release checkout
