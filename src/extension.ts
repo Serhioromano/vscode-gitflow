@@ -1,10 +1,16 @@
 import * as vscode from 'vscode';
 import { Flow, TreeViewBranches } from './ViewBranches';
 import { TreeViewVersions, Tag } from './ViewVersions';
+import { GitExtension, API as GitAPI } from './git';
 
 export function activate(context: vscode.ExtensionContext) {
     const rootPath: string = (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 0))
-        ? vscode.workspace.workspaceFolders[0].uri.fsPath : "";
+    ? vscode.workspace.workspaceFolders[0].uri.fsPath : "";
+    
+    
+    let disposables: vscode.Disposable[] = [];
+    let git = vscode.extensions.getExtension<GitExtension>('vscode.git')!.exports;
+    let gitAPI: GitAPI | undefined = git.getAPI(1);
 
     const viewBranches = new TreeViewBranches(rootPath);
     const a = vscode.window.createTreeView('gitflowExplorer', {

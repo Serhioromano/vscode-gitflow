@@ -25,6 +25,9 @@
         "onView:gitflowExplorer",
         "onView:gitflowTags"
     ],
+    "extensionDependencies": [
+        "vscode.git"
+      ],
     "repository": {
         "type": "git",
         "url": "https://github.com/Serhioromano/vscode-gitflow"
