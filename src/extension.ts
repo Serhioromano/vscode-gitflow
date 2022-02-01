@@ -1,12 +1,11 @@
 import * as vscode from 'vscode';
 import { Flow, TreeViewBranches } from './ViewBranches';
 import { TreeViewVersions, Tag } from './ViewVersions';
-import { GitExtension, API as GitAPI } from './git';
+import { GitExtension, API as GitAPI } from './lib/git';
 
 export function activate(context: vscode.ExtensionContext) {
     const rootPath: string = (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 0))
     ? vscode.workspace.workspaceFolders[0].uri.fsPath : "";
-    
     
     let disposables: vscode.Disposable[] = [];
     let git = vscode.extensions.getExtension<GitExtension>('vscode.git')!.exports;
@@ -33,6 +32,19 @@ export function activate(context: vscode.ExtensionContext) {
     }));
 
 
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.newSupport', () => {
+        viewBranches.startSupport();
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.checkoutSupport', (node?: Flow) => {
+        viewBranches.checkoutSupport(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.deleteSupport', (node?: Flow) => {
+        viewBranches.deleteSupport(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.rebaseSupport', (node?: Flow) => {
+        viewBranches.rebaseSupport(node);
+    }));
+
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.newHotfix', () => {
         viewBranches.startHotfix();
     }));
@@ -47,6 +59,9 @@ export function activate(context: vscode.ExtensionContext) {
     }));
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.rebaseHotfix', (node?: Flow) => {
         viewBranches.rebaseHotfix(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.checkoutHotfix', (node?: Flow) => {
+        viewBranches.checkoutHotfix(node);
     }));
 
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.newRelease', () => {
@@ -66,6 +81,9 @@ export function activate(context: vscode.ExtensionContext) {
     }));
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.rebaseRelease', (node?: Flow) => {
         viewBranches.rebaseRelease(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.checkoutRelease', (node?: Flow) => {
+        viewBranches.checkoutRelease(node);
     }));
 
 
