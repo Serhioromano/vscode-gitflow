@@ -3,6 +3,16 @@ import { threadId } from 'worker_threads';
 import { Util } from './lib/Util';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 
+interface BranchList {
+    develop: string,
+    master: string,
+    release: string,
+    feature: string,
+    hotfix: string,
+    bugfix: string,
+    support: string
+};
+
 export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     private _onDidChangeTreeData: vscode.EventEmitter<Flow | undefined | null | void> = new vscode.EventEmitter<Flow | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<Flow | undefined | null | void> = this._onDidChangeTreeData.event;
@@ -11,13 +21,21 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     private listRemoteBranches: string[] = [];
     private listRemotes: string[] = [];
     private util;
-    private brunchNames: { [key: string]: string } = {};
     private terminal: vscode.Terminal | null;
-    private develop: string = 'develop';
+    private branches: BranchList;
 
     constructor(private workspaceRoot: string) {
         this.util = new Util(workspaceRoot);
         this.terminal = null;
+        this.branches = {
+            develop: "",
+            master: "",
+            release: "",
+            feature: "",
+            hotfix: "",
+            bugfix: "",
+            support: ""
+        };
     }
 
     getTreeItem(element: Flow): vscode.TreeItem {
@@ -46,14 +64,14 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             }
 
             this.curBranch = this.util.execSync("git rev-parse --abbrev-ref HEAD").trim();
-            list.replace("\r", "").split("\n").forEach(el => {
-                if (el.trim().substring(el.length - 2) === "/") {
-                    let l = el.split(" ");
-                    this.brunchNames[l[0].toLowerCase()] = l[3].trim();
-                }
-            });
-            this.develop = list.replace("\r", "").split("\n")[1].split(": ")[1];
-            console.log(this.develop);
+            this.branches.develop = this.util.execSync('git config --get gitflow.branch.develop');
+            this.branches.master = this.util.execSync('git config --get gitflow.branch.master');
+            this.branches.release = this.util.execSync('git config --get gitflow.branch.release');
+            this.branches.feature = this.util.execSync('git config --get gitflow.branch.feature');
+            this.branches.hotfix = this.util.execSync('git config --get gitflow.branch.hotfix');
+            this.branches.bugfix = this.util.execSync('git config --get gitflow.branch.bugfix');
+            this.branches.support = this.util.execSync('git config --get gitflow.branch.support');
+            console.log(this.branches);
 
 
             this.listRemotes = [...new Set(
@@ -84,11 +102,11 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     ));
                 });
 
-            tree.push(new Flow('release', 'Releases', 'tag', vscode.TreeItemCollapsibleState.Expanded, false, 'r'));
-            tree.push(new Flow('feature', 'Features', 'test-view-icon', vscode.TreeItemCollapsibleState.Expanded, false, 'f'));
-            tree.push(new Flow('bugfix', 'BugFixes', 'callstack-view-session', vscode.TreeItemCollapsibleState.Expanded, false, 'b'));
-            tree.push(new Flow('hotfix', 'HotFixes', 'flame', vscode.TreeItemCollapsibleState.Expanded, false, 'h'));
-            tree.push(new Flow('support', 'Support', 'history', vscode.TreeItemCollapsibleState.Expanded, false, 's'));
+            tree.push(new Flow(this.branches.release.replace("/",""), 'Releases', 'tag', vscode.TreeItemCollapsibleState.Expanded, false, 'r'));
+            tree.push(new Flow(this.branches.feature.replace("/",""), 'Features', 'test-view-icon', vscode.TreeItemCollapsibleState.Expanded, false, 'f'));
+            tree.push(new Flow(this.branches.bugfix.replace("/",""), 'BugFixes', 'callstack-view-session', vscode.TreeItemCollapsibleState.Expanded, false, 'b'));
+            tree.push(new Flow(this.branches.hotfix.replace("/",""), 'HotFixes', 'flame', vscode.TreeItemCollapsibleState.Expanded, false, 'h'));
+            tree.push(new Flow(this.branches.support.replace("/",""), 'Support', 'history', vscode.TreeItemCollapsibleState.Expanded, false, 's'));
             return Promise.resolve(tree);
         }
 
@@ -191,7 +209,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.support) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.support) !== -1),
                 { title: "Select support branch" }
             );
         }
@@ -228,7 +246,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.support) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.support) !== -1),
                 { title: "Select bugfix" }
             );
         }
@@ -245,7 +263,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         );
         let option = options?.includes("[-f] Force deletion") ? "-D" : "-d";
 
-        this.util.execSync(`git checkout -d ${this.develop}`);
+        this.util.execSync(`git checkout -d ${this.branches.develop}`);
         this.util.execSync(`git branch ${option} ${name}`);
 
         if (options?.includes("[-r] Delete remote branch")) {
@@ -258,7 +276,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.support) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.support) !== -1),
                 { title: "Select support branch" }
             );
         }
@@ -287,7 +305,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             return;
         }
 
-        let base = ((this.curBranch.search('support/') !== -1)
+        let base = ((this.curBranch.search(this.branches.support) !== -1)
             ? await vscode.window.showQuickPick(['Yes', 'No'], { title: `Start release based on ${this.curBranch}?` })
             : 'No');
 
@@ -301,7 +319,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.bugfix) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.bugfix) !== -1),
                 { title: "Select bugfix" }
             );
         }
@@ -336,7 +354,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.bugfix) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.bugfix) !== -1),
                 { title: "Select bugfix" }
             );
         }
@@ -369,7 +387,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
                 this.listBranches
-                    .filter(el => el.search(this.brunchNames.bugfix) !== -1 && !this.listRemoteBranches.includes(el)),
+                    .filter(el => el.search(this.branches.bugfix) !== -1 && !this.listRemoteBranches.includes(el)),
                 { title: "Select local Bugfix that is not on ORIGIN" }
             );
         }
@@ -384,7 +402,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.bugfix) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.bugfix) !== -1),
                 { title: "Select bugfix" }
             );
         }
@@ -412,7 +430,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.bugfix) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.bugfix) !== -1),
                 { title: "Select bugfix" }
             );
         }
@@ -427,7 +445,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listRemoteBranches.filter(el => el.search(this.brunchNames.bugfix) !== -1),
+                this.listRemoteBranches.filter(el => el.search(this.branches.bugfix) !== -1),
                 { title: "Select remote bugfix" }
             );
         }
@@ -445,9 +463,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
     //#region Features
     async startFeature() {
-        let name = await vscode.window.showInputBox({ title: "Enter feature name [a-zA-Z0-9-]*" });
+        let name = await vscode.window.showInputBox({ title: "Enter feature name [a-zA-Z0-9-.]*" });
         if (name?.length === 0) { return; }
-        if (name?.match(/^([a-zA-Z0-9\-]*)$/) === null) {
+        if (name?.match(/^([a-zA-Z0-9\-\.]*)$/) === null) {
             vscode.window.showErrorMessage("Feature name have to match [a-zA-Z0-9\\-]*");
             return;
         }
@@ -455,7 +473,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (name === undefined) {
             return;
         }
-        let base = ((this.curBranch.search('support/') !== -1)
+        let base = ((this.curBranch.search(this.branches.support) !== -1)
             ? await vscode.window.showQuickPick(['Yes', 'No'], { title: `Start release based on ${this.curBranch}?` })
             : 'No');
 
@@ -469,7 +487,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.feature) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.feature) !== -1),
                 { title: "Select feature" }
             );
         }
@@ -506,7 +524,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.feature) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.feature) !== -1),
                 { title: "Select feature" }
             );
         }
@@ -539,7 +557,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
                 this.listBranches
-                    .filter(el => el.search(this.brunchNames.feature) !== -1 && !this.listRemoteBranches.includes(el)),
+                    .filter(el => el.search(this.branches.feature) !== -1 && !this.listRemoteBranches.includes(el)),
                 { title: "Select local feature that is not on ORIGIN" }
             );
         }
@@ -554,7 +572,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.feature) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.feature) !== -1),
                 { title: "Select feature" }
             );
         }
@@ -582,7 +600,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.feature) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.feature) !== -1),
                 { title: "Select feature" }
             );
         }
@@ -597,7 +615,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listRemoteBranches.filter(el => el.search(this.brunchNames.feature) !== -1),
+                this.listRemoteBranches.filter(el => el.search(this.branches.feature) !== -1),
                 { title: "Select remote feature" }
             );
         }
@@ -637,7 +655,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             this.util.execSync('git commit ./package.json -m"Version bump"');
         }
 
-        let base = ((this.curBranch.search('support/') !== -1)
+        let base = ((this.curBranch.search(this.branches.support) !== -1)
             ? await vscode.window.showQuickPick(['Yes', 'No'], { title: `Start release based on ${this.curBranch}?` })
             : 'No');
 
@@ -652,7 +670,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.hotfix) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.hotfix) !== -1),
                 { title: "Select hotfix branch" }
             );
         }
@@ -669,7 +687,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.hotfix) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.hotfix) !== -1),
                 { title: "Select hotfix" }
             );
         }
@@ -684,7 +702,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.hotfix) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.hotfix) !== -1),
                 { title: "Select hotfix" }
             );
         }
@@ -710,7 +728,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.release) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.release) !== -1),
                 { title: "Select release" }
             );
         }
@@ -742,7 +760,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.hotfix) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.hotfix) !== -1),
                 { title: "Select hotfix" }
             );
         }
@@ -803,7 +821,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             this.util.execSync('git commit ./package.json -m"Version bump"');
         }
 
-        let base = ((this.curBranch.search('support/') !== -1)
+        let base = ((this.curBranch.search(this.branches.support) !== -1)
             ? await vscode.window.showQuickPick(['Yes', 'No'], { title: `Start release based on ${this.curBranch}?` })
             : 'No');
 
@@ -817,7 +835,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.release) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.release) !== -1),
                 { title: "Select release branch" }
             );
         }
@@ -834,7 +852,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.release) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.release) !== -1),
                 { title: "Select release" }
             );
         }
@@ -849,7 +867,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.release) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.release) !== -1),
                 { title: "Select release" }
             );
         }
@@ -875,7 +893,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listRemoteBranches.filter(el => el.search(this.brunchNames.release) !== -1),
+                this.listRemoteBranches.filter(el => el.search(this.branches.release) !== -1),
                 { title: "Select remote release" }
             );
         }
@@ -893,7 +911,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.release) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.release) !== -1),
                 { title: "Select release" }
             );
         }
@@ -937,7 +955,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter(el => el.search(this.brunchNames.release) !== -1),
+                this.listBranches.filter(el => el.search(this.branches.release) !== -1),
                 { title: "Select release" }
             );
         }
