@@ -42,7 +42,8 @@ Multiple folder workspace was long waited feature of VS Code by many people. It 
 
 < 30 February 2022
 
-- Multiple folder workspace
+- Multiple folder workspace [done]
+- Flow "support" [done]
 - Status bar button to finish current branch
 
 ## How to work with Support
