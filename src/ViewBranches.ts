@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
-import { threadId } from 'worker_threads';
 import { Util } from './lib/Util';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { GitExtension, API as GitAPI } from './lib/git';
+
 
 interface BranchList {
     develop: string,
@@ -19,12 +20,11 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     private curBranch: string = '';
     private listBranches: string[] = [];
     private listRemoteBranches: string[] = [];
-    private listRemotes: string[] = [];
     private util;
     private terminal: vscode.Terminal | null;
     private branches: BranchList;
 
-    constructor(private workspaceRoot: string) {
+    constructor(public workspaceRoot: string) {
         this.util = new Util(workspaceRoot);
         this.terminal = null;
         this.branches = {
@@ -43,6 +43,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     }
 
     getChildren(element?: Flow): Thenable<Flow[]> {
+        this.util = new Util(this.workspaceRoot);
         if (!this.util.check()) {
             return Promise.resolve([]);
         }
@@ -64,22 +65,23 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             }
 
             this.curBranch = this.util.execSync("git rev-parse --abbrev-ref HEAD").trim();
-            this.branches.develop = this.util.execSync('git config --get gitflow.branch.develop');
-            this.branches.master = this.util.execSync('git config --get gitflow.branch.master');
-            this.branches.release = this.util.execSync('git config --get gitflow.branch.release');
-            this.branches.feature = this.util.execSync('git config --get gitflow.branch.feature');
-            this.branches.hotfix = this.util.execSync('git config --get gitflow.branch.hotfix');
-            this.branches.bugfix = this.util.execSync('git config --get gitflow.branch.bugfix');
-            this.branches.support = this.util.execSync('git config --get gitflow.branch.support');
+            let b = this.util.execSync("git flow config list").replace("\r", "").split("\n");
+            this.branches.master  = b[0].split(": ")[1].trim();
+            this.branches.develop = b[1].split(": ")[1].trim();
+            this.branches.feature = b[2].split(": ")[1].trim();
+            this.branches.bugfix  = b[3].split(": ")[1].trim();
+            this.branches.release = b[4].split(": ")[1].trim();
+            this.branches.hotfix  = b[5].split(": ")[1].trim();
+            this.branches.support = b[6].split(": ")[1].trim();
             console.log(this.branches);
 
 
-            this.listRemotes = [...new Set(
-                this.util.execSync('git remote -v')
-                    .split("\n")
-                    .map(el => el.split("\t")[0].trim())
-                    .filter(el => el !== '')
-            )];
+            // this.listRemotes = [...new Set(
+            //     this.util.execSync('git remote -v')
+            //         .split("\n")
+            //         .map(el => el.split("\t")[0].trim())
+            //         .filter(el => el !== '')
+            // )];
             this.listBranches = this.util.execSync("git branch")
                 .split("\n")
                 .map(el => el.trim().replace("* ", ""))
@@ -1016,6 +1018,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     _runTerminal(cmd: string): void {
         this._initTerminal();
         this.terminal?.show();
+        this.terminal?.sendText(`cd ${this.workspaceRoot}`);
         this.terminal?.sendText(cmd);
     }
 

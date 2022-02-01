@@ -94,6 +94,7 @@ export class Util {
         }
     }
     private execCb(cmd: string, cb: (s: string) => void): void {
+        console.log(this.workspaceRoot);
         exec(cmd, {
             cwd: this.workspaceRoot
         }, (err, stdout, stderr) => {

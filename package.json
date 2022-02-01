@@ -37,9 +37,10 @@
     "contributes": {
         "commands": [
             {
-                "command": "gitflow.test",
-                "title": "Test",
-                "category": "Git-Flow"
+                "command": "gitflow.switchRepo",
+                "title": "Switch active repository",
+                "category": "Git-Flow",
+                "icon": "$(remote)"
             },
             {
                 "command": "gitflow.checkoutBranch",
@@ -310,49 +311,59 @@
                     "group": "navigation"
                 },
                 {
-                    "command": "gitflow.syncAll",
-                    "when": "view == gitflowExplorer",
+                    "command": "gitflow.switchRepo",
+                    "when": "view == gitflowExplorer && workspaceFolderCount > 1",
                     "group": "navigation"
                 },
                 {
                     "command": "gitflow.syncAll",
                     "when": "view == gitflowExplorer",
-                    "group": "mygr@1"
+                    "group": "navigation"
+                },
+                {
+                    "command": "gitflow.switchRepo",
+                    "when": "view == gitflowExplorer && workspaceFolderCount > 1",
+                    "group": "a_group@1"
+                },
+                {
+                    "command": "gitflow.syncAll",
+                    "when": "view == gitflowExplorer",
+                    "group": "b_group@1"
                 },
                 {
                     "command": "gitflow.refreshB",
                     "when": "view == gitflowExplorer",
-                    "group": "mygr@2"
+                    "group": "b_group@3"
                 },
                 {
                     "command": "gitflow.fetchAllBranches",
                     "when": "view == gitflowExplorer",
-                    "group": "mygr@3"
+                    "group": "b_group@4"
                 },
                 {
                     "command": "gitflow.init",
                     "when": "view == gitflowExplorer",
-                    "group": "mygr@4"
+                    "group": "b_group@5"
                 },
                 {
                     "command": "gitflow.newRelease",
                     "when": "view == gitflowExplorer",
-                    "group": "mygr1@5"
+                    "group": "c_group@6"
                 },
                 {
                     "command": "gitflow.newFeature",
                     "when": "view == gitflowExplorer",
-                    "group": "mygr1@6"
+                    "group": "c_group@7"
                 },
                 {
                     "command": "gitflow.newBugfix",
                     "when": "view == gitflowExplorer",
-                    "group": "mygr1@7"
+                    "group": "c_group@8"
                 },
                 {
                     "command": "gitflow.newHotfix",
                     "when": "view == gitflowExplorer",
-                    "group": "mygr1@8"
+                    "group": "c_group@9"
                 }
             ],
             "view/item/context": [

@@ -32,6 +32,12 @@ All basic operations you need to do in a single place.
 - Push all versions (tags)
 - Push local version (tag)
 
+### Multiple Folder Workspace
+
+Multiple folder workspace was long waited feature of VS Code by many people. It would be a shame not to support it.
+
+![ext](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/mfw.png)
+
 ## Roadmap
 
 < 30 February 2022

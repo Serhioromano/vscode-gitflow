@@ -4,22 +4,58 @@ import { TreeViewVersions, Tag } from './ViewVersions';
 import { GitExtension, API as GitAPI } from './lib/git';
 
 export function activate(context: vscode.ExtensionContext) {
-    const rootPath: string = (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 0))
-    ? vscode.workspace.workspaceFolders[0].uri.fsPath : "";
-    
-    let disposables: vscode.Disposable[] = [];
-    let git = vscode.extensions.getExtension<GitExtension>('vscode.git')!.exports;
-    let gitAPI: GitAPI | undefined = git.getAPI(1);
+
+
+    let rootPath: string = (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 0))
+        ? vscode.workspace.workspaceFolders[0].uri.fsPath : "";
+
+    console.log(vscode.workspace.workspaceFolders?.map((el) => el.uri.fsPath));
+
+    // let disposables: vscode.Disposable[] = [];
+    // let git = vscode.extensions.getExtension<GitExtension>('vscode.git')!.exports;
+    // let gitAPI: GitAPI | undefined = git.getAPI(1);
+    // let repos = gitAPI.repositories.map(el => el.rootUri.path);
+    // let rootPath = repos[0];
+    // console.log(repos, rootPath);
+
 
     const viewBranches = new TreeViewBranches(rootPath);
     const a = vscode.window.createTreeView('gitflowExplorer', {
         treeDataProvider: viewBranches, showCollapseAll: true
     });
-    a.message = "Git Flow version: " + viewBranches.version();
+    const viewVersions = new TreeViewVersions(rootPath);
+    const b = vscode.window.createTreeView('gitflowTags', {
+        treeDataProvider: viewVersions
+    });
 
+    if (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 1)) {
+        a.message = "Current repo: " + rootPath.split('/').reverse()[0];
+        b.message = "Current repo: " + rootPath.split('/').reverse()[0];
+    }
 
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.switchRepo', async () => {
+        let list: string[] = vscode.workspace.workspaceFolders?.map((el) => el.uri.fsPath) || [];
+        if(list.length < 2) {
+            vscode.window.showInformationMessage("Not a multi folder workspace");
+            return;
+        }
+        let repo = await vscode.window.showQuickPick(list, { title: "Select active repository" });
+        if (repo === undefined) {
+            return;
+        }
+        
+        a.message = "Current repo: " + `${repo}`.split('/').reverse()[0];
+        viewBranches.workspaceRoot = `${repo}`;
+        viewBranches.refresh();
+        b.message = "Current repo: " + `${repo}`.split('/').reverse()[0];
+        viewVersions.workspaceRoot = `${repo}`;
+        viewVersions.refresh();
+    }));
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.refreshB', () => {
         viewBranches.refresh();
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.fetchAllBranches', () => {
+        viewBranches.fetchAllBranches();
     }));
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.init', () => {
         viewBranches.init();
@@ -132,11 +168,6 @@ export function activate(context: vscode.ExtensionContext) {
     }));
 
 
-    const viewVersions = new TreeViewVersions(rootPath);
-    vscode.window.createTreeView('gitflowTags', {
-        treeDataProvider: viewVersions
-    });
-
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.refreshT', () => {
         viewVersions.refresh();
     }));
@@ -145,9 +176,6 @@ export function activate(context: vscode.ExtensionContext) {
     }));
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.pushTag', (e?: Tag) => {
         viewVersions.pushTag(e);
-    }));
-    context.subscriptions.push(vscode.commands.registerCommand('gitflow.fetchAllBranches', () => {
-        viewBranches.fetchAllBranches();
     }));
 }
 
