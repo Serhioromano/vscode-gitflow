@@ -13,6 +13,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     private util;
     private brunchNames: { [key: string]: string } = {};
     private terminal: vscode.Terminal | null;
+    private develop: string = 'develop';
 
     constructor(private workspaceRoot: string) {
         this.util = new Util(workspaceRoot);
@@ -51,6 +52,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     this.brunchNames[l[0].toLowerCase()] = l[3].trim();
                 }
             });
+            this.develop = list.replace("\r", "").split("\n")[1].split(": ")[1];
+            console.log(this.develop);
+
 
             this.listRemotes = [...new Set(
                 this.util.execSync('git remote -v')
@@ -240,6 +244,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             list, { title: "Select options", canPickMany: true }
         );
         let option = options?.includes("[-f] Force deletion") ? "-D" : "-d";
+
+        this.util.execSync(`git checkout -d ${this.develop}`);
         this.util.execSync(`git branch ${option} ${name}`);
 
         if (options?.includes("[-r] Delete remote branch")) {
@@ -255,6 +261,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 this.listBranches.filter(el => el.search(this.brunchNames.support) !== -1),
                 { title: "Select support branch" }
             );
+        }
+        if (name === undefined) {
+            return;
         }
         let cmd = `git checkout -q ${name}`;
 
@@ -278,7 +287,11 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             return;
         }
 
-        let cmd = `git flow bugfix start -F ${name}`;
+        let base = ((this.curBranch.search('support/') !== -1)
+            ? await vscode.window.showQuickPick(['Yes', 'No'], { title: `Start release based on ${this.curBranch}?` })
+            : 'No');
+
+        let cmd = `git flow bugfix start ${name} ${base === 'Yes' ? this.curBranch : ''}`;
 
         this.util.exec(cmd, false, s => {
             this._onDidChangeTreeData.fire();
@@ -442,8 +455,11 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (name === undefined) {
             return;
         }
+        let base = ((this.curBranch.search('support/') !== -1)
+            ? await vscode.window.showQuickPick(['Yes', 'No'], { title: `Start release based on ${this.curBranch}?` })
+            : 'No');
 
-        let cmd = `git flow feature start -F ${name}`;
+        let cmd = `git flow feature start ${name} ${base === 'Yes' ? this.curBranch : ''}`;
 
         this.util.exec(cmd, false, s => {
             this._onDidChangeTreeData.fire();
@@ -602,15 +618,14 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let exist: boolean = existsSync(this.workspaceRoot + '/package.json');
         let version: string = exist ? JSON.parse(readFileSync(this.workspaceRoot + '/package.json', 'utf8')).version : '';
         let name = await vscode.window.showInputBox({
-            title: "Enter release name [a-zA-Z0-9-]*",
+            title: "Enter release name [a-zA-Z0-9-.]*",
             value: version
         });
-        if (name?.length === 0) { return; }
-        if (name?.match(/^[a-zA-Z0-9\-\.]*$/) === null) {
-            vscode.window.showErrorMessage("Release name have to match [a-zA-Z0-9\-\.]*");
+        if (name === undefined) {
             return;
         }
-        if (name === undefined) {
+        if (name?.match(/^[a-zA-Z0-9\-\.]*$/) === null) {
+            vscode.window.showErrorMessage("Release name have to match [a-zA-Z0-9\-\.]*");
             return;
         }
         if (name !== version && exist) {
@@ -622,7 +637,29 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             this.util.execSync('git commit ./package.json -m"Version bump"');
         }
 
-        let cmd = `git flow hotfix start ${name}`;
+        let base = ((this.curBranch.search('support/') !== -1)
+            ? await vscode.window.showQuickPick(['Yes', 'No'], { title: `Start release based on ${this.curBranch}?` })
+            : 'No');
+
+        let cmd = `git flow hotfix start ${name} ${base === 'Yes' ? this.curBranch : ''}`;
+
+
+        this.util.exec(cmd, false, s => {
+            this._onDidChangeTreeData.fire();
+        });
+    }
+    async checkoutHotfix(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search(this.brunchNames.hotfix) !== -1),
+                { title: "Select hotfix branch" }
+            );
+        }
+        if (name === undefined) {
+            return;
+        }
+        let cmd = `git checkout -q ${name}`;
 
         this.util.exec(cmd, false, s => {
             this._onDidChangeTreeData.fire();
@@ -749,14 +786,14 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             title: "Enter release name [a-zA-Z0-9-]*",
             value: version
         });
-        if (name?.length === 0) { return; }
+        if (name === undefined) {
+            return;
+        }
         if (name?.match(/^[a-zA-Z0-9\-\.]*$/) === null) {
             vscode.window.showErrorMessage("Release name have to match [a-zA-Z0-9\-\.]*");
             return;
         }
-        if (name === undefined) {
-            return;
-        }
+
         if (name !== version && exist) {
             writeFileSync(
                 this.workspaceRoot + '/package.json',
@@ -766,7 +803,28 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             this.util.execSync('git commit ./package.json -m"Version bump"');
         }
 
-        let cmd = `git flow release start ${name}`;
+        let base = ((this.curBranch.search('support/') !== -1)
+            ? await vscode.window.showQuickPick(['Yes', 'No'], { title: `Start release based on ${this.curBranch}?` })
+            : 'No');
+
+        let cmd = `git flow release start ${name} ${base === 'Yes' ? this.curBranch : ''}`;
+
+        this.util.exec(cmd, false, s => {
+            this._onDidChangeTreeData.fire();
+        });
+    }
+    async checkoutRelease(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search(this.brunchNames.release) !== -1),
+                { title: "Select release branch" }
+            );
+        }
+        if (name === undefined) {
+            return;
+        }
+        let cmd = `git checkout -q ${name}`;
 
         this.util.exec(cmd, false, s => {
             this._onDidChangeTreeData.fire();

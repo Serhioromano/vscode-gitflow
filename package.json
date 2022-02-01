@@ -167,6 +167,12 @@
                 "icon": "$(cloud-upload)"
             },
             {
+                "command": "gitflow.checkoutRelease",
+                "title": "Release - Checkout",
+                "category": "Git-Flow",
+                "icon": "$(plug)"
+            },
+            {
                 "command": "gitflow.publishRelease",
                 "title": "Release - Publish",
                 "category": "Git-Flow",
@@ -219,6 +225,12 @@
                 "title": "Hotfix - Rebase",
                 "category": "Git-Flow",
                 "icon": "$(git-merge)"
+            },
+            {
+                "command": "gitflow.checkoutHotfix",
+                "title": "Hotfix - Checkout",
+                "category": "Git-Flow",
+                "icon": "$(plug)"
             },
             {
                 "command": "gitflow.newBugfix",
@@ -436,12 +448,27 @@
                     "when": "view == gitflowExplorer && viewItem == support ||  viewItem == support_local"
                 },
                 {
+                    "command": "gitflow.rebaseSupport",
+                    "when": "view == gitflowExplorer && viewItem == support ||  viewItem == support_local",
+                    "group": "inline"
+                },
+                {
                     "command": "gitflow.deleteSupport",
                     "when": "view == gitflowExplorer && viewItem == support ||  viewItem == support_local"
                 },
                 {
+                    "command": "gitflow.deleteSupport",
+                    "when": "view == gitflowExplorer && viewItem == support ||  viewItem == support_local",
+                    "group": "inline"
+                },
+                {
                     "command": "gitflow.checkoutSupport",
                     "when": "view == gitflowExplorer && viewItem == support || viewItem == support_local"
+                },
+                {
+                    "command": "gitflow.checkoutSupport",
+                    "when": "view == gitflowExplorer && viewItem == support || viewItem == support_local",
+                    "group": "inline"
                 },
 
                 {
@@ -461,6 +488,10 @@
                     "when": "view == gitflowExplorer && viewItem == hotfix ||  viewItem == hotfix_local"
                 },
                 {
+                    "command": "gitflow.checkoutHotfix",
+                    "when": "view == gitflowExplorer && viewItem == hotfix ||  viewItem == hotfix_local"
+                },
+                {
                     "command": "gitflow.publishHotfix",
                     "when": "view == gitflowExplorer && viewItem == hotfix_local",
                     "group": "inline"
@@ -477,6 +508,11 @@
                 },
                 {
                     "command": "gitflow.deleteHotfix",
+                    "when": "view == gitflowExplorer && viewItem == hotfix ||  viewItem == hotfix_local",
+                    "group": "inline"
+                },
+                {
+                    "command": "gitflow.checkoutHotfix",
                     "when": "view == gitflowExplorer && viewItem == hotfix ||  viewItem == hotfix_local",
                     "group": "inline"
                 },
@@ -587,6 +623,10 @@
                     "when": "view == gitflowExplorer && viewItem == release ||  viewItem == release_local"
                 },
                 {
+                    "command": "gitflow.checkoutRelease",
+                    "when": "view == gitflowExplorer && viewItem == release ||  viewItem == release_local"
+                },
+                {
                     "command": "gitflow.publishRelease",
                     "when": "view == gitflowExplorer && viewItem == release_local",
                     "group": "inline"
@@ -598,6 +638,11 @@
                 },
                 {
                     "command": "gitflow.finishRelease",
+                    "when": "view == gitflowExplorer && viewItem == release ||  viewItem == release_local",
+                    "group": "inline"
+                },
+                {
+                    "command": "gitflow.checkoutRelease",
                     "when": "view == gitflowExplorer && viewItem == release ||  viewItem == release_local",
                     "group": "inline"
                 },

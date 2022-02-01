@@ -2,6 +2,12 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [0.3.0] 02/01/22 
+
+- add - Support (Start, Checkout, Rebase, Delete)
+- add - Release checkout
+- add - Hotfix checkout
+
 ## [0.2.14] 01/31/22 
 
 - enhance - Order and group context menu elements. 

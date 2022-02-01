@@ -60,6 +60,9 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.rebaseHotfix', (node?: Flow) => {
         viewBranches.rebaseHotfix(node);
     }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.checkoutHotfix', (node?: Flow) => {
+        viewBranches.checkoutHotfix(node);
+    }));
 
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.newRelease', () => {
         viewBranches.startRelease();
@@ -78,6 +81,9 @@ export function activate(context: vscode.ExtensionContext) {
     }));
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.rebaseRelease', (node?: Flow) => {
         viewBranches.rebaseRelease(node);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.checkoutRelease', (node?: Flow) => {
+        viewBranches.checkoutRelease(node);
     }));
 
 

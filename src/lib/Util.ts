@@ -66,29 +66,26 @@ export class Util {
             location: vscode.ProgressLocation.Notification,
             title: `Executing ${cmd}`,
             cancellable: false
-        }, (progress, token) => {
-            let num = 0;
-            const p = new Promise<void>(resolve => {
+        }, (progress, token) => new Promise<void>(resolve => {
+            setTimeout(() => {
                 this.execCb(cmd, res => {
                     cb(res);
                     resolve();
                 });
-            });
-
-            return p;
-        });
+            }, 100);
+        }));
     }
 
-    public exec(cmd: string, progress:boolean, cb: (s: string) => void): void {
+    public exec(cmd: string, progress: boolean, cb: (s: string) => void): void {
         console.log(cmd);
-        if(progress) {
+        if (progress) {
             this.progress(cmd, cb);
         } else {
             this.execCb(cmd, cb);
         }
     }
 
-    public      execSync(cmd: string): string {
+    public execSync(cmd: string): string {
         try {
             return execSync(cmd, { cwd: this.workspaceRoot }).toString();
         }
@@ -97,7 +94,9 @@ export class Util {
         }
     }
     private execCb(cmd: string, cb: (s: string) => void): void {
-        exec(cmd, { cwd: this.workspaceRoot }, (err, stdout, stderr) => {
+        exec(cmd, {
+            cwd: this.workspaceRoot
+        }, (err, stdout, stderr) => {
             if (err) {
                 vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
                 return;
