@@ -127,7 +127,10 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 - In the command line, enter `gh auth login`, then follow the prompts.
 
 ## Changelog
-
+- 0.3.0
+  - add - Support (Start, Checkout, Rebase, Delete)
+  - add - Release checkout
+  - add - Hotfix checkout
 - 0.2.14 
   - enhance - Order and group context menu elements. 
   - enhance - use VS Code theme icons instead of SVG. 
