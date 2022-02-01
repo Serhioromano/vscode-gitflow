@@ -20,8 +20,9 @@ All basic operations you need to do in a single place.
 - Init git flow
 - Feature (Start, Finish, Checkout, Delete, Rebase, Publish, Track)
 - Bugfix (Start, Finish, Checkout, Delete, Rebase, Publish, Track)
-- Release (Start, Finish, Publish, Track, Delete, Rebase)
-- Hotfix (Start, Finish, Publish, Rebase, Delete)
+- Release (Start, Finish, Checkout, Publish, Track, Delete, Rebase)
+- Hotfix (Start, Finish, Checkout, Publish, Rebase, Delete)
+- Support (Start, Checkout, Rebase, Delete) (See: [Hot to work with support](#-Hot-to-work-with-support))
 
 ### Additional
 
@@ -30,6 +31,41 @@ All basic operations you need to do in a single place.
 - Fetch from origin
 - Push all versions (tags)
 - Push local version (tag)
+
+## Roadmap
+
+< 30 February 2022
+
+- Multiple folder workspace
+- Status bar button to finish current branch
+
+## How to work with Support
+
+### What is Git Flow Support
+
+Support branches are similar to LTS version of Linux distros.
+
+In the git-flow model, your **latest released** version actually maps to the `master` or `main`, while your "preview release" maps to a git-flow release branch. It is forked from develop and finally merged into `main` when the actual release happens. Then this will become your **latest release** and you will usually fix only bugs for that release, using git-flow hotfix branches. In this way, your master always represents the most stable state of your latest released version.
+
+
+Say you had a project, and you were happily releasing new versions.
+Maybe your current production version was 8.x. But you had some Really
+Important Customers who refused to upgrade to anything after 6.0. Now,
+if someone found a security flaw in the 6.0 version of your project,
+it would be a bad idea to hang all those Really Important Customers
+out to dry. So you release a new hotfix against `support/6.0`, even though all
+their problems would be solved if they just upgraded to the new 8.x
+release.
+
+For this to happen you have to create `support/6.0` at some point of time. Basically you can create support branch on all major version change. 
+
+### Workflow
+
+First create your support branch. When you create you can select tag version to start from. Use latest version in major set.
+
+Now if you checkout any support branch, no matter what you start hotfix, release, bugfix or feature, you will be prompted to confirm to start it based on currently active support branch. And if you started it based on support branch, when you finish you hotfix, release, bugfix or feature, it will be finished against that support branch and not to `master` or `develop` branches.
+
+Thus you `master` or `main` branch contain most recent version of your product and support branches have major LTS versions.
 
 ## How to setup:
 
@@ -91,7 +127,10 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 - In the command line, enter `gh auth login`, then follow the prompts.
 
 ## Changelog
-
+- 0.3.0
+  - add - Support (Start, Checkout, Rebase, Delete)
+  - add - Release checkout
+  - add - Hotfix checkout
 - 0.2.14 
   - enhance - Order and group context menu elements. 
   - enhance - use VS Code theme icons instead of SVG. 

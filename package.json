@@ -2,7 +2,7 @@
     "name": "vscode-gitflow",
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
-    "version": "0.2.14",
+    "version": "0.3.0",
     "engines": {
         "vscode": "^1.63.0"
     },
@@ -24,6 +24,9 @@
     "activationEvents": [
         "onView:gitflowExplorer",
         "onView:gitflowTags"
+    ],
+    "extensionDependencies": [
+        "vscode.git"
     ],
     "repository": {
         "type": "git",
@@ -86,6 +89,30 @@
                 "category": "Git-Flow"
             },
             {
+                "command": "gitflow.newSupport",
+                "title": "Support - Start",
+                "category": "Git-Flow",
+                "icon": "$(debug-start)"
+            },
+            {
+                "command": "gitflow.rebaseSupport",
+                "title": "Support - Rebase",
+                "category": "Git-Flow",
+                "icon": "$(git-merge)"
+            },
+            {
+                "command": "gitflow.deleteSupport",
+                "title": "Support - Delete",
+                "category": "Git-Flow",
+                "icon": "$(trash)"
+            },
+            {
+                "command": "gitflow.checkoutSupport",
+                "title": "Support - Checkout",
+                "category": "Git-Flow",
+                "icon": "$(plug)"
+            },
+            {
                 "command": "gitflow.newFeature",
                 "title": "Feature - Start",
                 "category": "Git-Flow",
@@ -140,6 +167,12 @@
                 "icon": "$(cloud-upload)"
             },
             {
+                "command": "gitflow.checkoutRelease",
+                "title": "Release - Checkout",
+                "category": "Git-Flow",
+                "icon": "$(plug)"
+            },
+            {
                 "command": "gitflow.publishRelease",
                 "title": "Release - Publish",
                 "category": "Git-Flow",
@@ -192,6 +225,12 @@
                 "title": "Hotfix - Rebase",
                 "category": "Git-Flow",
                 "icon": "$(git-merge)"
+            },
+            {
+                "command": "gitflow.checkoutHotfix",
+                "title": "Hotfix - Checkout",
+                "category": "Git-Flow",
+                "icon": "$(plug)"
             },
             {
                 "command": "gitflow.newBugfix",
@@ -275,7 +314,6 @@
                     "when": "view == gitflowExplorer",
                     "group": "navigation"
                 },
-
                 {
                     "command": "gitflow.syncAll",
                     "when": "view == gitflowExplorer",
@@ -349,6 +387,10 @@
                     "when": "view == gitflowExplorer && viewItem == b"
                 },
                 {
+                    "command": "gitflow.newSupport",
+                    "when": "view == gitflowExplorer && viewItem == s"
+                },
+                {
                     "command": "gitflow.newFeature",
                     "when": "view == gitflowExplorer && viewItem == f",
                     "group": "inline"
@@ -366,6 +408,11 @@
                 {
                     "command": "gitflow.newBugfix",
                     "when": "view == gitflowExplorer && viewItem == b",
+                    "group": "inline"
+                },
+                {
+                    "command": "gitflow.newSupport",
+                    "when": "view == gitflowExplorer && viewItem == s",
                     "group": "inline"
                 },
                 {
@@ -395,6 +442,35 @@
                     "when": "view == gitflowExplorer && viewItem == origin_bugfix",
                     "group": "inline"
                 },
+
+                {
+                    "command": "gitflow.rebaseSupport",
+                    "when": "view == gitflowExplorer && viewItem == support ||  viewItem == support_local"
+                },
+                {
+                    "command": "gitflow.rebaseSupport",
+                    "when": "view == gitflowExplorer && viewItem == support ||  viewItem == support_local",
+                    "group": "inline"
+                },
+                {
+                    "command": "gitflow.deleteSupport",
+                    "when": "view == gitflowExplorer && viewItem == support ||  viewItem == support_local"
+                },
+                {
+                    "command": "gitflow.deleteSupport",
+                    "when": "view == gitflowExplorer && viewItem == support ||  viewItem == support_local",
+                    "group": "inline"
+                },
+                {
+                    "command": "gitflow.checkoutSupport",
+                    "when": "view == gitflowExplorer && viewItem == support || viewItem == support_local"
+                },
+                {
+                    "command": "gitflow.checkoutSupport",
+                    "when": "view == gitflowExplorer && viewItem == support || viewItem == support_local",
+                    "group": "inline"
+                },
+
                 {
                     "command": "gitflow.publishHotfix",
                     "when": "view == gitflowExplorer && viewItem == hotfix_local"
@@ -409,6 +485,10 @@
                 },
                 {
                     "command": "gitflow.deleteHotfix",
+                    "when": "view == gitflowExplorer && viewItem == hotfix ||  viewItem == hotfix_local"
+                },
+                {
+                    "command": "gitflow.checkoutHotfix",
                     "when": "view == gitflowExplorer && viewItem == hotfix ||  viewItem == hotfix_local"
                 },
                 {
@@ -428,6 +508,11 @@
                 },
                 {
                     "command": "gitflow.deleteHotfix",
+                    "when": "view == gitflowExplorer && viewItem == hotfix ||  viewItem == hotfix_local",
+                    "group": "inline"
+                },
+                {
+                    "command": "gitflow.checkoutHotfix",
                     "when": "view == gitflowExplorer && viewItem == hotfix ||  viewItem == hotfix_local",
                     "group": "inline"
                 },
@@ -538,6 +623,10 @@
                     "when": "view == gitflowExplorer && viewItem == release ||  viewItem == release_local"
                 },
                 {
+                    "command": "gitflow.checkoutRelease",
+                    "when": "view == gitflowExplorer && viewItem == release ||  viewItem == release_local"
+                },
+                {
                     "command": "gitflow.publishRelease",
                     "when": "view == gitflowExplorer && viewItem == release_local",
                     "group": "inline"
@@ -549,6 +638,11 @@
                 },
                 {
                     "command": "gitflow.finishRelease",
+                    "when": "view == gitflowExplorer && viewItem == release ||  viewItem == release_local",
+                    "group": "inline"
+                },
+                {
+                    "command": "gitflow.checkoutRelease",
                     "when": "view == gitflowExplorer && viewItem == release ||  viewItem == release_local",
                     "group": "inline"
                 },
