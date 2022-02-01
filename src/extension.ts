@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { Flow, TreeViewBranches } from './ViewBranches';
 import { TreeViewVersions, Tag } from './ViewVersions';
-import { GitExtension, API as GitAPI } from './git';
+import { GitExtension, API as GitAPI } from './lib/git';
 
 export function activate(context: vscode.ExtensionContext) {
     const rootPath: string = (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 0))

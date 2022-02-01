@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Util } from './Util';
+import { Util } from './lib/Util';
 
 export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     private _onDidChangeTreeData: vscode.EventEmitter<Tag | undefined | null | void> = new vscode.EventEmitter<Tag | undefined | null | void>();

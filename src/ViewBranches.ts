@@ -1,9 +1,7 @@
 import * as vscode from 'vscode';
 import { threadId } from 'worker_threads';
-import { Util } from './Util';
+import { Util } from './lib/Util';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { exec } from 'child_process';
-import { isRegExp } from 'util';
 
 export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     private _onDidChangeTreeData: vscode.EventEmitter<Flow | undefined | null | void> = new vscode.EventEmitter<Flow | undefined | null | void>();
