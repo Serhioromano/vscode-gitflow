@@ -22,6 +22,7 @@
     ],
     "icon": "resources/media/icon.png",
     "activationEvents": [
+        "workspaceContains:.git",
         "onView:gitflowExplorer",
         "onView:gitflowTags"
     ],
@@ -35,6 +36,13 @@
     "homepage": "https://marketplace.visualstudio.com/items?itemName=serhioromano.vscode-gitflow",
     "main": "./out/extension.js",
     "contributes": {
+        "keybindings": [
+			{
+				"command": "gitflow.quickPick",
+				"key": "shift+alt+d",
+				"when": "gitflow.initialized == true"
+			}
+        ],
         "commands": [
             {
                 "command": "gitflow.switchRepo",
@@ -47,6 +55,12 @@
                 "title": "Checkout",
                 "category": "Git-Flow",
                 "icon": "$(plug)"
+            },
+            {
+                "command": "gitflow.quickPick",
+                "title": "Quick Pick",
+                "category": "Git-Flow",
+                "icon": "$(extensions-rating)"
             },
             {
                 "command": "gitflow.syncAll",
