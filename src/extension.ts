@@ -49,33 +49,33 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
         let list = [
-            { label: "$(test-view-icon) Start Feature", id: "newFeature", arg: "", description: "" },
-            { label: "$(callstack-view-session) Start Bugfix", id: "newBugfix", arg: "", description: "" },
-            { label: "$(history) Start Support", id: "newSupport", arg: "", description: "" },
+            { label: "$(test-view-icon) Start Feature", id: "newFeature", description: "" },
+            { label: "$(callstack-view-session) Start Bugfix", id: "newBugfix", description: "" },
+            { label: "$(history) Start Support", id: "newSupport", description: "" },
         ];
         // Only single release might be at a time
         if (viewBranches.listBranches.filter(el => el.search("release/") !== -1).length === 0) {
-            list.push({ label: "$(tag) Start Release", id: "newRelease", arg: "", description: "" });
+            list.push({ label: "$(tag) Start Release", id: "newRelease", description: "" });
         }
         // Only single hotfix at a time
         if (viewBranches.listBranches.filter(el => el.search("hotfix/") !== -1).length === 0) {
-            list.push({ label: "$(flame) Start Hotfix", id: "newHotfix", arg: "", description: "" });
+            list.push({ label: "$(flame) Start Hotfix", id: "newHotfix", description: "" });
         }
 
         let cur = viewBranches.curBranch.split("/")[0];
         if (["feature", "release", "hotfix", "bugfix"].includes(cur)) {
-            list.push({ label: `$(trash) Delete ${ucf(cur)}`, description: viewBranches.curBranch, id: "delete", arg: cur });
-            list.push({ label: `$(debug-stop) Finalize ${ucf(cur)}`, description: viewBranches.curBranch, id: "finish", arg: cur });
-            list.push({ label: `$(git-merge) Rebase ${ucf(cur)}`, description: viewBranches.curBranch, id: "rebase", arg: cur });
+            list.push({ label: `$(trash) Delete ${ucf(cur)}`, description: viewBranches.curBranch, id: "delete" });
+            list.push({ label: `$(debug-stop) Finalize ${ucf(cur)}`, description: viewBranches.curBranch, id: "finish" });
+            list.push({ label: `$(git-merge) Rebase ${ucf(cur)}`, description: viewBranches.curBranch, id: "rebase" });
             if (!viewBranches.listRemoteBranches.includes(viewBranches.curBranch)) {
-                list.push({ label: `$(cloud-upload) Publish ${ucf(cur)}`, description: viewBranches.curBranch, id: "publish", arg: cur });
+                list.push({ label: `$(cloud-upload) Publish ${ucf(cur)}`, description: viewBranches.curBranch, id: "publish" });
             }
         }
         let action = await vscode.window.showQuickPick(list, { title: "Select action" });
         if (action === undefined) {
             return;
         }
-        if(action.label.search("new") !== -1) {
+        if (action.label.search("new") !== -1) {
             vscode.commands.executeCommand(`gitflow.${action.id}`);
         } else {
             viewBranches.general(action.id, action.description);
