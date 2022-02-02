@@ -389,7 +389,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         this.general('start', 'support');
     }
     async rebaseSupport(node: Flow | undefined) {
-        this.general('rebase', name, this.branches.support);
+        this.general('rebase', node?.full, this.branches.support);
     }
     async deleteSupport(node: Flow | undefined) {
         let name = node?.full;

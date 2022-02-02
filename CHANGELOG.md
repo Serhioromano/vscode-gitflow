@@ -2,25 +2,30 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [0.4.0] 02/01/22 
+## [0.5.0] 02/01/22
+
+- add - Quick Pick popup
+- optimize - Code was refactored and optimized. 1800 lines to 580.
+
+## [0.4.3] 02/01/22
 
 - add - Support for multiple folder workspaces
 - fix - Progress notification not resolving
 
-## [0.3.0] 02/01/22 
+## [0.3.0] 02/01/22
 
 - add - Support (Start, Checkout, Rebase, Delete)
 - add - Release checkout
 - add - Hotfix checkout
 
-## [0.2.14] 01/31/22 
+## [0.2.14] 01/31/22
 
-- enhance - Order and group context menu elements. 
+- enhance - Order and group context menu elements.
 - enhance -  use VS Code theme icons instead of SVG. This will apply Product icons theme to this extension too.
 - enhance - not related to features of this extension, but CI flow was created for fast delivery of new versions.
 - enhance - README overview updated with new features and new picture.
 
-## [0.2.11] 01/30/22 
+## [0.2.11] 01/30/22
 
 - fix - take name of flow branches from configuration
 - fix - ui buttons

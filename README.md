@@ -1,6 +1,6 @@
 # Git FLow Support for VS Code [PREVIEW]
 
-GitFlow support for VS Code based on [Git Flow AVH](https://github.com/petervanderdoes/gitflow-avh). That is right, this is the one you was looking for! 
+GitFlow support for VS Code based on [Git Flow AVH](https://github.com/petervanderdoes/gitflow-avh). That is right, this is the one you was looking for!
 
 > **If you like this extension, please do not forget to rate it, so your colleagues could also discover this fine piece of work.**
 ## How to use
@@ -32,11 +32,17 @@ All basic operations you need to do in a single place.
 - Push all versions (tags)
 - Push local version (tag)
 
-### Multiple Folder Workspace
+#### Multiple Folder Workspace
 
 Multiple folder workspace was long waited feature of VS Code by many people. It would be a shame not to support it.
 
 ![ext](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/mfw.png)
+
+#### Quick Pick
+
+Quick Pick is a popup with essential Git Flow commands, like create new flow branch or apply actions to currently selected flow brunch. You can call it with `Shift`+`Alt`+`d` short key. Note this command is available only if extension was initialized successfully.
+
+![ext](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/qp.png)
 
 ## Roadmap
 
@@ -64,7 +70,7 @@ out to dry. So you release a new hotfix against `support/6.0`, even though all
 their problems would be solved if they just upgraded to the new 8.x
 release.
 
-For this to happen you have to create `support/6.0` at some point of time. Basically you can create support branch on all major version change. 
+For this to happen you have to create `support/6.0` at some point of time. Basically you can create support branch on all major version change.
 
 ### Workflow
 
@@ -107,7 +113,7 @@ Or simple edit `your_repository/.git/config` and make sure repository URL there 
 
 Read [this article](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) how to authorize your PC with SSH key.
 
-Basically what you have to do is to generate key with 
+Basically what you have to do is to generate key with
 
 ```
 ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
@@ -134,18 +140,21 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 - In the command line, enter `gh auth login`, then follow the prompts.
 
 ## Changelog
-- 0.4.1
+- 0.5.0
+  - add - Quick Pick popup
+  - optimize - Code was refactored and optimized. 1800 lines to 580.
+- 0.4.3
   - add - Multiple folder workspaces
   - fix - Progress notification not resolving
 - 0.3.1
   - add - Support (Start, Checkout, Rebase, Delete)
   - add - Release checkout
   - add - Hotfix checkout
-- 0.2.14 
-  - enhance - Order and group context menu elements. 
-  - enhance - use VS Code theme icons instead of SVG. 
-  - enhance - CI flow was created for fast delivery of new versions. 
-- 0.2.11 
+- 0.2.14
+  - enhance - Order and group context menu elements.
+  - enhance - use VS Code theme icons instead of SVG.
+  - enhance - CI flow was created for fast delivery of new versions.
+- 0.2.11
   - fix - take name of flow branches from configuration
   - fix - ui buttons
 - 0.2.9
@@ -158,5 +167,5 @@ GitHub CLI will automatically store your Git credentials for you when you choose
   - add - bugfix support
   - delete - configurations
   - fix - git commands with remote
-  - update - README    
+  - update - README
 - 0.1.0 - Initial release of ...
