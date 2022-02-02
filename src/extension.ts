@@ -75,10 +75,10 @@ export function activate(context: vscode.ExtensionContext) {
         if (action === undefined) {
             return;
         }
-        if (action.label.search("new") !== -1) {
-            vscode.commands.executeCommand(`gitflow.${action.id}`);
+        if (action.id.search("new") !== -1) {
+            await viewBranches.general('start', action.id.replace("new","").toLowerCase());
         } else {
-            viewBranches.general(action.id, action.description);
+            await viewBranches.general(action.id, action.description);
         }
         vscode.commands.executeCommand("workbench.view.scm");
 

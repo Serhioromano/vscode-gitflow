@@ -36,13 +36,13 @@ All basic operations you need to do in a single place.
 
 Multiple folder workspace was long waited feature of VS Code by many people. It would be a shame not to support it.
 
-![ext](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/mfw.png)
+![Gitflow multiple folder workspace](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/mfw.png)
 
 #### Quick Pick
 
 Quick Pick is a popup with essential Git Flow commands, like create new flow branch or apply actions to currently selected flow brunch. You can call it with `Shift`+`Alt`+`d` short key. Note this command is available only if extension was initialized successfully.
 
-![ext](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/qp.png)
+![Git flow quick pik](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/qp.png)
 
 ## Roadmap
 
@@ -50,6 +50,7 @@ Quick Pick is a popup with essential Git Flow commands, like create new flow bra
 
 - Multiple folder workspace [done]
 - Flow "support" [done]
+- Quick Pick [done]
 - Status bar button to finish current branch
 
 ## How to work with Support

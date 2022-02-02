@@ -77,7 +77,6 @@ export class Util {
     }
 
     public exec(cmd: string, progress: boolean, cb: (s: string) => void): void {
-        console.log(cmd);
         if (progress) {
             this.progress(cmd, cb);
         } else {
@@ -94,7 +93,6 @@ export class Util {
         }
     }
     private execCb(cmd: string, cb: (s: string) => void, resolve?: any): void {
-        console.log(this.workspaceRoot);
         exec(cmd, {
             cwd: this.workspaceRoot
         }, (err, stdout, stderr) => {

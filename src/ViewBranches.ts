@@ -48,7 +48,6 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (!this.util.check()) {
             return Promise.resolve([]);
         }
-        console.log("Start tree");
 
         let tree: Flow[] = [];
 
@@ -197,6 +196,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (branch === undefined) {
             return;
         }
+
+
 
         let option: string | undefined = "";
         let list: string[];
