@@ -93,14 +93,14 @@ export class Util {
             return '' + e;
         }
     }
-    private execCb(cmd: string, cb: (s: string) => void, resolve?:any): void {
+    private execCb(cmd: string, cb: (s: string) => void, resolve?: any): void {
         console.log(this.workspaceRoot);
         exec(cmd, {
             cwd: this.workspaceRoot
         }, (err, stdout, stderr) => {
             if (err) {
                 vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
-                if(resolve !== undefined) {
+                if (resolve !== undefined) {
                     resolve();
                 }
                 return;
@@ -112,25 +112,25 @@ export class Util {
 
     public check(): boolean {
         if (!this.workspaceRoot) {
-            vscode.window.showInformationMessage('Empty workspace');
+            vscode.window.showErrorMessage('No folder opened');
             return false;
         }
-        let status = this.execSync("git status").toLowerCase();
-
-        if (status.search('not recognized') > 0 || status.search('not found') > 0
-        ) {
+        let status = this.execSync("git version").toLowerCase();
+        if (status.search('git version') === -1) {
             vscode.window.showWarningMessage('Looks like git CLI is not installed.');
             return false;
         }
-        if (status.search('not a git repository') > 0) {
+
+        status = this.execSync("git status").toLowerCase();
+        if (status.search('not a git repository') !== -1) {
             vscode.window.showWarningMessage('This project is not a Git repository.');
             return false;
         }
 
-        if (this.execSync('git flow').toLowerCase().search('is not a git command') > 0) {
+        if (this.execSync('git flow').toLowerCase().search('is not a git command') !== -1) {
             let installLink = 'Install';
             vscode.window
-                .showWarningMessage('To use GitFlow extension please install Git flow.', installLink)
+                .showWarningMessage('To use Git Flow extension please install Git flow (AVH).', installLink)
                 .then(selection => {
                     if (selection === installLink) {
                         vscode.env.openExternal(vscode.Uri.parse('https://github.com/petervanderdoes/gitflow-avh/wiki/Installation'));

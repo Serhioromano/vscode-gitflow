@@ -17,9 +17,9 @@ interface BranchList {
 export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     private _onDidChangeTreeData: vscode.EventEmitter<Flow | undefined | null | void> = new vscode.EventEmitter<Flow | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<Flow | undefined | null | void> = this._onDidChangeTreeData.event;
-    private curBranch: string = '';
-    private listBranches: string[] = [];
-    private listRemoteBranches: string[] = [];
+    public curBranch: string = '';
+    public listBranches: string[] = [];
+    public listRemoteBranches: string[] = [];
     private util;
     private terminal: vscode.Terminal | null;
     private branches: BranchList;
@@ -47,6 +47,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (!this.util.check()) {
             return Promise.resolve([]);
         }
+        console.log("Start tree");
+
         let tree: Flow[] = [];
 
         if (element === undefined) {
@@ -66,15 +68,13 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
             this.curBranch = this.util.execSync("git rev-parse --abbrev-ref HEAD").trim();
             let b = this.util.execSync("git flow config list").replace("\r", "").split("\n");
-            this.branches.master  = b[0].split(": ")[1].trim();
+            this.branches.master = b[0].split(": ")[1].trim();
             this.branches.develop = b[1].split(": ")[1].trim();
             this.branches.feature = b[2].split(": ")[1].trim();
-            this.branches.bugfix  = b[3].split(": ")[1].trim();
+            this.branches.bugfix = b[3].split(": ")[1].trim();
             this.branches.release = b[4].split(": ")[1].trim();
-            this.branches.hotfix  = b[5].split(": ")[1].trim();
+            this.branches.hotfix = b[5].split(": ")[1].trim();
             this.branches.support = b[6].split(": ")[1].trim();
-            console.log(this.branches);
-
 
             // this.listRemotes = [...new Set(
             //     this.util.execSync('git remote -v')
@@ -104,11 +104,13 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     ));
                 });
 
-            tree.push(new Flow(this.branches.release.replace("/",""), 'Releases', 'tag', vscode.TreeItemCollapsibleState.Expanded, false, 'r'));
-            tree.push(new Flow(this.branches.feature.replace("/",""), 'Features', 'test-view-icon', vscode.TreeItemCollapsibleState.Expanded, false, 'f'));
-            tree.push(new Flow(this.branches.bugfix.replace("/",""), 'BugFixes', 'callstack-view-session', vscode.TreeItemCollapsibleState.Expanded, false, 'b'));
-            tree.push(new Flow(this.branches.hotfix.replace("/",""), 'HotFixes', 'flame', vscode.TreeItemCollapsibleState.Expanded, false, 'h'));
-            tree.push(new Flow(this.branches.support.replace("/",""), 'Support', 'history', vscode.TreeItemCollapsibleState.Expanded, false, 's'));
+            tree.push(new Flow(this.branches.release.replace("/", ""), 'Releases', 'tag', vscode.TreeItemCollapsibleState.Expanded, false, 'r'));
+            tree.push(new Flow(this.branches.feature.replace("/", ""), 'Features', 'test-view-icon', vscode.TreeItemCollapsibleState.Expanded, false, 'f'));
+            tree.push(new Flow(this.branches.bugfix.replace("/", ""), 'BugFixes', 'callstack-view-session', vscode.TreeItemCollapsibleState.Expanded, false, 'b'));
+            tree.push(new Flow(this.branches.hotfix.replace("/", ""), 'HotFixes', 'flame', vscode.TreeItemCollapsibleState.Expanded, false, 'h'));
+            tree.push(new Flow(this.branches.support.replace("/", ""), 'Support', 'history', vscode.TreeItemCollapsibleState.Expanded, false, 's'));
+
+            vscode.commands.executeCommand('setContext', 'gitflow.initialized', true);
             return Promise.resolve(tree);
         }
 
@@ -177,6 +179,125 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
         this.util.exec(cmd, false, s => {
             this._onDidChangeTreeData.fire();
+        });
+    }
+
+    async general(what: string, branch: string) {
+        let option: string | undefined = "";
+        let list: string[];
+        let options: string[] | undefined;
+
+        switch (what) {
+            case "delete":
+                list = ["[-f] Force deletion"];
+                if (this.listRemoteBranches.includes(branch)) {
+                    list.push("[-r] Delete remote branch");
+                }
+                options = await vscode.window.showQuickPick(
+                    list, { title: "Select options", canPickMany: true }
+                );
+                option = options?.map(el => {
+                    let m = el.match(/\[([^\]]*)\]/);
+                    return m === null ? '' : m[1];
+                }).join(" ");
+                break;
+            case "rebase":
+                options = await vscode.window.showQuickPick(
+                    ["[-i] An interactive rebase", "[-p] Preserve merges"], { title: "Select options", canPickMany: true }
+                );
+                option = options?.map(el => {
+                    let m = el.match(/\[([^\]]*)\]/);
+                    return m === null ? '' : m[1];
+                }).join(" ");
+
+                let base = await vscode.window.showQuickPick(
+                    this.listBranches.filter(el => el.split("/").length < 2),
+                    { title: "Select base branch" }
+                );
+                if (base === undefined) {
+                    return;
+                }
+                break;
+            case "finish":
+                option = await this._getDeleteOptions(branch.split("/")[0]);
+                break;
+        }
+
+        let cmd = `git flow ${what} ${option}`;
+        console.log(cmd);
+
+    }
+
+    async _getDeleteOptions(what: string): Promise<string> {
+        return new Promise(async (resolve) => {
+            let list: string[] = [];
+            switch (what) {
+                case "bugfix":
+                    list = [
+                        "[-F] Fetch from origin before performing finish",
+                        "[-r] Rebase before merging",
+                        "[-p] Preserve merges while rebasing",
+                        "[-k] Keep branch after performing finish",
+                        "[--keepremote] Keep the remote branch",
+                        "[--keeplocal] Keep the local branch",
+                        "[-D] Force delete bugfix branch after finish",
+                        "[-S] Squash bugfix during merge",
+                        "[--no-ff] Never fast-forward during the merge"
+                    ];
+                    break;
+                case "hotfix":
+                    list = [
+                        "[-F] Fetch from origin before performing finish",
+                        "[-p] Push to origin after performing finish",
+                        "[-k] Keep branch after performing finish",
+                        "[--keepremote] Keep the remote branch",
+                        "[--keeplocal] Keep the local branch",
+                        "[-D] Force delete hotfix branch after finish",
+                        "[-n] Don't tag this hotfix",
+                        "[-b] Don't back-merge master, or tag if applicable, in develop",
+                        "[-S] Squash hotfix during merge"
+                    ];
+                    break;
+                case "feature":
+                    list = [
+                        "[-F] Fetch from origin before performing finish",
+                        "[-r] Rebase before merging",
+                        "[-p] Preserve merges while rebasing",
+                        "[--push] Push to origin after performing finish",
+                        "[-k] Keep branch after performing finish",
+                        "[--keepremote] Keep the remote branch",
+                        "[--keeplocal] Keep the local branch",
+                        "[-D] Force delete feature branch after finish",
+                        "[-S] Squash feature during merge",
+                        "[--no-ff] Never fast-forward during the merge"
+                    ];
+                    break;
+                case "release":
+                    list = [
+                        "[-F] Fetch from origin before performing finish",
+                        "[-p] Push to origin after performing finish",
+                        "[-D] Force delete release branch after finish",
+                        "[--pushproduction] Push the production branch",
+                        "[--pushdevelop] Push the develop branch",
+                        "[--pushtag] Push the tag",
+                        "[-k] Keep branch after performing finish",
+                        "[--keepremote] Keep the remote branch",
+                        "[--keeplocal] Keep the local branch",
+                        "[-n] Don't tag this release",
+                        "[-b] Don't back-merge master, or tag if applicable, in develop",
+                        "[-S] Squash release during merge",
+                        "[--ff-master] Fast forward master branch if possible",
+                        "[--nodevelopmerge] Don't back-merge develop branch"
+                    ];
+                    break;
+            }
+            let options = await vscode.window.showQuickPick(
+                list, { title: "Select delete options", canPickMany: true }
+            );
+            resolve(options?.map(el => {
+                let m = el.match(/\[([^\]]*)\]/);
+                return m === null ? '' : m[1];
+            }).join(" ") || "");
         });
     }
 
@@ -325,23 +446,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 { title: "Select bugfix" }
             );
         }
-        let options = await vscode.window.showQuickPick(
-            [
-                "[-F] Fetch from origin before performing finish",
-                "[-r] Rebase before merging",
-                "[-p] Preserve merges while rebasing",
-                "[-k] Keep branch after performing finish",
-                "[--keepremote] Keep the remote branch",
-                "[--keeplocal] Keep the local branch",
-                "[-D] Force delete bugfix branch after finish",
-                "[-S] Squash bugfix during merge",
-                "[--no-ff] Never fast-forward during the merge"
-            ], { title: "Select options", canPickMany: true }
-        );
-        let option = options?.map(el => {
-            let m = el.match(/\[([^\]]*)\]/);
-            return m === null ? '' : m[1];
-        }).join(" ");
+        let option = await this._getDeleteOptions('bugfix');
 
         let cmd = `git flow bugfix finish ${option} ${name?.split("/")[1]}`;
 
@@ -494,24 +599,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             );
         }
 
-        let options = await vscode.window.showQuickPick(
-            [
-                "[-F] Fetch from origin before performing finish",
-                "[-r] Rebase before merging",
-                "[-p] Preserve merges while rebasing",
-                "[--push] Push to origin after performing finish",
-                "[-k] Keep branch after performing finish",
-                "[--keepremote] Keep the remote branch",
-                "[--keeplocal] Keep the local branch",
-                "[-D] Force delete feature branch after finish",
-                "[-S] Squash feature during merge",
-                "[--no-ff] Never fast-forward during the merge"
-            ], { title: "Select options", canPickMany: true }
-        );
-        let option = options?.map(el => {
-            let m = el.match(/\[([^\]]*)\]/);
-            return m === null ? '' : m[1];
-        }).join(" ");
+        let option = await this._getDeleteOptions('feature');
 
         let cmd = `git flow feature finish ${option} ${name?.split("/")[1]}`;
 
@@ -772,21 +860,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         });
 
 
-        let options = await vscode.window.showQuickPick([
-            "[-F] Fetch from origin before performing finish",
-            "[-p] Push to origin after performing finish",
-            "[-k] Keep branch after performing finish",
-            "[--keepremote] Keep the remote branch",
-            "[--keeplocal] Keep the local branch",
-            "[-D] Force delete hotfix branch after finish",
-            "[-n] Don't tag this hotfix",
-            "[-b] Don't back-merge master, or tag if applicable, in develop",
-            "[-S] Squash hotfix during merge"
-        ], { title: "Select options", canPickMany: true });
-        let option = options?.map(el => {
-            let m = el.match(/\[([^\]]*)\]/);
-            return m === null ? '' : m[1];
-        }).join(" ");
+        let option = await this._getDeleteOptions('hotfix');
 
         let cmd = `git flow hotfix finish -m"New hotfix: ${version}" -T ${version} ${option} ${name?.split("/")[1]}`;
 
@@ -922,28 +996,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             title: "Tagname", value: name?.split("/")[1]
         });
 
-        let options = await vscode.window.showQuickPick([
-            "[-F] Fetch from origin before performing finish",
-            "[-p] Push to origin after performing finish",
-            "[-D] Force delete release branch after finish",
-            "[--pushproduction] Push the production branch",
-            "[--pushdevelop] Push the develop branch",
-            "[--pushtag] Push the tag",
-            "[-k] Keep branch after performing finish",
-            "[--keepremote] Keep the remote branch",
-            "[--keeplocal] Keep the local branch",
-            "[-n] Don't tag this release",
-            "[-b] Don't back-merge master, or tag if applicable, in develop",
-            "[-S] Squash release during merge",
-            "[--ff-master] Fast forward master branch if possible",
-            // "[-T] Use given tag name",
-            "[--nodevelopmerge] Don't back-merge develop branch"
-        ], { title: "Select options", canPickMany: true });
-        let option = options?.map(el => {
-            let m = el.match(/\[([^\]]*)\]/);
-            return m === null ? '' : m[1];
-        }).join(" ");
-
+        let option = await this._getDeleteOptions('release');
         let cmd = `git flow release finish -m"New release: ${version}" -T ${version} ${option} ${name?.split("/")[1]}`;
 
         this.util.exec(cmd,

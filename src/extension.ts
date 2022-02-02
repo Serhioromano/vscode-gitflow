@@ -3,30 +3,21 @@ import { Flow, TreeViewBranches } from './ViewBranches';
 import { TreeViewVersions, Tag } from './ViewVersions';
 import { GitExtension, API as GitAPI } from './lib/git';
 
+
 export function activate(context: vscode.ExtensionContext) {
-
-
     let rootPath: string = (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 0))
         ? vscode.workspace.workspaceFolders[0].uri.fsPath : "";
-
-    console.log(vscode.workspace.workspaceFolders?.map((el) => el.uri.fsPath));
-
-    // let disposables: vscode.Disposable[] = [];
-    // let git = vscode.extensions.getExtension<GitExtension>('vscode.git')!.exports;
-    // let gitAPI: GitAPI | undefined = git.getAPI(1);
-    // let repos = gitAPI.repositories.map(el => el.rootUri.path);
-    // let rootPath = repos[0];
-    // console.log(repos, rootPath);
-
 
     const viewBranches = new TreeViewBranches(rootPath);
     const a = vscode.window.createTreeView('gitflowExplorer', {
         treeDataProvider: viewBranches, showCollapseAll: true
     });
+    viewBranches.getChildren();
     const viewVersions = new TreeViewVersions(rootPath);
     const b = vscode.window.createTreeView('gitflowTags', {
         treeDataProvider: viewVersions
     });
+    viewVersions.getChildren();
 
     if (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 1)) {
         a.message = "Current repo: " + rootPath.split('/').reverse()[0];
@@ -35,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.switchRepo', async () => {
         let list: string[] = vscode.workspace.workspaceFolders?.map((el) => el.uri.fsPath) || [];
-        if(list.length < 2) {
+        if (list.length < 2) {
             vscode.window.showInformationMessage("Not a multi folder workspace");
             return;
         }
@@ -43,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
         if (repo === undefined) {
             return;
         }
-        
+
         a.message = "Current repo: " + `${repo}`.split('/').reverse()[0];
         viewBranches.workspaceRoot = `${repo}`;
         viewBranches.refresh();
@@ -51,6 +42,51 @@ export function activate(context: vscode.ExtensionContext) {
         viewVersions.workspaceRoot = `${repo}`;
         viewVersions.refresh();
     }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('gitflow.quickPick', async () => {
+        if (viewBranches.listBranches.length < 2) {
+            vscode.window.showWarningMessage("Looks like view was not yet initialized");
+            return;
+        }
+        let list = [
+            { label: "$(test-view-icon) Start Feature", id: "newFeature", arg: "", description: "" },
+            { label: "$(callstack-view-session) Start Bugfix", id: "newBugfix", arg: "", description: "" },
+            { label: "$(history) Start Support", id: "newSupport", arg: "", description: "" },
+        ];
+        // Only single release might be at a time
+        if (viewBranches.listBranches.filter(el => el.search("release/") !== -1).length === 0) {
+            list.push({ label: "$(tag) Start Release", id: "newRelease", arg: "", description: "" });
+        }
+        // Only single hotfix at a time
+        if (viewBranches.listBranches.filter(el => el.search("hotfix/") !== -1).length === 0) {
+            list.push({ label: "$(flame) Start Hotfix", id: "newHotfix", arg: "", description: "" });
+        }
+
+        let cur = viewBranches.curBranch.split("/")[0];
+        if (["feature", "release", "hotfix", "bugfix"].includes(cur)) {
+            list.push({ label: `$(trash) Delete ${ucf(cur)}`, description: viewBranches.curBranch, id: "delete", arg: cur });
+            list.push({ label: `$(debug-stop) Finalize ${ucf(cur)}`, description: viewBranches.curBranch, id: "finish", arg: cur });
+            list.push({ label: `$(git-merge) Rebase ${ucf(cur)}`, description: viewBranches.curBranch, id: "rebase", arg: cur });
+            if (!viewBranches.listRemoteBranches.includes(viewBranches.curBranch)) {
+                list.push({ label: `$(cloud-upload) Publish ${ucf(cur)}`, description: viewBranches.curBranch, id: "publish", arg: cur });
+            }
+        }
+        let action = await vscode.window.showQuickPick(list, { title: "Select action" });
+        if (action === undefined) {
+            return;
+        }
+        if(action.label.search("new") !== -1) {
+            vscode.commands.executeCommand(`gitflow.${action.id}`);
+        } else {
+            viewBranches.general(action.id, action.description);
+        }
+        vscode.commands.executeCommand("workbench.view.scm");
+
+        function ucf(string: string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    }));
+
     context.subscriptions.push(vscode.commands.registerCommand('gitflow.refreshB', () => {
         viewBranches.refresh();
     }));
