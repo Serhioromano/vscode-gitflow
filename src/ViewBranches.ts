@@ -403,28 +403,28 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                             return m === null ? "" : m[1];
                         })
                         .join(" ") || "";
+                if (
+                    ["hotfix", "release"].includes(feature) &&
+                    exist &&
+                    `${name}`.match(/^[0-9\.]*$/) !== null
+                ) {
+                    version =
+                        JSON.parse(readFileSync(this.workspaceRoot + "/package.json", "utf8"))
+                            .version || "";
+                    if (version !== "" && name !== version) {
+                        writeFileSync(
+                            this.workspaceRoot + "/package.json",
+                            readFileSync(this.workspaceRoot + "/package.json", "utf8").replace(
+                                version,
+                                `${name}`
+                            )
+                        );
+                        this.util.execSync("git add ./package.json");
+                        this.util.execSync('git commit ./package.json -m"Version bump"');
+                    }
+                    option = `${option} -m"Finish ${ucf(feature)}: ${version}" -T "${version}"`;
+                }
                 break;
-        }
-
-        if (
-            ["hotfix", "release"].includes(feature) &&
-            exist &&
-            `${name}`.match(/^[0-9\.]*$/) !== null
-        ) {
-            version =
-                JSON.parse(readFileSync(this.workspaceRoot + "/package.json", "utf8")).version ||
-                "";
-            if (version !== "" && name !== version) {
-                writeFileSync(
-                    this.workspaceRoot + "/package.json",
-                    readFileSync(this.workspaceRoot + "/package.json", "utf8").replace(
-                        version,
-                        `${name}`
-                    )
-                );
-                this.util.execSync("git add ./package.json");
-                this.util.execSync('git commit ./package.json -m"Version bump"');
-            }
         }
 
         let cmd = `git flow ${feature} ${what} ${option} ${name} ${base}`;
