@@ -396,6 +396,28 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 ) {
                     progress = true;
                 }
+                if (
+                    ["hotfix", "release"].includes(feature) &&
+                    exist &&
+                    `${name}`.match(/^[0-9\.]*$/) !== null
+                ) {
+                    version =
+                        JSON.parse(readFileSync(this.workspaceRoot + "/package.json", "utf8"))
+                            .version || "";
+                    if (version !== "" && name !== version) {
+                        writeFileSync(
+                            this.workspaceRoot + "/package.json",
+                            readFileSync(this.workspaceRoot + "/package.json", "utf8").replace(
+                                version,
+                                `${name}`
+                            )
+                        );
+                        this.util.execSync("git add ./package.json");
+                        this.util.execSync('git commit ./package.json -m"Version bump"');
+                    }
+                    options.push(`-m"Finish ${ucf(feature)}"`);
+                    options.push(`-T "${version}"`);
+                }
                 option =
                     options
                         ?.map((el) => {
@@ -404,27 +426,6 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         })
                         .join(" ") || "";
                 break;
-        }
-
-        if (
-            ["hotfix", "release"].includes(feature) &&
-            exist &&
-            `${name}`.match(/^[0-9\.]*$/) !== null
-        ) {
-            version =
-                JSON.parse(readFileSync(this.workspaceRoot + "/package.json", "utf8")).version ||
-                "";
-            if (version !== "" && name !== version) {
-                writeFileSync(
-                    this.workspaceRoot + "/package.json",
-                    readFileSync(this.workspaceRoot + "/package.json", "utf8").replace(
-                        version,
-                        `${name}`
-                    )
-                );
-                this.util.execSync("git add ./package.json");
-                this.util.execSync('git commit ./package.json -m"Version bump"');
-            }
         }
 
         let cmd = `git flow ${feature} ${what} ${option} ${name} ${base}`;
