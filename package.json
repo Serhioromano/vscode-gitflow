@@ -122,6 +122,12 @@
                 "icon": "$(git-merge)"
             },
             {
+                "command": "gitflow.publishSupport",
+                "title": "Support - Publish",
+                "category": "Git-Flow",
+                "icon": "$(cloud-upload)"
+            },
+            {
                 "command": "gitflow.deleteSupport",
                 "title": "Support - Delete",
                 "category": "Git-Flow",
@@ -504,6 +510,15 @@
                 {
                     "command": "gitflow.checkoutSupport",
                     "when": "view == gitflowExplorer && viewItem == support || viewItem == support_local",
+                    "group": "inline"
+                },
+                {
+                    "command": "gitflow.publishSupport",
+                    "when": "view == gitflowExplorer && viewItem == support_local"
+                },
+                {
+                    "command": "gitflow.publishSupport",
+                    "when": "view == gitflowExplorer && viewItem == support_local",
                     "group": "inline"
                 },
 

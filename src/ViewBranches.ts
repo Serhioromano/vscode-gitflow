@@ -547,10 +547,31 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         this.util.execSync(`git branch ${option} ${name}`);
 
         if (options?.includes("[-r] Delete remote branch")) {
-            this.util.execSync(`git push --delete origin ${name}`);
+            this.util.exec(`git push --delete origin ${name}`, true, ()=> {
+                this._onDidChangeTreeData.fire();
+            });
+            return;
         }
 
         this._onDidChangeTreeData.fire();
+    }
+    async publishSupport(node: Flow | undefined) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter((el) => el.search(this.branches.support) !== -1),
+                {title: "Select support branch"}
+            );
+        }
+        if (name === undefined) {
+            return;
+        }
+
+        let cmd = `git push origin ${name}`;
+
+        this.util.exec(cmd, true, (s) => {
+            this._onDidChangeTreeData.fire();
+        });
     }
     async checkoutSupport(node: Flow | undefined) {
         let name = node?.full;
@@ -563,6 +584,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (name === undefined) {
             return;
         }
+
         let cmd = `git checkout -q ${name}`;
 
         this.util.exec(cmd, false, (s) => {
