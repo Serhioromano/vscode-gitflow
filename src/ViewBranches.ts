@@ -396,6 +396,13 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 ) {
                     progress = true;
                 }
+                option =
+                    options
+                        ?.map((el) => {
+                            let m = el.match(/\[([^\]]*)\]/);
+                            return m === null ? "" : m[1];
+                        })
+                        .join(" ") || "";
                 if (
                     ["hotfix", "release"].includes(feature) &&
                     exist &&
@@ -415,16 +422,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         this.util.execSync("git add ./package.json");
                         this.util.execSync('git commit ./package.json -m"Version bump"');
                     }
-                    options.push(`-m"Finish ${ucf(feature)}"`);
-                    options.push(`-T "${version}"`);
+                    option = `${option} -m"Finish ${ucf(feature)}: ${version}" -T "${version}"`;
                 }
-                option =
-                    options
-                        ?.map((el) => {
-                            let m = el.match(/\[([^\]]*)\]/);
-                            return m === null ? "" : m[1];
-                        })
-                        .join(" ") || "";
                 break;
         }
 
