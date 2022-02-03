@@ -422,7 +422,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         this.util.execSync("git add ./package.json");
                         this.util.execSync('git commit ./package.json -m"Version bump"');
                     }
-                    option = `${option} -m"Finish ${ucf(feature)}: ${version}" -T "${version}"`;
+                    option = `${option} -m"Finish ${ucf(feature)}: ${name}" -T "${name}"`;
                 }
                 break;
         }
@@ -432,6 +432,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
         this.util.exec(cmd, progress, (s) => {
             this._onDidChangeTreeData.fire();
+            if (["hotfix", "release"].includes(feature)) {
+                vscode.commands.executeCommand("gitflow.refreshT");
+            }
         });
 
         function ucf(string: string) {
