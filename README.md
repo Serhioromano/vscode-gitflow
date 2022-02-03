@@ -1,7 +1,3 @@
-I am going to show you how I automated release of my Git Flow extension for VS Code. By the way I use this extension for that process. When I finished with feature I was working for I click CTRL SHIFT D and select finish feature. Then click CTRL SHIFT D again and select start release. Then click CTRL SHIFT D and select finish release. That is all. Here you can see new tag was created. All I need is to push it to github with this button. As soon as it is pushed githab starts actio that build extension and publish to market place where it is available in few minutes.
-
-Сейчас покажу вам как быстро я делаю релиз новой версии расширения для VS Code поддержки Git FLow  используя свое же расширение и автоматизацию гитхаб. После того как чательно все проверил Нажимаю CTRL SHIFT D в меню выбираю завершить фичу, секунда жму жжжж еще, выбираю начать релиз, жму jjjjj выбираю заверзить релиз и все. Релиз готов. Вот тут появился новый тег. Все что мне нужно это запушить его, вот этой кнопкой. Как только он попадает на гитхаб срабатывает действие которое билдит, и публикует новую версию расширения которое доступно в ВС Код уже через 1-2 минуты.
-
 # Git FLow Support for VS Code [PREVIEW]
 
 GitFlow support for VS Code based on [Git Flow AVH](https://github.com/petervanderdoes/gitflow-avh). That is right, this is the one you was looking for!
