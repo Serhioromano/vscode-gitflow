@@ -2,8 +2,11 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [0.5.7] 03/01/22
+## [0.5.9] 03/01/22
 
+- add - Checkout support branch
+- add - Publish support branch
+- fix - Checkout release branch
 - add - Delete tags local and remote
 - fix - Release checkout
 

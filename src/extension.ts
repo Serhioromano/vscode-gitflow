@@ -164,6 +164,11 @@ export function activate(context: vscode.ExtensionContext) {
             viewBranches.rebaseSupport(node);
         })
     );
+    context.subscriptions.push(
+        vscode.commands.registerCommand("gitflow.publishSupport", (node?: Flow) => {
+            viewBranches.publishSupport(node);
+        })
+    );
 
     context.subscriptions.push(
         vscode.commands.registerCommand("gitflow.newHotfix", () => {
