@@ -1,8 +1,24 @@
 {
-	// See http://go.microsoft.com/fwlink/?LinkId=827846
-	// for the documentation about the extensions.json format
 	"recommendations": [
 		"dbaeumer.vscode-eslint",
-        "maptz.regionfolder"
+        "akamud.vscode-theme-onelight",
+        "steoates.autoimport",
+        "alefragnani.bookmarks",
+        "streetsidesoftware.code-spell-checker",
+        "editorconfig.editorconfig",
+        "dbaeumer.vscode-eslint",
+        "serhioromano.vscode-gitflow",
+        "mhutchie.git-graph",
+        "christian-kohler.npm-intellisense",
+        "eg2.vscode-npm-script",
+        "streetsidesoftware.code-spell-checker-russian",
+        "ms-ceintl.vscode-language-pack-ru",
+        "ryu1kn.text-marker",
+        "wayou.vscode-todo-highlight",
+        "eg2.tslint",
+        "yzhang.markdown-all-in-one",
+        "jebbs.markdown-extended",
+        "davidanson.vscode-markdownlint",
+        "tgreen7.vs-code-node-require"
 	]
 }

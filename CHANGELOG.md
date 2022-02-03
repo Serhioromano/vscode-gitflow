@@ -2,8 +2,9 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [0.5.0] 02/01/22
+## [0.5.2] 03/01/22
 
+- change - use different bundler for extension
 - add - Quick Pick popup
 - optimize - Code was refactored and optimized. 1800 lines to 580.
 
