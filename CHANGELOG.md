@@ -2,6 +2,10 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [0.5.5] 03/01/22
+
+- fix - important to update. Fix some release issues.
+
 ## [0.5.2] 03/01/22
 
 - change - use different bundler for extension
