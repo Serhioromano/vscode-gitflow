@@ -2,7 +2,7 @@
     "name": "vscode-gitflow",
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
-    "version": "0.5.4",
+    "version": "0.5.2",
     "engines": {
         "vscode": "^1.63.0"
     },
@@ -34,7 +34,7 @@
         "url": "https://github.com/Serhioromano/vscode-gitflow"
     },
     "homepage": "https://marketplace.visualstudio.com/items?itemName=serhioromano.vscode-gitflow",
-    "main": "./out/main.js",
+    "main": "./out/extension.js",
     "contributes": {
         "keybindings": [
 			{
@@ -680,13 +680,13 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "npm run esbuild-base -- --minify",
+        "_vscode:prepublish": "npm run esbuild-base -- --minify",
         "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
         "esbuild": "npm run esbuild-base -- --sourcemap",
         "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
         "watch": "tsc -watch -p ./",
         "publish": "vsce package && gh release create $(node -pe \"require('./package.json')['version']\") --generate-notes \"./vscode-gitflow-$(node -pe \"require('./package.json')['version']\").vsix\" && vsce publish",
-        "_vscode:prepublish": "npm run compile",
+        "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
