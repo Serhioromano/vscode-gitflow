@@ -1,4 +1,4 @@
-0.5.6{
+{
     "name": "vscode-gitflow",
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
