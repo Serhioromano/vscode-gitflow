@@ -432,6 +432,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
         this.util.exec(cmd, progress, (s) => {
             this._onDidChangeTreeData.fire();
+            if (["hotfix", "release"].includes(feature)) {
+                vscode.commands.executeCommand("gitflow.refreshT");
+            }
         });
 
         function ucf(string: string) {
