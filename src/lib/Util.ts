@@ -120,6 +120,8 @@ export class Util {
         }
 
         status = this.execSync("git status").toLowerCase();
+        console.log(status);
+
         if (status.search('not a git repository') !== -1) {
             vscode.window.showWarningMessage('This project is not a Git repository.');
             return false;
