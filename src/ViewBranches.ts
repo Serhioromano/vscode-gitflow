@@ -403,15 +403,16 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                             return m === null ? "" : m[1];
                         })
                         .join(" ") || "";
-                if (
-                    ["hotfix", "release"].includes(feature) &&
-                    exist &&
-                    `${name}`.match(/^[0-9\.]*$/) !== null
-                ) {
+
+                if (["hotfix", "release"].includes(feature) && exist) {
                     version =
                         JSON.parse(readFileSync(this.workspaceRoot + "/package.json", "utf8"))
                             .version || "";
-                    if (version !== "" && name !== version) {
+                    if (
+                        version !== "" &&
+                        name !== version &&
+                        `${name}`.match(/^[0-9\.]*$/) !== null
+                    ) {
                         writeFileSync(
                             this.workspaceRoot + "/package.json",
                             readFileSync(this.workspaceRoot + "/package.json", "utf8").replace(

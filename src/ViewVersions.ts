@@ -9,7 +9,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
 
     constructor(public workspaceRoot: string) {
         this.util = new Util(workspaceRoot);
-        this.terminal = null;
+          this.terminal = null;
     }
 
     refresh(): void {
