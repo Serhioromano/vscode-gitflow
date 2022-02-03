@@ -2,8 +2,13 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [0.5.5] 03/01/22
+## [0.5.7] 03/01/22
 
+- fix - Release checkout
+
+## [0.5.6] 03/01/22
+
+- fix - If error tags shows error as tags
 - fix - important to update. Fix some release issues.
 
 ## [0.5.2] 03/01/22

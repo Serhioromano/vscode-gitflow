@@ -30,6 +30,9 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
         let tags = this.util.execSync('git tag --sort=-v:refname').split("\n").map(el => el.trim()).filter(el => el !== '');
         let list: Tag[] = [];
         tags.forEach(el => {
+            if(el.search(" ") !== -1) {
+                return;
+            }
             list.push(new Tag(el, !remotes.includes(el)));
         });
 
