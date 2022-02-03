@@ -141,7 +141,8 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 - In the command line, enter `gh auth login`, then follow the prompts.
 
 ## Changelog
-- 0.5.0
+
+- 0.5.2
   - add - Quick Pick popup
   - optimize - Code was refactored and optimized. 1800 lines to 580.
 - 0.4.3
