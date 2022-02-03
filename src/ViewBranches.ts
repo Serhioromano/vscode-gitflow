@@ -646,7 +646,21 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         this.general("start", "release");
     }
     async checkoutRelease(node: Flow | undefined) {
-        this.general("checkout", node?.full, this.branches.release);
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter((el) => el.search(this.branches.release) !== -1),
+                {title: "Select release branch"}
+            );
+        }
+        if (name === undefined) {
+            return;
+        }
+        let cmd = `git checkout -q ${name}`;
+
+        this.util.exec(cmd, false, (s) => {
+            this._onDidChangeTreeData.fire();
+        });
     }
     async publishRelease(node: Flow | undefined) {
         this.general("publish", node?.full, this.branches.release);
