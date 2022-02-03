@@ -22,5 +22,7 @@
         "retc",
         "vsix"
     ],
-    "workbench.colorTheme": "Atom One Light"
+    "workbench.colorTheme": "Atom One Light",
+    "editor.minimap.maxColumn": 200,
+    "editor.minimap.renderCharacters": false
 }
