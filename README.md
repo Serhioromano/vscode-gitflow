@@ -29,8 +29,11 @@ All basic operations you need to do in a single place.
 - Checkout root branches
 - Sync all root branches
 - Fetch from origin
-- Push all versions (tags)
-- Push local version (tag)
+- Push all tags
+- Push local tag
+- Delete tag locally and\or remotely
+- Multiple folder workspace support
+- Quick pick
 
 #### Multiple Folder Workspace
 
@@ -142,6 +145,9 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
+- 0.5.7
+  - add - Delete tags local and remote
+  - fix - Release checkout
 - 0.5.2
   - add - Quick Pick popup
   - optimize - Code was refactored and optimized. 1800 lines to 580.

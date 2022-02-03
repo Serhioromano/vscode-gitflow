@@ -93,6 +93,12 @@
                 "icon": "$(cloud-upload)"
             },
             {
+                "command": "gitflow.deleteTag",
+                "title": "Delete tag",
+                "category": "Git-Flow",
+                "icon": "$(trash)"
+            },
+            {
                 "command": "gitflow.fetchAllBranches",
                 "title": "Fetch all remote branches",
                 "category": "Git-Flow",
@@ -384,6 +390,11 @@
                 {
                     "command": "gitflow.pushTag",
                     "when": "view == gitflowTags && viewItem == local",
+                    "group": "inline"
+                },
+                {
+                    "command": "gitflow.deleteTag",
+                    "when": "view == gitflowTags",
                     "group": "inline"
                 },
                 {

@@ -319,6 +319,11 @@ export function activate(context: vscode.ExtensionContext) {
             viewVersions.pushTag(e);
         })
     );
+    context.subscriptions.push(
+        vscode.commands.registerCommand("gitflow.deleteTag", (e?: Tag) => {
+            viewVersions.deleteTag(e);
+        })
+    );
 }
 
 export function deactivate() {}

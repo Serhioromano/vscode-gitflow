@@ -4,6 +4,7 @@ All notable changes to the "gitflow" extension will be documented in this file.
 
 ## [0.5.7] 03/01/22
 
+- add - Delete tags local and remote
 - fix - Release checkout
 
 ## [0.5.6] 03/01/22
