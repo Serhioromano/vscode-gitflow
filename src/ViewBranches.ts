@@ -422,7 +422,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         this.util.execSync("git add ./package.json");
                         this.util.execSync('git commit ./package.json -m"Version bump"');
                     }
-                    option = `${option} -m"Finish ${ucf(feature)}: ${version}" -T "${version}"`;
+                    option = `${option} -m"Finish ${ucf(feature)}: ${name}" -T "${name}"`;
                 }
                 break;
         }
