@@ -24,5 +24,8 @@
     ],
     "workbench.colorTheme": "Atom One Light",
     "editor.minimap.maxColumn": 200,
-    "editor.minimap.renderCharacters": false
+    "editor.minimap.renderCharacters": false,
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
