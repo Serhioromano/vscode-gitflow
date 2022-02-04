@@ -145,7 +145,9 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
-- 0.5.7
+- 0.5.10
+  - add -  Groups in Quick Pick (require VS Code >=1.64.0)
+- 0.5.9
   - add - Delete tags local and remote
   - fix - Release checkout
 - 0.5.2

@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import {Flow, TreeViewBranches} from "./ViewBranches";
 import {TreeViewVersions, Tag} from "./ViewVersions";
-import {GitExtension, API as GitAPI} from "./lib/git";
+// import {GitExtension, API as GitAPI} from "./lib/git";
 
 export function activate(context: vscode.ExtensionContext) {
     let rootPath: string =
@@ -56,7 +56,9 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.window.showWarningMessage("Looks like view was not yet initialized");
                 return;
             }
+
             let list = [
+                {label: "Start new branch", id:"", kind: vscode.QuickPickItemKind.Separator},
                 {label: "$(test-view-icon) Start Feature", id: "newFeature", description: ""},
                 {label: "$(callstack-view-session) Start Bugfix", id: "newBugfix", description: ""},
                 {label: "$(history) Start Support", id: "newSupport", description: ""},
@@ -76,6 +78,11 @@ export function activate(context: vscode.ExtensionContext) {
 
             let cur = viewBranches.curBranch.split("/")[0];
             if (["feature", "release", "hotfix", "bugfix"].includes(cur)) {
+                list.push({
+                    label: "Current branch",
+                    id:"",
+                    kind: vscode.QuickPickItemKind.Separator,
+                });
                 list.push({
                     label: `$(trash) Delete ${ucf(cur)}`,
                     description: viewBranches.curBranch,

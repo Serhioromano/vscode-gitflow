@@ -4,7 +4,7 @@
     "description": "Git-Flow support for VS Code",
     "version": "0.5.10",
     "engines": {
-        "vscode": "^1.63.0"
+        "vscode": "^1.64.0"
     },
     "publisher": "Serhioromano",
     "author": "Sergey Romanov",
@@ -37,11 +37,11 @@
     "main": "./out/extension.js",
     "contributes": {
         "keybindings": [
-			{
-				"command": "gitflow.quickPick",
-				"key": "shift+alt+d",
-				"when": "gitflow.initialized == true"
-			}
+            {
+                "command": "gitflow.quickPick",
+                "key": "shift+alt+d",
+                "when": "gitflow.initialized == true"
+            }
         ],
         "commands": [
             {
@@ -484,7 +484,6 @@
                     "when": "view == gitflowExplorer && viewItem == origin_bugfix",
                     "group": "inline"
                 },
-
                 {
                     "command": "gitflow.rebaseSupport",
                     "when": "view == gitflowExplorer && viewItem == support ||  viewItem == support_local"
@@ -521,7 +520,6 @@
                     "when": "view == gitflowExplorer && viewItem == support_local",
                     "group": "inline"
                 },
-
                 {
                     "command": "gitflow.publishHotfix",
                     "when": "view == gitflowExplorer && viewItem == hotfix_local"
@@ -723,15 +721,18 @@
         "@types/glob": "^7.2.0",
         "@types/mocha": "^9.0.0",
         "@types/node": "14.x",
-        "@types/vscode": "^1.63.0",
+        "@types/vscode": "^1.64.0",
         "@typescript-eslint/eslint-plugin": "^5.9.1",
         "@typescript-eslint/parser": "^5.9.1",
         "@vscode/test-electron": "^2.0.3",
+        "esbuild": "^0.14.10",
         "eslint": "^8.6.0",
         "glob": "^7.2.0",
         "mocha": "^9.1.3",
         "typescript": "^4.5.4",
-        "vsce": "^2.6.4",
-        "esbuild": "^0.14.10"
+        "vsce": "^2.6.4"
+    },
+    "dependencies": {
+        "semver": "^7.3.5"
     }
 }
