@@ -87,15 +87,6 @@ Thus you `master` or `main` branch contain most recent version of your product a
 
 1. VS Code should open folder not file
 2. Git have to be installed.
-3. Root folder have to be a git repository. If not run `git init` command in terminal.
+3. Root folder have to be a git repository. If not run `git init` command in the terminal.
 4. [Git Flow](https://github.com/petervanderdoes/gitflow-avh/wiki/Installation) have to be installed.
 5. You have to initialize git flow in the root of your repository with `git flow init` command.
-
-### Work remotely
-
-In order to push branches to or delete branches from remote repository like GitHub, user have to be authenticated. For github there are 2 main ways to work with repositories over SSH protocol or over HTTPS. Those 2 different protocols usually refer to repository with different URL. Here is example of SSH and HTTPS urls of this extension.
-
-    https://github.com/Serhioromano/vscode-gitflow.git
-    git@github.com:Serhioromano/vscode-gitflow.git
-
-You can clone repository with either url.
