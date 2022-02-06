@@ -2,6 +2,7 @@
 .github/**
 .vscode-test/**
 src/**
+out/test/**
 .gitignore
 .yarnrc
 vsc-extension-quickstart.md
@@ -12,4 +13,7 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 node_modules/**
-resources/icon.psd
+resources/media/icon.psd
+resources/media/mfw.png
+resources/media/ss.png
+resources/media/qp.png

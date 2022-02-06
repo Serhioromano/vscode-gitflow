@@ -2,9 +2,9 @@ name: Greetings
 
 on:
   pull_request:
-    types: [opened]
-  issue:
-    types: [opened]
+    types: [ opened ]
+  issues:
+    types: [ opened ]
 
 jobs:
   greeting:
