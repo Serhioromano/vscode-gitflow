@@ -2,6 +2,12 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [0.5.27] 07/01/22
+
+- add - Output logger named Git Flow
+- fix - Readme was not visible in marketplace.
+- optimize - code refactor.
+
 ## [0.5.11] 05/01/22
 
 - add - Status bar button to call Quick Pick menu

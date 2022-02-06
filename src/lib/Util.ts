@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { execSync, exec, spawn, SpawnOptions } from "child_process";
+import { Logger, LogLevels } from './logger';
 
 type CmdResult = {
     retc: number | null,
@@ -8,9 +9,92 @@ type CmdResult = {
 };
 
 export class Util {
-    constructor(private workspaceRoot: string) { };
+    constructor(public workspaceRoot: string, private logger: Logger) { };
 
-    // public cmd(cmd: string, args?: string[]): Promise<CmdResult> {
+    private progress(cmd: string, cb: (s: string) => void) {
+        vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: `Executing ${cmd}`,
+            cancellable: false
+        }, (progress, token) => new Promise<void>(resolve => {
+            setTimeout(() => {
+                this.execCb(cmd, res => {
+                    cb(res);
+                    resolve();
+                }, resolve);
+            }, 100);
+        }));
+    }
+
+    public exec(cmd: string, progress: boolean, cb: (s: string) => void): void {
+        if (progress) {
+            this.progress(cmd, cb);
+        } else {
+            this.execCb(cmd, cb);
+        }
+    }
+
+    public execSync(cmd: string): string {
+        try {
+            let out = execSync(cmd, { cwd: this.workspaceRoot }).toString();
+            this.logger.log(out, cmd);
+            return out;
+        }
+        catch (e) {
+            return '' + e;
+        }
+    }
+    private execCb(cmd: string, cb: (s: string) => void, resolve?: any): void {
+        exec(cmd, {
+            cwd: this.workspaceRoot
+        }, (err, stdout, stderr) => {
+            if (err) {
+                vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
+                this.logger.log(`${err} ${stderr}`, cmd, LogLevels.error);
+                if (resolve !== undefined) {
+                    resolve();
+                }
+                return;
+            }
+            cb(stdout);
+            this.logger.log(`${stdout}`, cmd);
+            vscode.window.showInformationMessage(`${stdout}`);
+        });
+    }
+
+    public check(): boolean {
+        if (!this.workspaceRoot) {
+            vscode.window.showErrorMessage('No folder opened');
+            return false;
+        }
+        let status = this.execSync("git version").toLowerCase();
+        if (status.search('git version') === -1) {
+            vscode.window.showWarningMessage('Looks like git CLI is not installed.');
+            return false;
+        }
+
+        status = this.execSync("git status").toLowerCase();
+
+        if (status.search('not a git repository') !== -1) {
+            vscode.window.showWarningMessage('This project is not a Git repository.');
+            return false;
+        }
+
+        if (this.execSync('git flow').toLowerCase().search('is not a git command') !== -1) {
+            let installLink = 'Install';
+            vscode.window
+                .showWarningMessage('To use Git Flow extension please install Git flow (AVH).', installLink)
+                .then(selection => {
+                    if (selection === installLink) {
+                        vscode.env.openExternal(vscode.Uri.parse('https://github.com/petervanderdoes/gitflow-avh/wiki/Installation'));
+                    }
+                });
+            return false;
+        }
+        return true;
+    }
+}
+   // public cmd(cmd: string, args?: string[]): Promise<CmdResult> {
     //     let options: SpawnOptions = {};
     //     options.cwd = this.workspaceRoot;
     //     //options.shell = true;
@@ -60,83 +144,3 @@ export class Util {
     //         cb(result);
     //     }
     // }
-
-    private progress(cmd: string, cb: (s: string) => void) {
-        vscode.window.withProgress({
-            location: vscode.ProgressLocation.Notification,
-            title: `Executing ${cmd}`,
-            cancellable: false
-        }, (progress, token) => new Promise<void>(resolve => {
-            setTimeout(() => {
-                this.execCb(cmd, res => {
-                    cb(res);
-                    resolve();
-                }, resolve);
-            }, 100);
-        }));
-    }
-
-    public exec(cmd: string, progress: boolean, cb: (s: string) => void): void {
-        if (progress) {
-            this.progress(cmd, cb);
-        } else {
-            this.execCb(cmd, cb);
-        }
-    }
-
-    public execSync(cmd: string): string {
-        try {
-            return execSync(cmd, { cwd: this.workspaceRoot }).toString();
-        }
-        catch (e) {
-            return '' + e;
-        }
-    }
-    private execCb(cmd: string, cb: (s: string) => void, resolve?: any): void {
-        exec(cmd, {
-            cwd: this.workspaceRoot
-        }, (err, stdout, stderr) => {
-            if (err) {
-                vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
-                if (resolve !== undefined) {
-                    resolve();
-                }
-                return;
-            }
-            cb(stdout);
-            vscode.window.showInformationMessage(`${stdout}`);
-        });
-    }
-
-    public check(): boolean {
-        if (!this.workspaceRoot) {
-            vscode.window.showErrorMessage('No folder opened');
-            return false;
-        }
-        let status = this.execSync("git version").toLowerCase();
-        if (status.search('git version') === -1) {
-            vscode.window.showWarningMessage('Looks like git CLI is not installed.');
-            return false;
-        }
-
-        status = this.execSync("git status").toLowerCase();
-
-        if (status.search('not a git repository') !== -1) {
-            vscode.window.showWarningMessage('This project is not a Git repository.');
-            return false;
-        }
-
-        if (this.execSync('git flow').toLowerCase().search('is not a git command') !== -1) {
-            let installLink = 'Install';
-            vscode.window
-                .showWarningMessage('To use Git Flow extension please install Git flow (AVH).', installLink)
-                .then(selection => {
-                    if (selection === installLink) {
-                        vscode.env.openExternal(vscode.Uri.parse('https://github.com/petervanderdoes/gitflow-avh/wiki/Installation'));
-                    }
-                });
-            return false;
-        }
-        return true;
-    }
-}
