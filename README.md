@@ -8,7 +8,7 @@ GitFlow support for VS Code based on [Git Flow AVH](https://github.com/petervand
 
 1. When VS Code open windows directory while on remote WSL, sometimes might cause problems. But who is gonna do that, right?
 
-2. When authentication is not configured, commands that make `push` to remote commands may fail. (see: [How to setup](#How-to-setup))
+2. When authentication is not configured, commands that make `push` to remote commands may fail. (see: How to setup)
 
 ## How to use
 
@@ -31,7 +31,7 @@ All basic operations you need to do in a single place.
 - Bugfix (Start, Finish, Checkout, Delete, Rebase, Publish, Track)
 - Release (Start, Finish, Checkout, Delete, Rebase, Publish, Track,  )
 - Hotfix (Start, Finish, Checkout, Delete, Rebase, Publish)
-- Support (Start, Checkout, Rebase, Publish, Delete) (See: [How to work with support](#How-to-work-with-support))
+- Support (Start, Checkout, Rebase, Publish, Delete) (See: How to work with support)
 
 ### Additional
 
