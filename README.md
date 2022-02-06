@@ -1,6 +1,6 @@
 # Git FLow Support for VS Code
 
-> **Attention!!!**. From version 0.5.11 it requires latest VS Code >=1.64.0. But doe to Side Panel feature I think this version is gonna be most adopted.
+> **Attention!!!**. From version 0.5.11 it requires latest VS Code >=1.64.0. But due to Side Panel feature I think this version is gonna be most adopted.
 
 GitFlow support for VS Code based on [Git Flow AVH](https://github.com/petervanderdoes/gitflow-avh).
 
