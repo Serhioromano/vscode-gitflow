@@ -90,3 +90,91 @@ Thus you `master` or `main` branch contain most recent version of your product a
 3. Root folder have to be a git repository. If not run `git init` command in the terminal.
 4. [Git Flow](https://github.com/petervanderdoes/gitflow-avh/wiki/Installation) have to be installed.
 5. You have to initialize git flow in the root of your repository with `git flow init` command.
+
+### Work remotely
+
+In order to push branches to or delete branches from remote repository like GitHub, user have to be authenticated. For github there are 2 main ways to work with repositories over SSH protocol or over HTTPS. Those 2 different protocols usually refer to repository with different URL. Here is example of SSH and HTTPS urls of this extension.
+
+```text
+https://github.com/Serhioromano/vscode-gitflow.git
+git@github.com:Serhioromano/vscode-gitflow.git
+```
+
+You can clone repository with either url.
+
+#### SSH (recommended)
+
+First ensure your repository configured to work over SSH.
+
+```bash
+git remote remove origin
+git remote add origin git@github.com:user/repository.git
+```
+
+Or simple edit `your_repository/.git/config` and make sure repository URL there has a SSH link.
+
+Read [this article](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) how to authorize your PC with SSH key.
+
+Basically what you have to do is to generate key with
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+```
+
+Then go to `~/.ssh` folder and look for `id_rsa.pub` file and copy it's content. Last go to `https://github.com/settings/keys` and add SSH Key there.
+
+#### HTTPS
+
+First ensure your repository configured to work over SSH.
+
+```bash
+git remote remove origin
+git remote add origin https://github.com/user/repository.git
+```
+
+Or simple edit `your_repository/.git/config` and make sure repository URL there has a HTTP link.
+
+Now you need to [cache your credential](https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git). Use GitHub CLI
+
+GitHub CLI will automatically store your Git credentials for you when you choose HTTPS as your preferred protocol for Git operations and answer "yes" to the prompt asking if you would like to authenticate to Git with your GitHub credentials.
+
+- [Install GitHub CLI](https://cli.github.com/manual/installation) on macOS, Windows, or Linux.
+- In the command line, enter `gh auth login`, then follow the prompts.
+
+## Changelog
+
+- 0.5.11
+  - add - Status bar button to call Quick Pick menu
+  - add -  Groups in Quick Pick (require VS Code ^1.64.0)
+- 0.5.9
+  - add - Delete tags local and remote
+  - fix - Release checkout
+- 0.5.2
+  - add - Quick Pick popup
+  - optimize - Code was refactored and optimized. 1800 lines to 580.
+- 0.4.3
+  - add - Multiple folder workspaces
+  - fix - Progress notification not resolving
+- 0.3.1
+  - add - Support (Start, Checkout, Rebase, Delete)
+  - add - Release checkout
+  - add - Hotfix checkout
+- 0.2.14
+  - enhance - Order and group context menu elements.
+  - enhance - use VS Code theme icons instead of SVG.
+  - enhance - CI flow was created for fast delivery of new versions.
+- 0.2.11
+  - fix - take name of flow branches from configuration
+  - fix - ui buttons
+- 0.2.9
+  - add - single command to sync all root branches (develop and master ot main)
+  - add - command to checkout root branches
+  - enhance - better icons
+- 0.2.2
+  - add - progress bas during process
+  - add - icons to menu elements
+  - add - bugfix support
+  - delete - configurations
+  - fix - git commands with remote
+  - update - README
+- 0.1.0 - Initial release of ...
