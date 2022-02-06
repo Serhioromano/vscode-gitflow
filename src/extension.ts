@@ -5,16 +5,37 @@ import {
     StatusBarAlignment,
     ExtensionContext,
     QuickPickItemKind,
+    extensions,
 } from "vscode";
 import {Flow, TreeViewBranches} from "./ViewBranches";
 import {TreeViewVersions, Tag} from "./ViewVersions";
 // import {GitExtension, API as GitAPI} from "./lib/git";
+// import {GitBaseExtension, API as GitBaseAPI} from "./lib/git-base";
 
 export function activate({subscriptions}: ExtensionContext) {
     let rootPath: string =
         workspace.workspaceFolders && workspace.workspaceFolders.length > 0
             ? workspace.workspaceFolders[0].uri.fsPath
             : "";
+
+    // const gitExtension = extensions.getExtension<GitExtension>("vscode.git")!.exports;
+    // const git = gitExtension.getAPI(1);
+
+    // const gitBaseExtension = extensions.getExtension<GitBaseExtension>("vscode.git-base")!.exports;
+    // const gitbase = gitExtension.getAPI(1);
+
+    // gitbase.onDidChangeState((e) => {
+    //     if (e.toString().toLowerCase() === "initialized") {
+    //         console.log(git.repositories);
+    //         git.onDidChangeState((e) => {
+    //             console.log("state", e);
+    //         });
+    //         git.repositories[0].state.onDidChange((e) => {
+    //             console.log("repo", e);
+    //         });
+    //     }
+    //     console.log("base", e);
+    // });
 
     const viewBranches = new TreeViewBranches(rootPath);
     const a = window.createTreeView("gitflowExplorer", {
