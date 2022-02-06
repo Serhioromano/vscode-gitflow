@@ -27,8 +27,7 @@
         "onView:gitflowTags"
     ],
     "extensionDependencies": [
-        "vscode.git",
-        "vscode.git-base"
+        "vscode.git"
     ],
     "repository": {
         "type": "git",
