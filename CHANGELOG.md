@@ -2,9 +2,10 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [0.5.10] 05/01/22
+## [0.5.11] 05/01/22
 
-- add -  Groups in Quick Pick (require VS Code >=1.64.0)
+- add - Status bar button to call Quick Pick menu
+- add - Groups in Quick Pick (require VS Code >=1.64.0)
 
 ## [0.5.9] 03/01/22
 

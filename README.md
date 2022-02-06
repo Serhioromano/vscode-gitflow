@@ -1,16 +1,22 @@
-# Git FLow Support for VS Code [PREVIEW]
+# Git FLow Support for VS Code
 
-GitFlow support for VS Code based on [Git Flow AVH](https://github.com/petervanderdoes/gitflow-avh). That is right, this is the one you was looking for!
+> **Attention!!!**. From version 0.5.11 it requires latest VS Code >=1.64.0. But doe to Side Panel feature I think this version is gonna be most adopted.
 
-> **If you like this extension, please do not forget to rate it, so your colleagues could also discover this fine piece of work.**
+GitFlow support for VS Code based on [Git Flow AVH](https://github.com/petervanderdoes/gitflow-avh).
+
+## Known Issues
+
+1. When VS Code open windows directory while on remote WSL, sometimes might cause problems. But who is gonna do that, right?
+
+2. When authentication is not configured, commands that make `push` to remote commands may fail. (see: [How to setup](#How-to-setup))
 
 ## How to use
 
-> We suggest [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph) to complements this extension.
-
-When You install it, in standard SCM side bar, 2 new views will appear, GITFLOW and VERSIONS. Versions are simple tags.
+When installed, you will find 2 new views in SCM side bar, GITFLOW and VERSIONS. Also in status bar you will find **Git Flow** button to launch Quick Pick menu.
 
 ![ext](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/ss.png)
+
+> We suggest [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph) to complements this extension.
 
 ## Features
 
@@ -23,7 +29,7 @@ All basic operations you need to do in a single place.
 - Bugfix (Start, Finish, Checkout, Delete, Rebase, Publish, Track)
 - Release (Start, Finish, Checkout, Delete, Rebase, Publish, Track,  )
 - Hotfix (Start, Finish, Checkout, Delete, Rebase, Publish)
-- Support (Start, Checkout, Rebase, Publish, Delete) (See: [Hot to work with support](#-Hot-to-work-with-support))
+- Support (Start, Checkout, Rebase, Publish, Delete) (See: [How to work with support](#How-to-work-with-support))
 
 ### Additional
 
@@ -85,7 +91,7 @@ Now if you checkout any support branch, no matter what you start hotfix, release
 
 Thus you `master` or `main` branch contain most recent version of your product and support branches have major LTS versions.
 
-## How to setup:
+## How to setup
 
 ### Work locally
 
@@ -145,7 +151,8 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
-- 0.5.10
+- 0.5.11
+  - add - Status bar button to call Quick Pick menu
   - add -  Groups in Quick Pick (require VS Code >=1.64.0)
 - 0.5.9
   - add - Delete tags local and remote
