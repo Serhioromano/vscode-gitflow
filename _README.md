@@ -131,7 +131,7 @@ Basically what you have to do is to generate key with
 ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
 ```
 
-Then go to `~/.ssh` folder and look for `id_rsa.pub` file and copy it's content. Last go to https://github.com/settings/keys and add SSH Key there.
+Then go to `~/.ssh` folder and look for `id_rsa.pub` file and copy it's content. Last go to `https://github.com/settings/keys` and add SSH Key there.
 
 #### HTTPS
 
