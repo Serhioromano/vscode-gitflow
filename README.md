@@ -99,24 +99,3 @@ In order to push branches to or delete branches from remote repository like GitH
     git@github.com:Serhioromano/vscode-gitflow.git
 
 You can clone repository with either url.
-
-#### SSH (recommended)
-
-First ensure your repository configured to work over SSH.
-
-```bash
-git remote remove origin
-git remote add origin git@github.com:user/repository.git
-```
-
-Or simple edit `your_repository/.git/config` and make sure repository URL there has a SSH link.
-
-Read [this article](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) how to authorize your PC with SSH key.
-
-Basically what you have to do is to generate key with
-
-```bash
-ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-```
-
-Then go to `~/.ssh` folder and look for `id_rsa.pub` file and copy it's content. Last go to `https://github.com/settings/keys` and add SSH Key there.
