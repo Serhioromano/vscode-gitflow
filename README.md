@@ -119,22 +119,4 @@ Basically what you have to do is to generate key with
 ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
 ```
 
-Then go to `~/.ssh` folder and look for `id_rsa.pub` file and copy it's content. Last go to <https://github.com/settings/keys> and add SSH Key there.
-
-#### HTTPS
-
-First ensure your repository configured to work over SSH.
-
-```bash
-git remote remove origin
-git remote add origin https://github.com/user/repository.git
-```
-
-Or simple edit `your_repository/.git/config` and make sure repository URL there has a HTTP link.
-
-Now you need to [cache your credential](https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git). Use GitHub CLI
-
-GitHub CLI will automatically store your Git credentials for you when you choose HTTPS as your preferred protocol for Git operations and answer "yes" to the prompt asking if you would like to authenticate to Git with your GitHub credentials.
-
-- [Install GitHub CLI](https://cli.github.com/manual/installation) on macOS, Windows, or Linux.
-- In the command line, enter `gh auth login`, then follow the prompts.
+Then go to `~/.ssh` folder and look for `id_rsa.pub` file and copy it's content. Last go to `https://github.com/settings/keys` and add SSH Key there.
