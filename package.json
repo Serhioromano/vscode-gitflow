@@ -2,7 +2,7 @@
     "name": "vscode-gitflow",
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
-    "version": "0.5.15",
+    "version": "0.5.16",
     "engines": {
         "vscode": ">=1.64.0"
     },
@@ -27,8 +27,7 @@
         "onView:gitflowTags"
     ],
     "extensionDependencies": [
-        "vscode.git",
-        "vscode.git-base"
+        "vscode.git"
     ],
     "repository": {
         "type": "git",

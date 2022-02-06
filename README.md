@@ -12,7 +12,9 @@ GitFlow support for VS Code based on [Git Flow AVH](https://github.com/petervand
 
 ## How to use
 
-When installed, you will find 2 new views in SCM side bar, GITFLOW and VERSIONS. Also in status bar you will find **Git Flow** button to launch Quick Pick menu. To call Quick Pick menu use `Shift`+`Alt`+`D`.
+When installed, you will find 2 new views in SCM side bar, GITFLOW and VERSIONS. Also in status bar you will find **Git Flow** button to launch Quick Pick menu or use `Shift`+`Alt`+`D` short key.
+
+To see list of all commands use `F1` or `Ctrl`+`Shift`+`P` and type gitflow.
 
 ![ext](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/ss.png)
 
@@ -40,7 +42,7 @@ All basic operations you need to do in a single place.
 - Push local tag
 - Delete tag locally and\or remotely
 - Multiple folder workspace support
-- Quick pick (use `Shift`+`Alt`+`D` or button in statusbar)
+- Quick Pick menu (use `Shift`+`Alt`+`D`)
 
 #### Multiple Folder Workspace
 
@@ -61,7 +63,7 @@ Quick Pick is a popup with essential Git Flow commands, like create new flow bra
 - Multiple folder workspace [done]
 - Flow "support" [done]
 - Quick Pick [done]
-- Status bar button to finish current branch [done]
+- Status bar button to finish current branch
 
 ## How to work with Support
 
@@ -153,7 +155,7 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 - 0.5.11
   - add - Status bar button to call Quick Pick menu
-  - add - Groups in Quick Pick (require VS Code `>=1.64.0`)
+  - add -  Groups in Quick Pick (require VS Code >=1.64.0)
 - 0.5.9
   - add - Delete tags local and remote
   - fix - Release checkout
