@@ -2,7 +2,9 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [0.5.27] 02/07/22
+## [1.0.0] 02/07/22
+
+Finlay I have all features I planned in this extension. This is still preview but final extension.
 
 - add - Parameter to show all internal git commands run in `git flow` in output window
 - add - Output logger named Git Flow
