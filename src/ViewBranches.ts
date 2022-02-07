@@ -285,7 +285,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             case "start":
                 if (["hotfix", "release"].includes(feature) && exist) {
                     version =
-                        JSON.parse(readFileSync(this.util.workspaceRoot + "/package.json", "utf8")).version || "";
+                        JSON.parse(readFileSync(this.util.workspaceRoot + "/package.json", "utf8")).version ||
+                        "";
                 }
 
                 name = await vscode.window.showInputBox({
@@ -397,7 +398,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         .join(" ") || "";
                 if (["hotfix", "release"].includes(feature) && exist) {
                     version =
-                        JSON.parse(readFileSync(this.util.workspaceRoot + "/package.json", "utf8")).version || "";
+                        JSON.parse(readFileSync(this.util.workspaceRoot + "/package.json", "utf8")).version ||
+                        "";
                     if (version !== "" && name !== version && `${name}`.match(/^[0-9\.]*$/) !== null) {
                         writeFileSync(
                             this.util.workspaceRoot + "/package.json",
@@ -414,7 +416,11 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 break;
         }
 
-        let cmd = `git flow ${feature} ${what} ${option} ${name} ${base}`;
+        let command =
+            vscode.workspace.getConfiguration("gitflow").get("showAllCommands") === true
+                ? " --showcommands "
+                : " ";
+        let cmd = `git flow ${feature} ${what}${command}${option} ${name} ${base}`;
         console.log(cmd);
 
         this.util.exec(cmd, progress, (s) => {

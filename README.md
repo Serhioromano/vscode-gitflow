@@ -41,6 +41,7 @@ All basic operations you need to do in a single place.
 - Delete tag locally and\or remotely
 - Multiple folder workspace support
 - Quick Pick menu (use `Shift`+`Alt`+`D`)
+- All commands results are outputted in output window named `Git Flow`. There is a parameter that also allow to show all internal `git` commands run inside `git flow`.
 
 #### Multiple Folder Workspace
 
@@ -143,6 +144,11 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
+- 0.5.27
+  - add - Parameter to show all internal git commands run in `git flow` in output window
+  - add - Output logger named Git Flow
+  - fix - Readme was not visible in marketplace.
+  - optimize - code refactor.
 - 0.5.11
   - add - Status bar button to call Quick Pick menu
   - add -  Groups in Quick Pick (require VS Code ^1.64.0)

@@ -36,6 +36,16 @@
     "homepage": "https://marketplace.visualstudio.com/items?itemName=serhioromano.vscode-gitflow",
     "main": "./out/extension.js",
     "contributes": {
+        "configuration": {
+            "title": "GitFlow",
+            "properties": {
+                "gitflow.showAllCommands": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show all `git` commands that `git flow` runs in output window."
+                }
+            }
+        },
         "keybindings": [
             {
                 "command": "gitflow.quickPick",
