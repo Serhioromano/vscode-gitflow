@@ -6,13 +6,11 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
         new vscode.EventEmitter<Tag | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<Tag | undefined | null | void> =
         this._onDidChangeTreeData.event;
-    private util: Util;
     private terminal: vscode.Terminal | null;
     private remotes: string[] = [];
     private tags: string[] = [];
 
-    constructor(public workspaceRoot: string) {
-        this.util = new Util(workspaceRoot);
+    constructor(private util: Util) {
         this.terminal = null;
     }
 
@@ -25,7 +23,9 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     }
 
     getChildren(element?: Tag): Thenable<Tag[]> {
-        this.util = new Util(this.workspaceRoot);
+        if (!this.util.check()) {
+            return Promise.resolve([]);
+        }
         this.remotes = this.util
             .execSync("git ls-remote --tags origin")
             .split("\n")

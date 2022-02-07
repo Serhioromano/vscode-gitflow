@@ -2,7 +2,7 @@
     "name": "vscode-gitflow",
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
-    "version": "0.5.26",
+    "version": "1.0.0",
     "engines": {
         "vscode": "^1.64.0"
     },
@@ -36,6 +36,16 @@
     "homepage": "https://marketplace.visualstudio.com/items?itemName=serhioromano.vscode-gitflow",
     "main": "./out/extension.js",
     "contributes": {
+        "configuration": {
+            "title": "GitFlow",
+            "properties": {
+                "gitflow.showAllCommands": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show all `git` commands that `git flow` runs in output window."
+                }
+            }
+        },
         "keybindings": [
             {
                 "command": "gitflow.quickPick",

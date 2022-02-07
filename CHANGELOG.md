@@ -2,12 +2,21 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [0.5.11] 05/01/22
+## [1.0.0] 02/07/22
+
+Finlay I have all features I planned in this extension. This is still preview but final extension.
+
+- add - Parameter to show all internal git commands run in `git flow` in output window
+- add - Output logger named Git Flow
+- fix - Readme was not visible in marketplace.
+- optimize - code refactor.
+
+## [0.5.11] 02/05/22
 
 - add - Status bar button to call Quick Pick menu
 - add - Groups in Quick Pick (require VS Code >=1.64.0)
 
-## [0.5.9] 03/01/22
+## [0.5.9] 02/04/22
 
 - add - Checkout support branch
 - add - Publish support branch
@@ -15,23 +24,23 @@ All notable changes to the "gitflow" extension will be documented in this file.
 - add - Delete tags local and remote
 - fix - Release checkout
 
-## [0.5.6] 03/01/22
+## [0.5.6] 02/03/22
 
 - fix - If error tags shows error as tags
 - fix - important to update. Fix some release issues.
 
-## [0.5.2] 03/01/22
+## [0.5.2] 02/03/22
 
 - change - use different bundler for extension
 - add - Quick Pick popup
 - optimize - Code was refactored and optimized. 1800 lines to 580.
 
-## [0.4.3] 02/01/22
+## [0.4.3] 02/02/22
 
 - add - Support for multiple folder workspaces
 - fix - Progress notification not resolving
 
-## [0.3.0] 02/01/22
+## [0.3.0] 02/02/22
 
 - add - Support (Start, Checkout, Rebase, Delete)
 - add - Release checkout
