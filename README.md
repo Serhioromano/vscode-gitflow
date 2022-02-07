@@ -144,7 +144,7 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
-- 0.5.27
+- 1.0.0
   - add - Parameter to show all internal git commands run in `git flow` in output window
   - add - Output logger named Git Flow
   - fix - Readme was not visible in marketplace.
