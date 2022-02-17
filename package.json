@@ -14,7 +14,16 @@
         "gitflow",
         "git-flow",
         "git",
-        "github"
+        "flow",
+        "github",
+        "feature",
+        "release",
+        "bugfix",
+        "bug fix",
+        "hotfix",
+        "hot fix",
+        "support",
+        "version"
     ],
     "categories": [
         "Other",
