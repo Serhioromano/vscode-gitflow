@@ -57,22 +57,16 @@ Quick Pick is a popup with essential Git Flow commands, like create new flow bra
 
 ![Git flow quick pik](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/qp.png)
 
-## How to work with Support
+## How to work with Support branch
 
-### What is Git Flow Support
+### What is Git Flow Support branch for?
 
 Support branches are similar to LTS version of Linux distros.
 
 In the git-flow model, your **latest released** version actually maps to the `master` or `main`, while your "preview release" maps to a git-flow release branch. It is forked from develop and finally merged into `main` when the actual release happens. Then this will become your **latest release** and you will usually fix only bugs for that release, using git-flow hotfix branches. In this way, your master always represents the most stable state of your latest released version.
 
-Say you had a project, and you were happily releasing new versions.
-Maybe your current production version was 8.x. But you had some Really
-Important Customers who refused to upgrade to anything after 6.0. Now,
-if someone found a security flaw in the 6.0 version of your project,
-it would be a bad idea to hang all those Really Important Customers
-out to dry. So you release a new hotfix against `support/6.0`, even though all
-their problems would be solved if they just upgraded to the new 8.x
-release.
+Say you had a project, and you were happily releasing new versions. Maybe your current production version was 8.x. But you had some Really Important Customers who refused to upgrade to anything after 6.0. Now, if someone found a security flaw in the 6.0 version of your project, it would be a bad idea to hang all those Really Important Customers
+out to dry. So you release a new hotfix against `support/6.0`, even though all their problems would be solved if they just upgraded to the new 8.x release.
 
 For this to happen you have to create `support/6.0` at some point of time. Basically you can create support branch on all major version change.
 
