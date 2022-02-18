@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
-import { CommandManager } from './lib/cm';
-import { Logger } from "./lib/logger";
-import { Util } from "./lib/Util";
-import { Flow, TreeViewBranches } from "./ViewBranches";
-import { TreeViewVersions, Tag } from "./ViewVersions";
+import {CommandManager} from "./lib/cm";
+import {Logger} from "./lib/logger";
+import {Util} from "./lib/Util";
+import {Flow, TreeViewBranches} from "./ViewBranches";
+import {TreeViewVersions, Tag} from "./ViewVersions";
 
 export function activate(context: vscode.ExtensionContext) {
     let rootPath: string =
@@ -63,7 +63,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 }
 
-export function deactivate() { }
+export function deactivate() {}
 
 // import {GitExtension, API as GitAPI} from "./lib/git";
 // import {GitBaseExtension, API as GitBaseAPI} from "./lib/git-base";
