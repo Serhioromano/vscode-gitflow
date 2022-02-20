@@ -41,6 +41,7 @@ All basic operations you need to do in a single place.
 - Push all tags
 - Push local tag
 - Delete tag locally and\or remotely
+- Automatic version update in `package.json`
 - Multiple folder workspace support
 - Quick Pick menu (use `Shift`+`Alt`+`D`)
 - All commands results are outputted in output window named `Git Flow`. There is a parameter that also allow to show all internal `git` commands run inside `git flow`.
