@@ -34,6 +34,7 @@
     "icon": "resources/media/icon.png",
     "activationEvents": [
         "workspaceContains:.git",
+        "onCommand:gitflow.quickPick",
         "onView:gitflowExplorer",
         "onView:gitflowTags"
     ],
@@ -754,6 +755,7 @@
         "vsce": "^2.6.4"
     },
     "dependencies": {
-        "semver": "^7.3.5"
+        "semver": "^7.3.5",
+        "typescript-memoize": "^1.1.0"
     }
 }

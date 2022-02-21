@@ -27,7 +27,7 @@
     ],
     "workbench.colorTheme": "Dracula",
     "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "vscode.typescript-language-features"
     },
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#1f6fd0",
