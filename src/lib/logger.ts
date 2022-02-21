@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import {Disposable} from "./disposables";
+import { Disposable } from "./disposables";
 
 export enum LogLevels {
     info = "INFO",
@@ -31,7 +31,7 @@ export class Logger extends Disposable {
                 "git flow config list",
             ].includes(cmd)
         ) {
-            return;
+            //return;
         }
         this.channel.appendLine(`${level}: [${cmd}] ${msg}`);
     }

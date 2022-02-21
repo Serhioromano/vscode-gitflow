@@ -6,9 +6,9 @@
 
 ## Known Issues
 
-1. When VS Code open windows directory while on remote WSL, sometimes might cause problems. But who is gonna do that, right?
-
-2. When authentication is not configured, commands that make `push` to remote commands may fail. (see: [How to setup](#how-to-setup))
+1. If you name your branches folders with capital letters like `Feature` instead of `feature` will not work. Bug in `git-flow` extension of git CLI command.
+2. When VS Code open windows directory while on remote WSL, sometimes might cause problems. But who is gonna do that, right?
+3. When authentication is not configured, commands that make `push` to remote commands may fail. (see: [How to setup](#how-to-setup))
 
 ## How to use
 
@@ -41,6 +41,7 @@ All basic operations you need to do in a single place.
 - Push all tags
 - Push local tag
 - Delete tag locally and\or remotely
+- Automatic version update in `package.json`
 - Multiple folder workspace support
 - Quick Pick menu (use `Shift`+`Alt`+`D`)
 - All commands results are outputted in output window named `Git Flow`. There is a parameter that also allow to show all internal `git` commands run inside `git flow`.
@@ -57,22 +58,16 @@ Quick Pick is a popup with essential Git Flow commands, like create new flow bra
 
 ![Git flow quick pik](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/qp.png)
 
-## How to work with Support
+## How to work with Support branch
 
-### What is Git Flow Support
+### What is Git Flow Support branch for?
 
 Support branches are similar to LTS version of Linux distros.
 
 In the git-flow model, your **latest released** version actually maps to the `master` or `main`, while your "preview release" maps to a git-flow release branch. It is forked from develop and finally merged into `main` when the actual release happens. Then this will become your **latest release** and you will usually fix only bugs for that release, using git-flow hotfix branches. In this way, your master always represents the most stable state of your latest released version.
 
-Say you had a project, and you were happily releasing new versions.
-Maybe your current production version was 8.x. But you had some Really
-Important Customers who refused to upgrade to anything after 6.0. Now,
-if someone found a security flaw in the 6.0 version of your project,
-it would be a bad idea to hang all those Really Important Customers
-out to dry. So you release a new hotfix against `support/6.0`, even though all
-their problems would be solved if they just upgraded to the new 8.x
-release.
+Say you had a project, and you were happily releasing new versions. Maybe your current production version was 8.x. But you had some Really Important Customers who refused to upgrade to anything after 6.0. Now, if someone found a security flaw in the 6.0 version of your project, it would be a bad idea to hang all those Really Important Customers
+out to dry. So you release a new hotfix against `support/6.0`, even though all their problems would be solved if they just upgraded to the new 8.x release.
 
 For this to happen you have to create `support/6.0` at some point of time. Basically you can create support branch on all major version change.
 
@@ -146,6 +141,8 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
+- 1.1.0
+  - optimize - performance improvement using memoization technique.
 - 1.0.0
   - add - Parameter to show all internal git commands run in `git flow` in output window
   - add - Output logger named Git Flow

@@ -2,7 +2,11 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [1.0.0] 02/07/22
+## [1.1.0] 02/21/22
+
+- optimize - performance improvement using memoization technique.
+
+## [1.0.1] 02/07/22
 
 Finlay I have all features I planned in this extension. This is still preview but final extension.
 

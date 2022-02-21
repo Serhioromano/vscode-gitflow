@@ -1,3 +1,4 @@
+import { debounce, memoize, throttle } from './lib/decorators';
 import * as vscode from "vscode";
 import {Util} from "./lib/Util";
 import {readFileSync, writeFileSync, existsSync} from "fs";
@@ -12,6 +13,9 @@ interface BranchList {
     support: string;
 }
 type Emitter = Flow | undefined | null | void;
+let checked:boolean = false;
+
+
 
 export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     private _onDidChangeTreeData: vscode.EventEmitter<Emitter> = new vscode.EventEmitter<Emitter>();
@@ -42,9 +46,11 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     }
 
     getChildren(element?: Flow): Thenable<Flow[]> {
-        if (!this.util.check()) {
+
+        if (!checked && !this.util.check()) {
             return Promise.resolve([]);
         }
+        checked = true;
 
         let tree: Flow[] = [];
 

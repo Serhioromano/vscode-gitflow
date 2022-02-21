@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import {CommandManager} from "./lib/cm";
 import {Logger} from "./lib/logger";
-import { Util } from "./lib/Util";
+import {Util} from "./lib/Util";
 import {Flow, TreeViewBranches} from "./ViewBranches";
 import {TreeViewVersions, Tag} from "./ViewVersions";
 

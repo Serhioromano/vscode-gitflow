@@ -2,7 +2,7 @@
     "name": "vscode-gitflow",
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "engines": {
         "vscode": "^1.64.0"
     },
@@ -14,7 +14,18 @@
         "gitflow",
         "git-flow",
         "git",
-        "github"
+        "flow",
+        "github",
+        "feature",
+        "release",
+        "bugfix",
+        "bug fix",
+        "hotfix",
+        "hot fix",
+        "support",
+        "version",
+        "versions",
+        "versioning"
     ],
     "categories": [
         "Other",
@@ -23,6 +34,7 @@
     "icon": "resources/media/icon.png",
     "activationEvents": [
         "workspaceContains:.git",
+        "onCommand:gitflow.quickPick",
         "onView:gitflowExplorer",
         "onView:gitflowTags"
     ],
@@ -743,6 +755,7 @@
         "vsce": "^2.6.4"
     },
     "dependencies": {
-        "semver": "^7.3.5"
+        "semver": "^7.3.5",
+        "typescript-memoize": "^1.1.0"
     }
 }
