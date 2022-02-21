@@ -13,6 +13,7 @@ interface BranchList {
     support: string;
 }
 type Emitter = Flow | undefined | null | void;
+let checked:boolean = false;
 
 
 
@@ -45,9 +46,11 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     }
 
     getChildren(element?: Flow): Thenable<Flow[]> {
-        if (!this.util.check()) {
+
+        if (!checked && !this.util.check()) {
             return Promise.resolve([]);
         }
+        checked = true;
 
         let tree: Flow[] = [];
 

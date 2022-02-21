@@ -6,9 +6,9 @@
 
 ## Known Issues
 
-1. When VS Code open windows directory while on remote WSL, sometimes might cause problems. But who is gonna do that, right?
-
-2. When authentication is not configured, commands that make `push` to remote commands may fail. (see: [How to setup](#how-to-setup))
+1. If you name your branches folders with capital letters like `Feature` instead of `feature` will not work. Bug in `git-flow` extension of git CLI command.
+2. When VS Code open windows directory while on remote WSL, sometimes might cause problems. But who is gonna do that, right?
+3. When authentication is not configured, commands that make `push` to remote commands may fail. (see: [How to setup](#how-to-setup))
 
 ## How to use
 
@@ -141,6 +141,8 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
+- 1.1.0
+  - optimize - performance improvement using memoization technique.
 - 1.0.0
   - add - Parameter to show all internal git commands run in `git flow` in output window
   - add - Output logger named Git Flow

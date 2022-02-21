@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import {Util} from "./lib/Util";
 
+let checked:boolean = false;
+
 export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     private _onDidChangeTreeData: vscode.EventEmitter<Tag | undefined | null | void> =
         new vscode.EventEmitter<Tag | undefined | null | void>();
@@ -23,9 +25,11 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     }
 
     getChildren(element?: Tag): Thenable<Tag[]> {
-        if (!this.util.check()) {
+        if (!checked && !this.util.check()) {
             return Promise.resolve([]);
         }
+        checked = true;
+        
         this.remotes = this.util
             .execSync("git ls-remote --tags origin")
             .split("\n")
