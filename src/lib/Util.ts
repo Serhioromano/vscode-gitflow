@@ -46,6 +46,8 @@ export class Util {
             this.logger.log(out, cmd);
             return out;
         } catch (e) {
+            vscode.window.showErrorMessage(`Error executing: ${cmd} : ${e}`);
+            this.logger.log(""+e, cmd, LogLevels.error);
             return "" + e;
         }
     }
