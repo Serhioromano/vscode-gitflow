@@ -58,6 +58,10 @@ Quick Pick is a popup with essential Git Flow commands, like create new flow bra
 
 ![Git flow quick pik](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/qp.png)
 
+#### Automatic version bump
+
+It can automatically update you `package.json` file for a new tag. It works only on `release` and `hotfix` branches. When you create one, as a name use version standard. For example create `1.0.1` release which result in `release/1.0.1` branch. When you finish it, before finish command `<version>` tag of `package.json` will be updated to `1.0.1` and automatically committed to git.
+
 ## How to work with Support branch
 
 ### What is Git Flow Support branch for?
