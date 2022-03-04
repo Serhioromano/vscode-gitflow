@@ -403,8 +403,14 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         })
                         .join(" ") || "";
 
+                let msg = await vscode.window.showInputBox({
+                    title: 'Message',
+                    value: `Finish ${ucf(feature)}: ${name}`,
+                });
+                msg = msg?.replace("\"","'");
+
                 if (["hotfix", "release"].includes(feature)) {
-                    option = `${option} -m"Finish ${ucf(feature)}: ${name}" -T "${name}"`;
+                    option = `${option} -m"${msg}" -T "${name}"`;
                 }
                 break;
         }
