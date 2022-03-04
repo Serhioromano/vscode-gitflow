@@ -422,15 +422,10 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         if (chc.includes("[Unreleased]") || chc.includes("[unreleased]") || chc.includes("[UNRELEASED]")) {
                             let date = new Date();
                             chc = chc
-                                .replace("[Unreleased]", `[${name}]`)
-                                .replace("[unreleased]", `[${name}]`)
-                                .replace("[UNRELEASED]", `[${name}]`)
-                                .replace("yyyy", `${date.getFullYear()}`)
-                                .replace("YYYY", `${date.getFullYear()}`)
-                                .replace("mm", `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`)
-                                .replace("MM", `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`)
-                                .replace("dd", `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`)
-                                .replace("DD", `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`);
+                                .replace(/\[unreleased\]/i, `[${name}]`)
+                                .replace(/\byyyy\b/i, `${date.getFullYear()}`)
+                                .replace(/\bmm\b/i, `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`)
+                                .replace(/\bdd\b/i, `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`);
 
                             writeFileSync(this.util.workspaceRoot + "/CHANGELOG.md", chc);
                             this.util.execSync("git add ./CHANGELOG.md");
