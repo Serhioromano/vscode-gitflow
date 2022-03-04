@@ -2,6 +2,12 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [1.2.0] 03/04/22
+
+- change - Now version bump happens on hotfix or release start rather than finish
+- add - update changelog automatically
+- enhance - Allow change finish message when finish hotfix or release
+
 ## [1.1.0] 02/21/22
 
 - optimize - performance improvement using memoization technique.

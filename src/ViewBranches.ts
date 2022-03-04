@@ -1,7 +1,8 @@
 import { debounce, memoize, throttle } from './lib/decorators';
 import * as vscode from "vscode";
-import {Util} from "./lib/Util";
-import {readFileSync, writeFileSync, existsSync} from "fs";
+import { Util } from "./lib/Util";
+import { readFileSync, writeFileSync, existsSync } from "fs";
+import { Tag } from './ViewVersions';
 
 interface BranchList {
     develop: string;
@@ -13,7 +14,7 @@ interface BranchList {
     support: string;
 }
 type Emitter = Flow | undefined | null | void;
-let checked:boolean = false;
+let checked: boolean = false;
 
 
 
@@ -251,7 +252,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
                 this.listBranches.filter((el) => el.split("/").length < 2),
-                {title: "Select branch"}
+                { title: "Select branch" }
             );
         }
 
@@ -321,7 +322,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                             .split("\n")
                             .map((el) => el.trim().replace("* ", ""))
                             .filter((el) => el !== ""),
-                        {title: "Start support branch based on a tag"}
+                        { title: "Start support branch based on a tag" }
                     );
                     if (base === undefined) {
                         return;
@@ -380,7 +381,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         base =
                             (await vscode.window.showQuickPick(
                                 this.listBranches.filter((el) => el.split("/").length < 2),
-                                {title: "Select base branch"}
+                                { title: "Select base branch" }
                             )) || "";
                 }
                 if (base === undefined) {
@@ -402,22 +403,40 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                             return m === null ? "" : m[1];
                         })
                         .join(" ") || "";
-                if (["hotfix", "release"].includes(feature) && exist) {
-                    version =
-                        JSON.parse(readFileSync(this.util.workspaceRoot + "/package.json", "utf8")).version ||
-                        "";
-                    if (version !== "" && name !== version && `${name}`.match(/^[0-9\.]*$/) !== null) {
-                        writeFileSync(
-                            this.util.workspaceRoot + "/package.json",
-                            readFileSync(this.util.workspaceRoot + "/package.json", "utf8").replace(
-                                version,
-                                `${name}`
-                            )
-                        );
-                        this.util.execSync("git add ./package.json");
-                        this.util.execSync('git commit ./package.json -m"Version bump"');
+
+                let msg;
+
+                if (["hotfix", "release"].includes(feature)) {
+                    msg = await vscode.window.showInputBox({
+                        title: 'Message',
+                        value: `Finish ${ucf(feature)}: ${name}`,
+                    });
+                    msg = msg?.replace("\"", "'");
+                    if (`${msg?.trim()}` === "") {
+                        msg = `Finish ${ucf(feature)}: ${name}`;
                     }
-                    option = `${option} -m"Finish ${ucf(feature)}: ${name}" -T "${name}"`;
+                    option = `${option} -m"${msg}" -T "${name}"`;
+
+                    if (existsSync(this.util.workspaceRoot + "/CHANGELOG.md")) {
+                        let chc = `${readFileSync(this.util.workspaceRoot + "/CHANGELOG.md")}`;
+                        if (chc.includes("[Unreleased]") || chc.includes("[unreleased]") || chc.includes("[UNRELEASED]")) {
+                            let date = new Date();
+                            chc = chc
+                                .replace("[Unreleased]", `[${name}]`)
+                                .replace("[unreleased]", `[${name}]`)
+                                .replace("[UNRELEASED]", `[${name}]`)
+                                .replace("yyyy", `${date.getFullYear()}`)
+                                .replace("YYYY", `${date.getFullYear()}`)
+                                .replace("mm", `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`)
+                                .replace("MM", `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`)
+                                .replace("dd", `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`)
+                                .replace("DD", `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`);
+
+                            writeFileSync(this.util.workspaceRoot + "/CHANGELOG.md", chc);
+                            this.util.execSync("git add ./CHANGELOG.md");
+                            this.util.execSync('git commit ./CHANGELOG.md -m"Update Changelog"');
+                        }
+                    }
                 }
                 break;
         }
@@ -435,6 +454,23 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 vscode.commands.executeCommand("gitflow.refreshT");
             }
         });
+
+        if (["hotfix", "release"].includes(feature) && exist && what === 'start') {
+            version =
+                JSON.parse(readFileSync(this.util.workspaceRoot + "/package.json", "utf8")).version ||
+                "";
+            if (version !== "" && name !== version && `${name}`.match(/^[0-9\.]*$/) !== null) {
+                writeFileSync(
+                    this.util.workspaceRoot + "/package.json",
+                    readFileSync(this.util.workspaceRoot + "/package.json", "utf8").replace(
+                        version,
+                        `${name}`
+                    )
+                );
+                this.util.execSync("git add ./package.json");
+                this.util.execSync('git commit ./package.json -m"Version bump"');
+            }
+        }
 
         function ucf(string: string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
@@ -525,7 +561,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
                 this.listBranches.filter((el) => el.search(this.branches.support) !== -1),
-                {title: "Select bugfix"}
+                { title: "Select bugfix" }
             );
         }
         if (name === undefined) {
@@ -559,7 +595,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
                 this.listBranches.filter((el) => el.search(this.branches.support) !== -1),
-                {title: "Select support branch"}
+                { title: "Select support branch" }
             );
         }
         if (name === undefined) {
@@ -577,7 +613,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
                 this.listBranches.filter((el) => el.search(this.branches.support) !== -1),
-                {title: "Select support branch"}
+                { title: "Select support branch" }
             );
         }
         if (name === undefined) {
@@ -671,7 +707,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
                 this.listBranches.filter((el) => el.search(this.branches.release) !== -1),
-                {title: "Select release branch"}
+                { title: "Select release branch" }
             );
         }
         if (name === undefined) {
