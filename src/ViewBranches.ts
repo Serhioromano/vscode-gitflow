@@ -411,8 +411,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         title: 'Message',
                         value: `Finish ${ucf(feature)}: ${name}`,
                     });
-                    msg = msg?.replace("\"", "'");
-                    if (`${msg?.trim()}` === "") {
+                    msg = `${msg}`.replace("\"", "'").trim();
+                    if (msg === "") {
                         msg = `Finish ${ucf(feature)}: ${name}`;
                     }
                     option = `${option} -m"${msg}" -T "${name}"`;
