@@ -4,6 +4,9 @@
 
 > **Attention!!!**. From version 0.5.11 it requires latest VS Code `>=1.64.0`.
 
+
+> Looking for an artist to contribute the extension icon.
+
 ## Known Issues
 
 1. If you name your branches folders with capital letters like `Feature` instead of `feature` will not work. Bug in `git-flow` extension of git CLI command.
