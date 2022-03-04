@@ -418,15 +418,22 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     option = `${option} -m"${msg}" -T "${name}"`;
 
                     if (existsSync(this.util.workspaceRoot + "/CHANGELOG.md")) {
+                        let updated = false;
                         let chc = `${readFileSync(this.util.workspaceRoot + "/CHANGELOG.md")}`;
-                        if (chc.includes("[Unreleased]") || chc.includes("[unreleased]") || chc.includes("[UNRELEASED]")) {
-                            let date = new Date();
-                            chc = chc
-                                .replace(/\[unreleased\]/i, `[${name}]`)
-                                .replace(/\byyyy\b/i, `${date.getFullYear()}`)
-                                .replace(/\bmm\b/i, `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`)
-                                .replace(/\bdd\b/i, `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`);
+                        chc = chc.split("\n").map(el => {
+                            if (el.includes("[Unreleased]") || chc.includes("[unreleased]") || chc.includes("[UNRELEASED]")) {
+                                let date = new Date();
+                                updated = true;
+                                el = el
+                                    .replace(/\[unreleased\]/i, `[${name}]`)
+                                    .replace(/\byyyy\b/i, `${date.getFullYear()}`)
+                                    .replace(/\bmm\b/i, `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`)
+                                    .replace(/\bdd\b/i, `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`);
+                            }
+                            return el;
+                        }).join("\n");
 
+                        if (updated) {
                             writeFileSync(this.util.workspaceRoot + "/CHANGELOG.md", chc);
                             this.util.execSync("git add ./CHANGELOG.md");
                             this.util.execSync('git commit ./CHANGELOG.md -m"Update Changelog"');

@@ -2,6 +2,11 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [1.2.7] 03/04/22
+
+- fix -  changelog update `mm` not to be replaced in a word like co**mm**and.
+- fix - release message is undefined
+
 ## [1.2.0] 03/04/22
 
 - change - Now version bump happens on hotfix or release start rather than finish
