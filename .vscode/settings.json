@@ -23,6 +23,7 @@
         "pushproduction",
         "pushtag",
         "retc",
+        "showcommands",
         "vsix"
     ],
     "workbench.colorTheme": "Dracula",

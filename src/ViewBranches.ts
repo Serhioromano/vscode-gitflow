@@ -2,6 +2,7 @@ import { debounce, memoize, throttle } from './lib/decorators';
 import * as vscode from "vscode";
 import { Util } from "./lib/Util";
 import { readFileSync, writeFileSync, existsSync } from "fs";
+import { Tag } from './ViewVersions';
 
 interface BranchList {
     develop: string;
@@ -403,14 +404,39 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         })
                         .join(" ") || "";
 
-                let msg = await vscode.window.showInputBox({
-                    title: 'Message',
-                    value: `Finish ${ucf(feature)}: ${name}`,
-                });
-                msg = msg?.replace("\"","'");
+                let msg;
 
                 if (["hotfix", "release"].includes(feature)) {
+                    msg = await vscode.window.showInputBox({
+                        title: 'Message',
+                        value: `Finish ${ucf(feature)}: ${name}`,
+                    });
+                    msg = msg?.replace("\"", "'");
+                    if (`${msg}` === "") {
+                        msg = `Finish ${ucf(feature)}: ${name}`;
+                    }
                     option = `${option} -m"${msg}" -T "${name}"`;
+
+                    if (existsSync(this.util.workspaceRoot + "/CHANGELOG.md")) {
+                        let chc = `${readFileSync(this.util.workspaceRoot + "/CHANGELOG.md")}`;
+                        if (chc.includes("[Unreleased]") || chc.includes("[unreleased]") || chc.includes("[UNRELEASED]")) {
+                            let date = new Date();
+                            chc = chc
+                                .replace("[Unreleased]", `[${name}]`)
+                                .replace("[unreleased]", `[${name}]`)
+                                .replace("[UNRELEASED]", `[${name}]`)
+                                .replace("yyyy", `${date.getFullYear()}`)
+                                .replace("YYYY", `${date.getFullYear()}`)
+                                .replace("mm", `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`)
+                                .replace("MM", `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`)
+                                .replace("dd", `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`)
+                                .replace("DD", `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`);
+
+                            writeFileSync(this.util.workspaceRoot + "/CHANGELOG.md", chc);
+                            this.util.execSync("git add ./CHANGELOG.md");
+                            this.util.execSync('git commit ./CHANGELOG.md -m"Update Changelog"');
+                        }
+                    }
                 }
                 break;
         }

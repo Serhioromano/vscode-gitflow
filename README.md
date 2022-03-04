@@ -42,6 +42,7 @@ All basic operations you need to do in a single place.
 - Push local tag
 - Delete tag locally and\or remotely
 - Automatic version update in `package.json`
+- Automatic update `CHANGELOG.md`
 - Multiple folder workspace support
 - Quick Pick menu (use `Shift`+`Alt`+`D`)
 - All commands results are outputted in output window named `Git Flow`. There is a parameter that also allow to show all internal `git` commands run inside `git flow`.
@@ -60,7 +61,21 @@ Quick Pick is a popup with essential Git Flow commands, like create new flow bra
 
 #### Automatic version bump
 
-It can automatically update you `package.json` file for a new tag. It works only on `release` and `hotfix` branches. When you create one, as a name use version standard. For example create `1.0.1` release which result in `release/1.0.1` branch. When you finish it, before finish command `<version>` tag of `package.json` will be updated to `1.0.1` and automatically committed to git.
+It can automatically update you `package.json` file for a new tag. It works only on `release` and `hotfix` branches. When you create one, as a name use version standard. For example create `1.0.1` release which result in `release/1.0.1` branch. `version` property of `package.json` will be updated to `1.0.1` and automatically committed to git.
+
+#### Automatic changelog update
+
+It can automatically update you `CHANGELOG.md`. If you have there something like
+
+```md
+## [Unreleased] - yyyy-mm-dd
+
+or
+
+### [UNRELEASED] (DD-MM-YYYY)
+```
+
+Or any combination of `[Unreleased]`, `[unreleased]`, `[UNRELEASED]`, `yyyy`, `mm` or `dd` and its all uppercasee copies, will be replaced.
 
 ## How to work with Support branch
 
@@ -145,6 +160,10 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
+- 1.2.0
+  - change - Now version bump happens on hotfix or release start rather than finish
+  - add - update changelog automatically
+  - enhance - Allow change finish message when finish hotfix or release
 - 1.1.0
   - optimize - performance improvement using memoization technique.
 - 1.0.0
