@@ -2,6 +2,10 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [1.2.9] 02/07/2022
+
+- security - fix string sanitization
+
 ## [1.2.8] 03/07/22
 
 - fix - stop command on ESC.
