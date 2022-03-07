@@ -431,7 +431,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         let updated = false;
                         let chc = `${readFileSync(this.util.workspaceRoot + "/CHANGELOG.md")}`;
                         chc = chc.split("\n").map(el => {
-                            if (el.includes("[Unreleased]") || chc.includes("[unreleased]") || chc.includes("[UNRELEASED]")) {
+                            if (el.toLowerCase().includes("[unreleased]")) {
                                 let date = new Date();
                                 updated = true;
                                 el = el
@@ -465,24 +465,24 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             if (["hotfix", "release"].includes(feature)) {
                 vscode.commands.executeCommand("gitflow.refreshT");
             }
+            if (["hotfix", "release"].includes(feature) && exist && what === 'start') {
+                version =
+                    JSON.parse(readFileSync(this.util.workspaceRoot + "/package.json", "utf8")).version ||
+                    "";
+                if (version !== "" && name !== version && `${name}`.match(/^[0-9\.]*$/) !== null) {
+                    writeFileSync(
+                        this.util.workspaceRoot + "/package.json",
+                        readFileSync(this.util.workspaceRoot + "/package.json", "utf8").replace(
+                            version,
+                            `${name}`
+                        )
+                    );
+                    this.util.execSync("git add ./package.json");
+                    this.util.execSync('git commit ./package.json -m"Version bump"');
+                }
+            }
         });
 
-        if (["hotfix", "release"].includes(feature) && exist && what === 'start') {
-            version =
-                JSON.parse(readFileSync(this.util.workspaceRoot + "/package.json", "utf8")).version ||
-                "";
-            if (version !== "" && name !== version && `${name}`.match(/^[0-9\.]*$/) !== null) {
-                writeFileSync(
-                    this.util.workspaceRoot + "/package.json",
-                    readFileSync(this.util.workspaceRoot + "/package.json", "utf8").replace(
-                        version,
-                        `${name}`
-                    )
-                );
-                this.util.execSync("git add ./package.json");
-                this.util.execSync('git commit ./package.json -m"Version bump"');
-            }
-        }
 
         function ucf(string: string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
