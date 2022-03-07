@@ -2,6 +2,8 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [unreleased] mm/dd/yyyy
+
 ## [1.2.8] 03/07/22
 
 - fix - stop command on ESC.
