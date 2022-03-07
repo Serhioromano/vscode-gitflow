@@ -2,6 +2,12 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [1.2.8] 03/07/22
+
+- fix - stop command on ESC.
+- fix - run version bump only when released or hotfix is started
+- enhance - `CHANGELOG.md` update conditions
+
 ## [1.2.7] 03/04/22
 
 - fix -  changelog update `mm` not to be replaced in a word like co**mm**and.
