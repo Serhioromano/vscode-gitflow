@@ -339,7 +339,10 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     title: "Select options",
                     canPickMany: true,
                 });
-                if (options?.includes("[-r] Delete remote branch")) {
+                if (options === undefined) {
+                    return;
+                }
+                if (options.includes("[-r] Delete remote branch")) {
                     progress = true;
                 }
                 option = options
@@ -357,8 +360,11 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         canPickMany: true,
                     }
                 );
+                if (options === undefined) {
+                    return;
+                }
                 option = options
-                    ?.map((el) => {
+                    .map((el) => {
                         let m = el.match(/\[([^\]]*)\]/);
                         return m === null ? "" : m[1];
                     })
@@ -396,13 +402,14 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 ) {
                     progress = true;
                 }
+                if (options === undefined) {
+                    return;
+                }
                 option =
-                    options
-                        ?.map((el) => {
-                            let m = el.match(/\[([^\]]*)\]/);
-                            return m === null ? "" : m[1];
-                        })
-                        .join(" ") || "";
+                    options.map((el) => {
+                        let m = el.match(/\[([^\]]*)\]/);
+                        return m === null ? "" : m[1];
+                    }).join(" ") || "";
 
                 let msg;
 
@@ -411,6 +418,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         title: 'Message',
                         value: `Finish ${ucf(feature)}: ${name}`,
                     });
+                    if (msg === undefined) {
+                        return;
+                    }
                     msg = `${msg}`.replace("\"", "'").trim();
                     if (msg === "") {
                         msg = `Finish ${ucf(feature)}: ${name}`;
