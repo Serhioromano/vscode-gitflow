@@ -55,7 +55,7 @@ export class Util {
             this.logger.log(out, cmd);
             return out;
         } catch (e) {
-            this.logger.log(`${e}`, cmd, LogLevels.error);
+            this.logger.log(`ERROR: ${e}`, cmd, LogLevels.error);
             vscode.window.showErrorMessage(`Error executing: ${cmd} : ${e}`);
             return "" + e;
         }
