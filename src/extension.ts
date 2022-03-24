@@ -13,6 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     const logger = new Logger();
     logger.log("Extension activate", "activate");
+    logger.log(rootPath, "Root");
 
     const util = new Util(rootPath, logger);
 

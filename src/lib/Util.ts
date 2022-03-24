@@ -19,7 +19,7 @@ export class Util {
         this.path = git.git.path;
         // const gitBaseExtension = vscode.extensions.getExtension<GitBaseExtension>("vscode.git-base")!.exports;
         // const gitbase = gitExtension.getAPI(1);
-     }
+    }
 
     private progress(cmd: string, cb: (s: string) => void) {
         vscode.window.withProgress(
@@ -64,10 +64,7 @@ export class Util {
     @MemoizeExpiring(1000)
     private execCb(cmd: string, cb: (s: string) => void, resolve?: any): void {
         exec(
-            cmd,
-            {
-                cwd: this.workspaceRoot,
-            },
+            cmd, { cwd: this.workspaceRoot, },
             (err, stdout, stderr) => {
                 if (err) {
                     vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
