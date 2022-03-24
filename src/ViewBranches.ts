@@ -25,6 +25,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     public curBranch: string = "";
     public listBranches: string[] = [];
     public listRemoteBranches: string[] = [];
+    public hasOrigin: boolean = false;
 
     private terminal: vscode.Terminal | null;
     private branches: BranchList;
@@ -100,6 +101,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 .execSync(`"${this.util.path}" branch -r`)
                 .split("\n")
                 .map((el) => {
+                    if(el.toLowerCase().search("origin/") !== -1){
+                        this.hasOrigin = true;
+                    }
                     let a = el.split("/");
                     a.shift();
                     return a.join("/");
@@ -220,6 +224,10 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     }
 
     syncAll() {
+        if(!this.hasOrigin) {
+            vscode.window.showWarningMessage("No ORIGIN remote has been found!");
+            return;
+        }
         vscode.window
             .withProgress(
                 {
