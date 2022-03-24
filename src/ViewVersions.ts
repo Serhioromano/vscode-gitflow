@@ -29,15 +29,15 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
             return Promise.resolve([]);
         }
         checked = true;
-        
+
         this.remotes = this.util
-            .execSync("git ls-remote --tags origin")
+            .execSync(`"${this.util.path}" ls-remote --tags origin`)
             .split("\n")
             .filter((el) => el.trim().search("refs/tags/") > 0)
             .map((el) => el.split("/")[2].replace("^{}", ""));
 
         this.tags = this.util
-            .execSync("git tag --sort=-v:refname")
+            .execSync(`"${this.util.path}" tag --sort=-v:refname`)
             .split("\n")
             .map((el) => el.trim())
             .filter((el) => el !== "");
@@ -56,7 +56,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
         let name = node?.label;
         if (node === undefined) {
             let tags = this.util
-                .execSync("git tag --sort=-v:refname")
+                .execSync(`"${this.util.path}" tag --sort=-v:refname`)
                 .split("\n")
                 .map((el) => el.trim())
                 .filter((el) => el !== "");
@@ -75,10 +75,10 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
                 })) || [];
         }
         if (remotes.includes("Delete Remote")) {
-            this.util.execSync(`git push --delete origin ${name}`);
+            this.util.execSync(`"${this.util.path}" push --delete origin ${name}`);
         }
         if (remotes.includes("Delete local")) {
-            this.util.execSync(`git tag -d ${name}`);
+            this.util.execSync(`"${this.util.path}" tag -d ${name}`);
         }
         this._onDidChangeTreeData.fire();
     }
@@ -97,12 +97,12 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
             return;
         }
 
-        this.util.exec(`git push origin ${name}`, true, (s) => {
+        this.util.exec(`"${this.util.path}" push origin ${name}`, true, (s) => {
             this._onDidChangeTreeData.fire();
         });
     }
     pushTags() {
-        this.util.exec(`git push origin --tags`, true, (s) => {
+        this.util.exec(`"${this.util.path}" push origin --tags`, true, (s) => {
             this._onDidChangeTreeData.fire();
         });
     }
