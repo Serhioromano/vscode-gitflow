@@ -30,6 +30,7 @@
     "[typescript]": {
         "editor.defaultFormatter": "vscode.typescript-language-features"
     },
+    "peacock.remoteColor": "#1857a4",
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#1f6fd0",
         "activityBar.activeBorder": "#ee90bb",
@@ -48,6 +49,5 @@
         "titleBar.activeForeground": "#e7e7e7",
         "titleBar.inactiveBackground": "#1857a499",
         "titleBar.inactiveForeground": "#e7e7e799"
-    },
-    "peacock.remoteColor": "#1857a4"
+    }
 }
