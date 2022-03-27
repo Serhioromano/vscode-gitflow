@@ -73,7 +73,7 @@ export class Util {
     private execCb(cmd: string, cb: (s: string) => void, resolve?: any): void {
         if (this.path.trim().length === 0) {
             return;
-        }
+        }   
         exec(
             cmd, { cwd: this.workspaceRoot, },
             (err, stdout, stderr) => {
