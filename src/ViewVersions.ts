@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import {Util} from "./lib/Util";
+import { Util } from "./lib/Util";
 
-let checked:boolean = false;
+let checked: boolean = false;
 
 export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     private _onDidChangeTreeData: vscode.EventEmitter<Tag | undefined | null | void> =
@@ -11,6 +11,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     private terminal: vscode.Terminal | null;
     private remotes: string[] = [];
     private tags: string[] = [];
+    private hasOrigin: boolean = false;
 
     constructor(private util: Util) {
         this.terminal = null;
@@ -29,12 +30,22 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
             return Promise.resolve([]);
         }
         checked = true;
-
-        this.remotes = this.util
-            .execSync(`"${this.util.path}" ls-remote --tags origin`)
+        this.util
+            .execSync(`"${this.util.path}" remote`)
             .split("\n")
-            .filter((el) => el.trim().search("refs/tags/") > 0)
-            .map((el) => el.split("/")[2].replace("^{}", ""));
+            .map((el) => {
+                if (el.toLowerCase().trim() === "origin") {
+                    this.hasOrigin = true;
+                }
+            });
+
+        if (this.hasOrigin) {
+            this.remotes = this.util
+                .execSync(`"${this.util.path}" ls-remote --tags origin`)
+                .split("\n")
+                .filter((el) => el.trim().search("refs/tags/") > 0)
+                .map((el) => el.split("/")[2].replace("^{}", ""));
+        }
 
         this.tags = this.util
             .execSync(`"${this.util.path}" tag --sort=-v:refname`)
@@ -84,6 +95,10 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     }
 
     async pushTag(node: Tag | undefined) {
+        if(!this.hasOrigin) {
+            vscode.window.showWarningMessage("No ORIGIN remote has been found!");
+            return;
+        }
         let name = node?.label;
         if (node === undefined) {
             let tags = this.util
@@ -102,6 +117,10 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
         });
     }
     pushTags() {
+        if(!this.hasOrigin) {
+            vscode.window.showWarningMessage("No ORIGIN remote has been found!");
+            return;
+        }
         this.util.exec(`"${this.util.path}" push origin --tags`, true, (s) => {
             this._onDidChangeTreeData.fire();
         });
