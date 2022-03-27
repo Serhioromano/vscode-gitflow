@@ -2,7 +2,10 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [unreleased] mm/dd/yyyy
+## [1.3.0] 02/27/2022
+
+- add - use `git.path` settings.
+- enhance - better find git executable path on windows.
 
 ## [1.2.9] 02/07/2022
 
