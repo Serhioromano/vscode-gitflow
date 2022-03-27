@@ -25,6 +25,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     public curBranch: string = "";
     public listBranches: string[] = [];
     public listRemoteBranches: string[] = [];
+    public hasOrigin: boolean = false;
 
     private terminal: vscode.Terminal | null;
     private branches: BranchList;
@@ -56,7 +57,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let tree: Flow[] = [];
 
         if (element === undefined) {
-            let list = this.util.execSync("git flow config list");
+            let list = this.util.execSync(`"${this.util.path}" flow config list`);
 
             if (list.toLowerCase().search("not a gitflow-enabled repo yet") > 0) {
                 let initLink = "Init";
@@ -73,9 +74,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 return Promise.resolve([]);
             }
 
-            this.curBranch = this.util.execSync("git rev-parse --abbrev-ref HEAD").trim();
+            this.curBranch = this.util.execSync(`"${this.util.path}" rev-parse --abbrev-ref HEAD`).trim();
 
-            let b = this.util.execSync("git flow config list").replace("\r", "").split("\n");
+            let b = this.util.execSync(`"${this.util.path}" flow config list`).replace("\r", "").split("\n");
             this.branches.master = b[0].split(": ")[1].trim();
             this.branches.develop = b[1].split(": ")[1].trim();
             this.branches.feature = b[2].split(": ")[1].trim();
@@ -85,21 +86,24 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             this.branches.support = b[6].split(": ")[1].trim();
 
             // this.listRemotes = [...new Set(
-            //     this.util.execSync('git remote -v')
+            //     this.util.execSync(`"${this.util.path}" remote -v')
             //         .split("\n")
             //         .map(el => el.split("\t")[0].trim())
             //         .filter(el => el !== '')
             // )];
             this.listBranches = this.util
-                .execSync("git branch")
+                .execSync(`"${this.util.path}" branch`)
                 .split("\n")
                 .map((el) => el.trim().replace("* ", ""))
                 .filter((el) => el !== "");
 
             this.listRemoteBranches = this.util
-                .execSync("git branch -r")
+                .execSync(`"${this.util.path}" branch -r`)
                 .split("\n")
                 .map((el) => {
+                    if(el.toLowerCase().search("origin/") !== -1){
+                        this.hasOrigin = true;
+                    }
                     let a = el.split("/");
                     a.shift();
                     return a.join("/");
@@ -214,12 +218,16 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     }
 
     fetchAllBranches() {
-        this.util.exec("git fetch --all", true, (s) => {
+        this.util.exec(`"${this.util.path}" fetch --all`, true, (s) => {
             this._onDidChangeTreeData.fire();
         });
     }
 
     syncAll() {
+        if(!this.hasOrigin) {
+            vscode.window.showWarningMessage("No ORIGIN remote has been found!");
+            return;
+        }
         vscode.window
             .withProgress(
                 {
@@ -234,9 +242,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                                 .filter((el) => el.split("/").length < 2)
                                 .forEach((el) => {
                                     if (this.listRemoteBranches.includes(el)) {
-                                        this.util.execSync(`git pull origin ${el}`);
+                                        this.util.execSync(`"${this.util.path}" pull origin ${el}`);
                                     }
-                                    this.util.execSync(`git push origin ${el}:${el}`);
+                                    this.util.execSync(`"${this.util.path}" push origin ${el}:${el}`);
                                 });
                             resolve();
                         }, 100);
@@ -256,7 +264,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             );
         }
 
-        let cmd = `git checkout -q ${name}`;
+        let cmd = `"${this.util.path}" checkout -q ${name}`;
 
         this.util.exec(cmd, false, (s) => {
             this._onDidChangeTreeData.fire();
@@ -318,7 +326,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 if (feature === "support") {
                     base = await vscode.window.showQuickPick(
                         this.util
-                            .execSync("git tag --sort=-v:refname")
+                            .execSync(`"${this.util.path}" tag --sort=-v:refname`)
                             .split("\n")
                             .map((el) => el.trim().replace("* ", ""))
                             .filter((el) => el !== ""),
@@ -374,7 +382,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     case "support":
                         let root = this.listBranches.filter((el) => el.split("/").length < 2);
                         let tags = this.util
-                            .execSync("git tag --sort=-v:refname")
+                            .execSync(`"${this.util.path}" tag --sort=-v:refname`)
                             .split("\n")
                             .map((el) => el.trim().replace("* ", ""))
                             .filter((el) => el !== "");
@@ -445,8 +453,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
                         if (updated) {
                             writeFileSync(this.util.workspaceRoot + "/CHANGELOG.md", chc);
-                            this.util.execSync("git add ./CHANGELOG.md");
-                            this.util.execSync('git commit ./CHANGELOG.md -m"Update Changelog"');
+                            this.util.execSync(`"${this.util.path}" add ./CHANGELOG.md`);
+                            this.util.execSync(`"${this.util.path}" commit ./CHANGELOG.md -m"Update Changelog"`);
                         }
                     }
                 }
@@ -457,7 +465,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             vscode.workspace.getConfiguration("gitflow").get("showAllCommands") === true
                 ? " --showcommands "
                 : " ";
-        let cmd = `git flow ${feature} ${what}${command}${option} ${name} ${base}`;
+        let cmd = `"${this.util.path}" flow ${feature} ${what}${command}${option} ${name} ${base}`;
         console.log(cmd);
 
         this.util.exec(cmd, progress, (s) => {
@@ -477,8 +485,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                             `${name}`
                         )
                     );
-                    this.util.execSync("git add ./package.json");
-                    this.util.execSync('git commit ./package.json -m"Version bump"');
+                    this.util.execSync(`"${this.util.path}" add ./package.json`);
+                    this.util.execSync(`"${this.util.path}" commit ./package.json -m"Version bump"`);
                 }
             }
         });
@@ -590,11 +598,11 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         });
         let option = options?.includes("[-f] Force deletion") ? "-D" : "-d";
 
-        this.util.execSync(`git checkout -d ${this.branches.develop}`);
-        this.util.execSync(`git branch ${option} ${name}`);
+        this.util.execSync(`"${this.util.path}" checkout -d ${this.branches.develop}`);
+        this.util.execSync(`"${this.util.path}" branch ${option} ${name}`);
 
         if (options?.includes("[-r] Delete remote branch")) {
-            this.util.exec(`git push --delete origin ${name}`, true, () => {
+            this.util.exec(`"${this.util.path}" push --delete origin ${name}`, true, () => {
                 this._onDidChangeTreeData.fire();
             });
             return;
@@ -603,6 +611,10 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         this._onDidChangeTreeData.fire();
     }
     async publishSupport(node: Flow | undefined) {
+        if(!this.hasOrigin) {
+            vscode.window.showWarningMessage("No ORIGIN remote has been found!");
+            return;
+        }
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
@@ -614,7 +626,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             return;
         }
 
-        let cmd = `git push origin ${name}`;
+        let cmd = `"${this.util.path}" push origin ${name}`;
 
         this.util.exec(cmd, true, (s) => {
             this._onDidChangeTreeData.fire();
@@ -632,7 +644,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             return;
         }
 
-        let cmd = `git checkout -q ${name}`;
+        let cmd = `"${this.util.path}" checkout -q ${name}`;
 
         this.util.exec(cmd, false, (s) => {
             this._onDidChangeTreeData.fire();
@@ -725,7 +737,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (name === undefined) {
             return;
         }
-        let cmd = `git checkout -q ${name}`;
+        let cmd = `"${this.util.path}" checkout -q ${name}`;
 
         this.util.exec(cmd, false, (s) => {
             this._onDidChangeTreeData.fire();
@@ -749,7 +761,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     //#endregion
 
     version(): string {
-        return this.util.execSync("git flow version");
+        return this.util.execSync(`"${this.util.path}" flow version`);
     }
 
     refresh(): void {

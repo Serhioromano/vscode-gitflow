@@ -2,6 +2,8 @@ import * as vscode from "vscode";
 import { execSync, exec, spawn, SpawnOptions } from "child_process";
 import { Logger, LogLevels } from "./logger";
 import { Memoize, MemoizeExpiring } from "typescript-memoize";
+import { GitExtension, API as GitAPI } from "./git";
+// import { GitBaseExtension, API as GitBaseAPI } from "./lib/git-base";
 
 type CmdResult = {
     retc: number | null;
@@ -10,7 +12,19 @@ type CmdResult = {
 };
 
 export class Util {
-    constructor(public workspaceRoot: string, private logger: Logger) { }
+    public path: string = '';
+    constructor(public workspaceRoot: string, private logger: Logger) {
+        this.path = vscode.workspace.getConfiguration('git').get('path') || "";
+        if (this.path.trim().length === 0) {
+            const gitExtension = vscode.extensions.getExtension<GitExtension>("vscode.git")!.exports;
+            const git = gitExtension.getAPI(1);
+            this.path = git.git.path;
+        }
+        if (this.path.trim().length === 0) {
+            vscode.window.showWarningMessage("Git is not found");
+        }
+        this.logger.log("Git found (path)", this.path);
+    }
 
     private progress(cmd: string, cb: (s: string) => void) {
         vscode.window.withProgress(
@@ -41,12 +55,15 @@ export class Util {
 
     @MemoizeExpiring(1000)
     public execSync(cmd: string): string {
+        if (this.path.trim().length === 0) {
+            return "";
+        }
         try {
             let out = execSync(cmd, { cwd: this.workspaceRoot }).toString();
             this.logger.log(out, cmd);
             return out;
         } catch (e) {
-            this.logger.log(`${e}`, cmd, LogLevels.error);
+            this.logger.log(`ERROR: ${e}`, cmd, LogLevels.error);
             vscode.window.showErrorMessage(`Error executing: ${cmd} : ${e}`);
             return "" + e;
         }
@@ -54,11 +71,11 @@ export class Util {
 
     @MemoizeExpiring(1000)
     private execCb(cmd: string, cb: (s: string) => void, resolve?: any): void {
+        if (this.path.trim().length === 0) {
+            return;
+        }
         exec(
-            cmd,
-            {
-                cwd: this.workspaceRoot,
-            },
+            cmd, { cwd: this.workspaceRoot, },
             (err, stdout, stderr) => {
                 if (err) {
                     vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
@@ -80,20 +97,20 @@ export class Util {
             vscode.window.showErrorMessage("No folder opened");
             return false;
         }
-        let status = this.execSync("git version").toLowerCase();
+        let status = this.execSync(`"${this.path}" version`).toLowerCase();
         if (status.search("git version") === -1) {
             vscode.window.showWarningMessage("Looks like git CLI is not installed.");
             return false;
         }
 
-        status = this.execSync("git status").toLowerCase();
+        status = this.execSync(`"${this.path}" status`).toLowerCase();
 
         if (status.search("not a git repository") !== -1) {
             vscode.window.showWarningMessage("This project is not a Git repository.");
             return false;
         }
 
-        if (this.execSync("git flow").toLowerCase().search("is not a git command") !== -1) {
+        if (this.execSync(`"${this.path}" flow log`).toLowerCase().search("is not a git command") !== -1) {
             let installLink = "Install";
             vscode.window
                 .showWarningMessage("To use Git Flow extension please install Git flow (AVH).", installLink)
