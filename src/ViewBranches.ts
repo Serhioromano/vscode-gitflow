@@ -466,7 +466,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 ? " --showcommands "
                 : " ";
         let cmd = `"${this.util.path}" flow ${feature} ${what}${command}${option} ${name} ${base}`;
-        console.log(cmd);
+        //console.log(cmd);
 
         this.util.exec(cmd, progress, (s) => {
             this._onDidChangeTreeData.fire();
