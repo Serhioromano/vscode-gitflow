@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import {Util} from "./lib/Util";
+import { Util } from "./lib/Util";
 
-let checked:boolean = false;
+let checked: boolean = false;
 
 export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     private _onDidChangeTreeData: vscode.EventEmitter<Tag | undefined | null | void> =
@@ -11,6 +11,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     private terminal: vscode.Terminal | null;
     private remotes: string[] = [];
     private tags: string[] = [];
+    private hasOrigin: boolean = false;
 
     constructor(private util: Util) {
         this.terminal = null;
@@ -29,15 +30,25 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
             return Promise.resolve([]);
         }
         checked = true;
-        
-        this.remotes = this.util
-            .execSync("git ls-remote --tags origin")
+        this.util
+            .execSync(`"${this.util.path}" remote`)
             .split("\n")
-            .filter((el) => el.trim().search("refs/tags/") > 0)
-            .map((el) => el.split("/")[2].replace("^{}", ""));
+            .map((el) => {
+                if (el.toLowerCase().trim() === "origin") {
+                    this.hasOrigin = true;
+                }
+            });
+
+        if (this.hasOrigin) {
+            this.remotes = this.util
+                .execSync(`"${this.util.path}" ls-remote --tags origin`)
+                .split("\n")
+                .filter((el) => el.trim().search("refs/tags/") > 0)
+                .map((el) => el.split("/")[2].replace("^{}", ""));
+        }
 
         this.tags = this.util
-            .execSync("git tag --sort=-v:refname")
+            .execSync(`"${this.util.path}" tag --sort=-v:refname`)
             .split("\n")
             .map((el) => el.trim())
             .filter((el) => el !== "");
@@ -56,7 +67,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
         let name = node?.label;
         if (node === undefined) {
             let tags = this.util
-                .execSync("git tag --sort=-v:refname")
+                .execSync(`"${this.util.path}" tag --sort=-v:refname`)
                 .split("\n")
                 .map((el) => el.trim())
                 .filter((el) => el !== "");
@@ -75,15 +86,19 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
                 })) || [];
         }
         if (remotes.includes("Delete Remote")) {
-            this.util.execSync(`git push --delete origin ${name}`);
+            this.util.execSync(`"${this.util.path}" push --delete origin ${name}`);
         }
         if (remotes.includes("Delete local")) {
-            this.util.execSync(`git tag -d ${name}`);
+            this.util.execSync(`"${this.util.path}" tag -d ${name}`);
         }
         this._onDidChangeTreeData.fire();
     }
 
     async pushTag(node: Tag | undefined) {
+        if(!this.hasOrigin) {
+            vscode.window.showWarningMessage("No ORIGIN remote has been found!");
+            return;
+        }
         let name = node?.label;
         if (node === undefined) {
             let tags = this.util
@@ -97,12 +112,16 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
             return;
         }
 
-        this.util.exec(`git push origin ${name}`, true, (s) => {
+        this.util.exec(`"${this.util.path}" push origin ${name}`, true, (s) => {
             this._onDidChangeTreeData.fire();
         });
     }
     pushTags() {
-        this.util.exec(`git push origin --tags`, true, (s) => {
+        if(!this.hasOrigin) {
+            vscode.window.showWarningMessage("No ORIGIN remote has been found!");
+            return;
+        }
+        this.util.exec(`"${this.util.path}" push origin --tags`, true, (s) => {
             this._onDidChangeTreeData.fire();
         });
     }

@@ -163,7 +163,16 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
-- 1.2.0
+- 1.3.0
+  - add - use `git.path` settings.
+  - enhance - better find git executable path on windows.
+- 1.2.9
+  - security - fix string sanitization
+  - fix - stop command on ESC.
+  - fix - run version bump only when released or hotfix is started
+  - enhance - `CHANGELOG.md` update conditions
+  - fix -  changelog update `mm` not to be replaced in a word like co**mm**and.
+  - fix - release message is undefined
   - change - Now version bump happens on hotfix or release start rather than finish
   - add - update changelog automatically
   - enhance - Allow change finish message when finish hotfix or release
