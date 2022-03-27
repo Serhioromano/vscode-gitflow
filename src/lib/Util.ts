@@ -73,7 +73,7 @@ export class Util {
     private execCb(cmd: string, cb: (s: string) => void, resolve?: any): void {
         if (this.path.trim().length === 0) {
             return;
-        }   
+        }
         exec(
             cmd, { cwd: this.workspaceRoot, },
             (err, stdout, stderr) => {
@@ -110,7 +110,7 @@ export class Util {
             return false;
         }
 
-        if (this.execSync(`"${this.path}" flow`).toLowerCase().search("is not a git command") !== -1) {
+        if (this.execSync(`"${this.path}" flow log`).toLowerCase().search("is not a git command") !== -1) {
             let installLink = "Install";
             vscode.window
                 .showWarningMessage("To use Git Flow extension please install Git flow (AVH).", installLink)
