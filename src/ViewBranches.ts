@@ -611,6 +611,10 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         this._onDidChangeTreeData.fire();
     }
     async publishSupport(node: Flow | undefined) {
+        if(!this.hasOrigin) {
+            vscode.window.showWarningMessage("No ORIGIN remote has been found!");
+            return;
+        }
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
