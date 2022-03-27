@@ -14,11 +14,16 @@ type CmdResult = {
 export class Util {
     public path: string = '';
     constructor(public workspaceRoot: string, private logger: Logger) {
-        const gitExtension = vscode.extensions.getExtension<GitExtension>("vscode.git")!.exports;
-        const git = gitExtension.getAPI(1);
-        this.path = git.git.path;
-        // const gitBaseExtension = vscode.extensions.getExtension<GitBaseExtension>("vscode.git-base")!.exports;
-        // const gitbase = gitExtension.getAPI(1);
+        this.path = vscode.workspace.getConfiguration('git').get('path') || "";
+        if (this.path.trim().length === 0) {
+            const gitExtension = vscode.extensions.getExtension<GitExtension>("vscode.git")!.exports;
+            const git = gitExtension.getAPI(1);
+            this.path = git.git.path;
+        }
+        if (this.path.trim().length === 0) {
+            vscode.window.showWarningMessage("Git is not found");
+        }
+        this.logger.log("Git found (path)", this.path);
     }
 
     private progress(cmd: string, cb: (s: string) => void) {
@@ -50,6 +55,9 @@ export class Util {
 
     @MemoizeExpiring(1000)
     public execSync(cmd: string): string {
+        if (this.path.trim().length === 0) {
+            return "";
+        }
         try {
             let out = execSync(cmd, { cwd: this.workspaceRoot }).toString();
             this.logger.log(out, cmd);
@@ -63,6 +71,9 @@ export class Util {
 
     @MemoizeExpiring(1000)
     private execCb(cmd: string, cb: (s: string) => void, resolve?: any): void {
+        if (this.path.trim().length === 0) {
+            return;
+        }
         exec(
             cmd, { cwd: this.workspaceRoot, },
             (err, stdout, stderr) => {
