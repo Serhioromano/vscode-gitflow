@@ -31,7 +31,7 @@
         "Other",
         "SCM Providers"
     ],
-    "icon": "resources/media/icon.png",
+    "icon": "icon.drawio.png",
     "activationEvents": [
         "workspaceContains:.git",
         "onCommand:gitflow.quickPick",
