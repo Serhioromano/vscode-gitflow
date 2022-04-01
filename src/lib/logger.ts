@@ -1,3 +1,4 @@
+import { time } from "console";
 import * as vscode from "vscode";
 import { Disposable } from "./disposables";
 
@@ -9,11 +10,14 @@ export enum LogLevels {
 
 export class Logger extends Disposable {
     private readonly channel: vscode.OutputChannel;
+    private time = 0;
 
     constructor() {
         super();
         this.channel = vscode.window.createOutputChannel("Git Flow");
         this.registerDisposable(this.channel);
+        let t = new Date();
+        this.time = t.getTime();
     }
 
     show() {
@@ -33,6 +37,8 @@ export class Logger extends Disposable {
         ) {
             //return;
         }
-        this.channel.appendLine(`${level}: [${cmd}] ${msg}`);
+        let t = new Date();
+        this.channel.appendLine(`${level}: (${t.getTime() - this.time}ms) [${cmd}] ${msg}`);
+        this.time = t.getTime();
     }
 }
