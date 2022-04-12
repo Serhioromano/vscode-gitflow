@@ -9,19 +9,19 @@
 
 ## Known Issues
 
-1. If you name your branches folders with capital letters like `Feature` instead of `feature` will not work. Bug in `git-flow` extension of git CLI command.
-2. When VS Code open windows directory while on remote WSL, sometimes might cause problems. But who is gonna do that, right?
+1. If you name your branch folders with capital letters like `Feature` instead of `feature`, things break due to a bug in the `git-flow` extension of git CLI command. Please make sure you name your branch folders with lower-case names.
+2. When VS Code opens a Windows directory while on a remote WSL, sometimes this might cause problems. But who is gonna do that, right?
 3. When authentication is not configured, commands that make `push` to remote commands may fail. (see: [How to setup](#how-to-setup))
 
 ## How to use
 
-When installed, you will find 2 new views in SCM side bar, GITFLOW and VERSIONS. Also in status bar you will find **Git Flow** button to launch Quick Pick menu or use `Shift`+`Alt`+`D` short key.
+When installed, you will find 2 new views in SCM side bar, GITFLOW and VERSIONS. Also in status bar you will find **Git Flow** button to launch Quick Pick menu, or you can use `Shift`+`Alt`+`D` short key.
 
 To see list of all commands use `F1` or `Ctrl`+`Shift`+`P` and type gitflow.
 
 ![ext](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/ss.png)
 
-> We suggest [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph) to complements this extension.
+> We suggest [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph) to complement this extension.
 
 ## Features
 
@@ -32,7 +32,7 @@ All basic operations you need to do in a single place.
 - Init git flow
 - Feature (Start, Finish, Checkout, Delete, Rebase, Publish, Track)
 - Bugfix (Start, Finish, Checkout, Delete, Rebase, Publish, Track)
-- Release (Start, Finish, Checkout, Delete, Rebase, Publish, Track,  )
+- Release (Start, Finish, Checkout, Delete, Rebase, Publish, Track)
 - Hotfix (Start, Finish, Checkout, Delete, Rebase, Publish)
 - Support (Start, Checkout, Rebase, Publish, Delete) (See: [How to work with support](#how-to-work-with-support))
 
@@ -52,23 +52,23 @@ All basic operations you need to do in a single place.
 
 #### Multiple Folder Workspace
 
-Multiple folder workspace was long waited feature of VS Code by many people. It would be a shame not to support it.
+Multiple folder workspace was long awaited feature of VS Code for many people. It would be a shame not to support it.
 
 ![Gitflow multiple folder workspace](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/mfw.png)
 
 #### Quick Pick
 
-Quick Pick is a popup with essential Git Flow commands, like create new flow branch or apply actions to currently selected flow brunch. You can call it with `Shift`+`Alt`+`d` short key. Note this command is available only if extension was initialized successfully.
+Quick Pick is a popup with essential Git Flow commands, like creating a new flow branch or appling actions to the currently selected flow brunch. You can call it with `Shift`+`Alt`+`d` short key. Note this command is available only if extension was initialized successfully.
 
 ![Git flow quick pik](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/qp.png)
 
 #### Automatic version bump
 
-It can automatically update you `package.json` file for a new tag. It works only on `release` and `hotfix` branches. When you create one, as a name use version standard. For example create `1.0.1` release which result in `release/1.0.1` branch. `version` property of `package.json` will be updated to `1.0.1` and automatically committed to git.
+This extension can automatically update your `package.json` file on creating a new tag - but only on `release` and `hotfix` branches. When you create one, as a name use version standard. For example create a `1.0.1` release which will result in a `release/1.0.1` branch. The `version` property of `package.json` will be updated to `1.0.1` and automatically committed to git.
 
 #### Automatic changelog update
 
-It can automatically update you `CHANGELOG.md`. If you have there something like
+This extension can automatically update your `CHANGELOG.md`. If you have there something like
 
 ```md
 ## [Unreleased] - yyyy-mm-dd
@@ -78,7 +78,7 @@ or
 ### [UNRELEASED] (DD-MM-YYYY)
 ```
 
-Or any combination of `[Unreleased]`, `[unreleased]`, `[UNRELEASED]`, `yyyy`, `mm` or `dd` and its all uppercasee copies, will be replaced.
+Or any combination of `[Unreleased]`, `[unreleased]`, `[UNRELEASED]`, `yyyy`, `mm` or `dd` and all uppercase variations, these will be replaced with the relevent info.
 
 ## How to work with Support branch
 
@@ -86,54 +86,53 @@ Or any combination of `[Unreleased]`, `[unreleased]`, `[UNRELEASED]`, `yyyy`, `m
 
 Support branches are similar to LTS version of Linux distros.
 
-In the git-flow model, your **latest released** version actually maps to the `master` or `main`, while your "preview release" maps to a git-flow release branch. It is forked from develop and finally merged into `main` when the actual release happens. Then this will become your **latest release** and you will usually fix only bugs for that release, using git-flow hotfix branches. In this way, your master always represents the most stable state of your latest released version.
+In the git-flow model, your **latest released** version actually maps to the `master` or `main`, while your "preview release" maps to a git-flow release branch. It is forked from develop and finally merged into `main` when the actual release happens. Then this will become your **latest release** and you will usually fix only bugs for that release, using git-flow hotfix branches. In this way, your `main` always represents the most stable state of your latest released version.
 
-Say you had a project, and you were happily releasing new versions. Maybe your current production version was 8.x. But you had some Really Important Customers who refused to upgrade to anything after 6.0. Now, if someone found a security flaw in the 6.0 version of your project, it would be a bad idea to hang all those Really Important Customers
-out to dry. So you release a new hotfix against `support/6.0`, even though all their problems would be solved if they just upgraded to the new 8.x release.
+Say you had a project, and you were happily releasing new versions. Maybe your current production version was 8.x. But you had some Really Important Customers who refused to upgrade to anything after 6.0. Now, if someone found a security flaw in the 6.0 version of your project, it would be a bad idea to hang all those Really Important Customers out to dry. So you release a new hotfix against `support/6.0`, even though all their problems would be solved if they just upgraded to the new 8.x release.
 
 For this to happen you have to create `support/6.0` at some point of time. Basically you can create support branch on all major version change.
 
 ### Workflow
 
-First create your support branch. When you create you can select tag version to start from. Use latest version in major set.
+First create your support branch. When you create you can select the tag version to start from. Use the latest version in major set.
 
-Now if you checkout any support branch, no matter what you start hotfix, release, bugfix or feature, you will be prompted to confirm to start it based on currently active support branch. And if you started it based on support branch, when you finish you hotfix, release, bugfix or feature, it will be finished against that support branch and not to `master` or `develop` branches.
+Now if you checkout any support branch, no matter what you start - hotfix, release, bugfix or feature - you will be prompted to confirm to start it based on currently active support branch. And if you started it based on support branch, when you finish your hotfix, release, bugfix or feature, it will be finished against that support branch and not to `main` or `develop` branches.
 
-Thus you `master` or `main` branch contain most recent version of your product and support branches have major LTS versions.
+Thus your `master` or `main` branch contain most recent version of your product and support branches have major LTS versions.
 
 ## How to setup
 
-### Work locally
+### Working locally
 
-1. VS Code should open folder not file
-2. Git have to be installed.
-3. Root folder have to be a git repository. If not run `git init` command in the terminal.
-4. [Git Flow](https://github.com/petervanderdoes/gitflow-avh/wiki/Installation) have to be installed.
+1. VS Code should be open on a folder not file
+2. Git must be installed.
+3. Root folder must be a git repository. If not run `git init` command in the terminal.
+4. [Git Flow](https://github.com/petervanderdoes/gitflow-avh/wiki/Installation) must be installed.
 5. You have to initialize git flow in the root of your repository with `git flow init` command.
 
-### Work remotely
+### Working remotely
 
-In order to push branches to or delete branches from remote repository like GitHub, user have to be authenticated. For github there are 2 main ways to work with repositories over SSH protocol or over HTTPS. Those 2 different protocols usually refer to repository with different URL. Here is example of SSH and HTTPS urls of this extension.
+In order to push branches to or delete branches from a remote repository like GitHub, you must be authenticated. For github there are 2 main ways to work with repositories - over SSH protocol or over HTTPS. Those 2 different protocols usually refer to repository with different URL. Here is example of the SSH and HTTPS urls for this extension.
 
 ```text
 https://github.com/Serhioromano/vscode-gitflow.git
 git@github.com:Serhioromano/vscode-gitflow.git
 ```
 
-You can clone repository with either url.
+You can clone a repository with either url.
 
 #### SSH (recommended)
 
-First ensure your repository configured to work over SSH.
+First ensure your repository is configured to work over SSH.
 
 ```bash
 git remote remove origin
 git remote add origin git@github.com:user/repository.git
 ```
 
-Or simple edit `your_repository/.git/config` and make sure repository URL there has a SSH link.
+Or simply edit `your_repository/.git/config` and make sure repository URL there has a SSH link.
 
-Read [this article](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) how to authorize your PC with SSH key.
+Read [this article](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) for how to authorize your PC with SSH key.
 
 Basically what you have to do is to generate key with
 
@@ -141,20 +140,20 @@ Basically what you have to do is to generate key with
 ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
 ```
 
-Then go to `~/.ssh` folder and look for `id_rsa.pub` file and copy it's content. Last go to `https://github.com/settings/keys` and add SSH Key there.
+Then go to `~/.ssh` folder and look for `id_rsa.pub` file and copy it's content. Lastly go to `https://github.com/settings/keys` and add SSH Key there.
 
 #### HTTPS
 
-First ensure your repository configured to work over SSH.
+First ensure your repository is configured to work over SSH.
 
 ```bash
 git remote remove origin
 git remote add origin https://github.com/user/repository.git
 ```
 
-Or simple edit `your_repository/.git/config` and make sure repository URL there has a HTTP link.
+Or simple edit `your_repository/.git/config` and make sure the repository URL there has a HTTP link.
 
-Now you need to [cache your credential](https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git). Use GitHub CLI
+Now you need to [cache your credential](https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git). Use the GitHub CLI.
 
 GitHub CLI will automatically store your Git credentials for you when you choose HTTPS as your preferred protocol for Git operations and answer "yes" to the prompt asking if you would like to authenticate to Git with your GitHub credentials.
 
