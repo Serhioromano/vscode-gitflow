@@ -2,6 +2,11 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [1.3.4] 04/10/2022
+
+- fix - Month updated in changelog one month less.
+- fix - Some words in command message `-m"Someting"` caused command failed. Fixed by using file.
+
 ## [1.3.0] 02/27/2022
 
 - add - use `git.path` settings.
