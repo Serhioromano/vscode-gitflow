@@ -162,7 +162,9 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
-- 1.3.0
+- 1.3.4
+  - fix - Month updated in changelog one month less.
+  - fix - Some words in command message `-m"Someting"` caused command failed. Fixed by using file.
   - add - use `git.path` settings.
   - enhance - better find git executable path on windows.
 - 1.2.9

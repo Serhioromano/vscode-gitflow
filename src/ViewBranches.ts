@@ -306,14 +306,14 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 }
 
                 name = await vscode.window.showInputBox({
-                    title: `Enter ${ucf(feature)} name [a-zA-Z0-9-.]*`,
+                    title: `Enter ${ucf(feature)} name [a-zA-Z0-9_-.]*`,
                     value: version,
                 });
                 if (name === undefined) {
                     return;
                 }
-                if (name?.match(/^([a-zA-Z0-9\-\.]*)$/) === null) {
-                    vscode.window.showErrorMessage(`${feature} name have to match [a-zA-Z0-9\\-\\.]*`);
+                if (name?.match(/^([a-zA-Z0-9\_\-\.]*)$/) === null) {
+                    vscode.window.showErrorMessage(`${feature} name have to match [a-zA-Z0-9_\\-\\.]*`);
                     return;
                 }
 
@@ -435,7 +435,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         msg = `Finish ${ucf(feature)}: ${name}`;
                     }
 
-                    let tmpMsgFile = path.join(process.env.TMPDIR, `vscode-git-flow-${Math.floor(Math.random() * 10000000)}.msg`);
+                    let tmpMsgFile = path.join(`${process.env.TMPDIR}`, `vscode-git-flow-${Math.floor(Math.random() * 10000000)}.msg`);
                     writeFileSync(tmpMsgFile, msg, "utf-8");
                     option = `${option} -f ${tmpMsgFile} -T "${name}"`;
 
@@ -449,7 +449,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                                 el = el
                                     .replace(/\[unreleased\]/i, `[${name}]`)
                                     .replace(/\byyyy\b/i, `${date.getFullYear()}`)
-                                    .replace(/\bmm\b/i, `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`)
+                                    .replace(/\bmm\b/i, `${date.getMonth() < 9 ? '0' : ''}${date.getMonth() + 1}`)
                                     .replace(/\bdd\b/i, `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`);
                             }
                             return el;
