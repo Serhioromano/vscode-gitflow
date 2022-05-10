@@ -2,6 +2,7 @@ import { debounce, memoize, throttle } from './lib/decorators';
 import * as vscode from "vscode";
 import { Util } from "./lib/Util";
 import { readFileSync, writeFileSync, existsSync } from "fs";
+import path from "path";
 import { Tag } from './ViewVersions';
 
 interface BranchList {
@@ -433,7 +434,10 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     if (msg === "") {
                         msg = `Finish ${ucf(feature)}: ${name}`;
                     }
-                    option = `${option} -m"${msg}" -T "${name}"`;
+
+                    let tmpMsgFile = path.join(process.env.TMPDIR, `vscode-git-flow-${Math.floor(Math.random() * 10000000)}.msg`);
+                    writeFileSync(tmpMsgFile, msg, "utf-8");
+                    option = `${option} -f ${tmpMsgFile} -T "${name}"`;
 
                     if (existsSync(this.util.workspaceRoot + "/CHANGELOG.md")) {
                         let updated = false;
