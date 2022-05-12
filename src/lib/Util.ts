@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import { execSync, exec, spawn, SpawnOptions } from "child_process";
-import { Logger, LogLevels } from "./logger";
-import { Memoize, MemoizeExpiring } from "typescript-memoize";
-import { GitExtension, API as GitAPI } from "./git";
+import {execSync, exec, spawn, SpawnOptions} from "child_process";
+import {Logger, LogLevels} from "./logger";
+import {Memoize, MemoizeExpiring} from "typescript-memoize";
+import {GitExtension, API as GitAPI} from "./git";
 // import { GitBaseExtension, API as GitBaseAPI } from "./lib/git-base";
 
 type CmdResult = {
@@ -12,9 +12,11 @@ type CmdResult = {
 };
 
 export class Util {
-    public path: string = '';
+    public path: string = "";
+    public flowPath: string = "";
     constructor(public workspaceRoot: string, private logger: Logger) {
-        this.path = vscode.workspace.getConfiguration('git').get('path') || "";
+        this.path = vscode.workspace.getConfiguration("git").get("path") || "";
+        this.flowPath = vscode.workspace.getConfiguration("gitflow").get("path") || `"${this.path}" flow`;
         if (this.path.trim().length === 0) {
             const gitExtension = vscode.extensions.getExtension<GitExtension>("vscode.git")!.exports;
             const git = gitExtension.getAPI(1);
@@ -36,10 +38,14 @@ export class Util {
             (progress, token) =>
                 new Promise<void>((resolve) => {
                     setTimeout(() => {
-                        this.execCb(cmd, (res) => {
-                            cb(res);
-                            resolve();
-                        }, resolve);
+                        this.execCb(
+                            cmd,
+                            (res) => {
+                                cb(res);
+                                resolve();
+                            },
+                            resolve
+                        );
                     }, 100);
                 })
         );
@@ -59,7 +65,7 @@ export class Util {
             return "";
         }
         try {
-            let out = execSync(cmd, { cwd: this.workspaceRoot }).toString();
+            let out = execSync(cmd, {cwd: this.workspaceRoot}).toString();
             this.logger.log(out, cmd);
             return out;
         } catch (e) {
@@ -74,24 +80,20 @@ export class Util {
         if (this.path.trim().length === 0) {
             return;
         }
-        exec(
-            cmd, { cwd: this.workspaceRoot, },
-            (err, stdout, stderr) => {
-                if (err) {
-                    vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
-                    this.logger.log(`${err} ${stderr}`, cmd, LogLevels.error);
-                    if (resolve !== undefined) {
-                        resolve();
-                    }
-                    return;
+        exec(cmd, {cwd: this.workspaceRoot}, (err, stdout, stderr) => {
+            if (err) {
+                vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
+                this.logger.log(`${err} ${stderr}`, cmd, LogLevels.error);
+                if (resolve !== undefined) {
+                    resolve();
                 }
-                cb(stdout);
-                this.logger.log(`${stdout}`, cmd);
-                vscode.window.showInformationMessage(`${stdout}`);
+                return;
             }
-        );
+            cb(stdout);
+            this.logger.log(`${stdout}`, cmd);
+            vscode.window.showInformationMessage(`${stdout}`);
+        });
     }
-
     public check(): boolean {
         if (!this.workspaceRoot) {
             vscode.window.showErrorMessage("No folder opened");
