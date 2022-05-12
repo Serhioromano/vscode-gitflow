@@ -111,7 +111,7 @@ export class Util {
             return false;
         }
 
-        if (this.execSync(`"${this.flowPath}" log`).toLowerCase().search("is not a git command") !== -1) {
+        if (this.execSync(`${this.flowPath} log`).toLowerCase().search("is not a git command") !== -1) {
             let installLink = "Install";
             vscode.window
                 .showWarningMessage("To use Git Flow extension please install Git flow (AVH).", installLink)

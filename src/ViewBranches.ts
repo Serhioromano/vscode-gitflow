@@ -58,7 +58,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let tree: Flow[] = [];
 
         if (element === undefined) {
-            let list = this.util.execSync(`"${this.util.flowPath}" config list`);
+            let list = this.util.execSync(`${this.util.flowPath} config list`);
 
             if (list.toLowerCase().search("not a gitflow-enabled repo yet") > 0) {
                 let initLink = "Init";
@@ -77,7 +77,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
             this.curBranch = this.util.execSync(`"${this.util.path}" rev-parse --abbrev-ref HEAD`).trim();
 
-            let b = this.util.execSync(`"${this.util.flowPath}" config list`).replace("\r", "").split("\n");
+            let b = this.util.execSync(`${this.util.flowPath} config list`).replace("\r", "").split("\n");
             this.branches.master = b[0].split(": ")[1].trim();
             this.branches.develop = b[1].split(": ")[1].trim();
             this.branches.feature = b[2].split(": ")[1].trim();
@@ -469,7 +469,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             vscode.workspace.getConfiguration("gitflow").get("showAllCommands") === true
                 ? " --showcommands "
                 : " ";
-        let cmd = `"${this.util.flowPath}" ${feature} ${what}${command}${option} ${name} ${base}`;
+        let cmd = `${this.util.flowPath} ${feature} ${what}${command}${option} ${name} ${base}`;
         //console.log(cmd);
 
         this.util.exec(cmd, progress, (s) => {
@@ -765,7 +765,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     //#endregion
 
     version(): string {
-        return this.util.execSync(`"${this.util.flowPath}" version`);
+        return this.util.execSync(`${this.util.flowPath} version`);
     }
 
     refresh(): void {
