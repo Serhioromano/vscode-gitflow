@@ -117,7 +117,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                             "git-branch",
                             vscode.TreeItemCollapsibleState.None,
                             this._isCurrent(el),
-                            "branch"
+                            "branch",
+                            this.curBranch
                         )
                     );
                 });
@@ -128,7 +129,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     "tag",
                     vscode.TreeItemCollapsibleState.Expanded,
                     false,
-                    "r"
+                    "r",
+                    this.curBranch
                 )
             );
             tree.push(
@@ -138,7 +140,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     "test-view-icon",
                     vscode.TreeItemCollapsibleState.Expanded,
                     false,
-                    "f"
+                    "f",
+                    this.curBranch
                 )
             );
             tree.push(
@@ -148,7 +151,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     "callstack-view-session",
                     vscode.TreeItemCollapsibleState.Expanded,
                     false,
-                    "b"
+                    "b",
+                    this.curBranch
                 )
             );
             tree.push(
@@ -158,7 +162,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     "flame",
                     vscode.TreeItemCollapsibleState.Expanded,
                     false,
-                    "h"
+                    "h",
+                    this.curBranch
                 )
             );
             tree.push(
@@ -168,7 +173,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     "history",
                     vscode.TreeItemCollapsibleState.Expanded,
                     false,
-                    "s"
+                    "s",
+                    this.curBranch
                 )
             );
 
@@ -186,7 +192,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         "git-branch",
                         vscode.TreeItemCollapsibleState.None,
                         this._isCurrent(el),
-                        element.full + (!this.listRemoteBranches.includes(el) ? "_local" : "")
+                        element.full + (!this.listRemoteBranches.includes(el) ? "_local" : ""),
+                        this.curBranch
                     )
                 );
             });
@@ -208,7 +215,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         "git-branch",
                         vscode.TreeItemCollapsibleState.None,
                         false,
-                        "origin_" + element.full
+                        "origin_" + element.full,
+                        this.curBranch
                     )
                 );
             });
@@ -820,12 +828,20 @@ export class Flow extends vscode.TreeItem {
         private icon: string,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
         public current?: boolean,
-        public parent?: string
+        public parent?: string,
+        public curBranch?: string
     ) {
         super(label, collapsibleState);
         this.description = current ? "Current" : "";
         this.contextValue = parent ? parent : full.replace("* ", "").split("/")[0];
     }
-
-    iconPath = new vscode.ThemeIcon(this.icon);
+    _isCurrentParent(): boolean {
+        return this.full.replace("* ", "").split("/")[0] === this.curBranch?.replace("* ", "").split("/")[0];
+    }
+    iconPath = new vscode.ThemeIcon(
+        this.icon,
+        this.current || this._isCurrentParent()
+            ? new vscode.ThemeColor("editorLightBulbAutoFix.foreground")
+            : ""
+    );
 }
