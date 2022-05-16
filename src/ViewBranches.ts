@@ -812,7 +812,10 @@ export class Flow extends vscode.TreeItem {
         public parent?: string
     ) {
         super(label, collapsibleState);
-        this.description = current ? "Current" : "";
+        if (current) {
+            this.description = "Current";
+            this.iconPath = new vscode.ThemeIcon("home", new vscode.ThemeColor("green"));
+        }
         this.contextValue = parent ? parent : full.replace("* ", "").split("/")[0];
     }
 

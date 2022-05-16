@@ -725,16 +725,16 @@
             ]
         }
     },
-    "main": "./out/main.js",
-    "_main": "./out/extension.js",
+    "_main": "./out/main.js",
+    "main": "./out/extension.js",
     "scripts": {
-        "vscode:prepublish": "npm run esbuild-base -- --minify",
+        "_vscode:prepublish": "npm run esbuild-base -- --minify",
         "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
         "esbuild": "npm run esbuild-base -- --sourcemap",
         "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
         "watch": "tsc -watch -p ./",
         "publish": "vsce package && gh release create $(node -pe \"require('./package.json')['version']\") --generate-notes \"./vscode-gitflow-$(node -pe \"require('./package.json')['version']\").vsix\" && vsce publish",
-        "_vscode:prepublish": "npm run compile",
+        "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
