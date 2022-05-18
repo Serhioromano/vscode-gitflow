@@ -2,8 +2,9 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [unreleased] 05/18/2022
+## [1.3.6] 05/18/2022
 
+- fix - tmp dir for message files on release and hotfix
 - add - parameter `gitflow.path` to manually set gitflow executable.
 - fix - Changelog automatic update month is 1 less.
 

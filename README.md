@@ -163,7 +163,8 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
-- 1.3.5
+- 1.3.6
+  - fix - tmp dir for message files on release and hotfix
   - add - parameter `gitflow.path` to manually set gitflow executable.
   - fix - Month updated in changelog one month less.
   - fix - Some words in command message `-m"Something"` caused command failed. Fixed by using file.
