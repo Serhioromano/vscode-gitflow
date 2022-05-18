@@ -163,7 +163,7 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
-- 1.3.10
+- 1.3.9
   - add - replace spaces in branch name with `_`
   - fix - tmp dir for message files on release and hotfix
   - add - parameter `gitflow.path` to manually set gitflow executable.

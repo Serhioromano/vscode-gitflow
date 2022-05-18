@@ -2,7 +2,7 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [1.3.10] 05/18/2022
+## [1.3.9] 05/18/2022
 
 - add - replace spaces in branch name with `_`
 - fix - tmp dir for message files on release and hotfix
