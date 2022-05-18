@@ -9,9 +9,10 @@
 
 ## Known Issues
 
-1. If you name your branch folders with capital letters like `Feature` instead of `feature`, things break due to a bug in the `git-flow` extension of git CLI command. Please make sure you name your branch folders with lower-case names.
-2. When VS Code opens a Windows directory while on a remote WSL, sometimes this might cause problems. But who is gonna do that, right?
-3. When authentication is not configured, commands that make `push` to remote commands may fail. (see: [How to setup](#how-to-setup))
+1. On MAC you might need to configure `gitflow.path` parameter to `/usr/local/bin/git-flow`.
+2. If you name your branch folders with capital letters like `Feature` instead of `feature`, things break due to a bug in the `git-flow` extension of git CLI command. Please make sure you name your branch folders with lower-case names.
+3. When VS Code opens a Windows directory while on a remote WSL, sometimes this might cause problems. But who is gonna do that, right?
+4. When authentication is not configured, commands that make `push` to remote commands may fail. (see: [How to setup](#how-to-setup))
 
 ## How to use
 
@@ -162,9 +163,10 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
-- 1.3.4
+- 1.3.5
+  - add - parameter `gitflow.path` to manually set gitflow executable.
   - fix - Month updated in changelog one month less.
-  - fix - Some words in command message `-m"Someting"` caused command failed. Fixed by using file.
+  - fix - Some words in command message `-m"Something"` caused command failed. Fixed by using file.
   - add - use `git.path` settings.
   - enhance - better find git executable path on windows.
 - 1.2.9

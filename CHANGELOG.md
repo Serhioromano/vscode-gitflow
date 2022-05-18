@@ -2,10 +2,15 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [unreleased] 05/18/2022
+
+- add - parameter `gitflow.path` to manually set gitflow executable.
+- fix - Changelog automatic update month is 1 less.
+
 ## [1.3.4] 05/10/2022
 
 - fix - Month updated in changelog one month less.
-- fix - Some words in command message `-m"Someting"` caused command failed. Fixed by using file.
+- fix - Some words in command message `-m"Something"` caused command failed. Fixed by using file.
 
 ## [1.3.0] 03/27/2022
 

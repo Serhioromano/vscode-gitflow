@@ -55,6 +55,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Show all `git` commands that `git flow` runs in output window."
+                },
+                "gitflow.path": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Set you git-flow path manually"
                 }
             }
         },
