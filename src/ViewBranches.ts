@@ -313,6 +313,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 if (name === undefined) {
                     return;
                 }
+                name = name.replace(/\s/igm, "_");
                 if (name?.match(/^([a-zA-Z0-9\_\-\.]*)$/) === null) {
                     vscode.window.showErrorMessage(`${feature} name have to match [a-zA-Z0-9_\\-\\.]*`);
                     return;
