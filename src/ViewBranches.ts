@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import { Util } from "./lib/Util";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import path from "path";
+import os from "os";
 import { Tag } from './ViewVersions';
 
 interface BranchList {
@@ -435,7 +436,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         msg = `Finish ${ucf(feature)}: ${name}`;
                     }
 
-                    let tmpMsgFile = path.join(`${process.env.TMPDIR}`, `vscode-git-flow-${Math.floor(Math.random() * 10000000)}.msg`);
+                    let tmpMsgFile = path.join(`${os.tmpdir()}`, `vscode-git-flow-${Math.floor(Math.random() * 10000000)}.msg`);
                     writeFileSync(tmpMsgFile, msg, "utf-8");
                     option = `${option} -f ${tmpMsgFile} -T "${name}"`;
 
@@ -470,7 +471,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 ? " --showcommands "
                 : " ";
         let cmd = `${this.util.flowPath} ${feature} ${what}${command}${option} ${name} ${base}`;
-        //console.log(cmd);
+        console.log(cmd);
 
         this.util.exec(cmd, progress, (s) => {
             this._onDidChangeTreeData.fire();
