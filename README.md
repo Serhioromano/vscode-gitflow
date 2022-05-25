@@ -51,23 +51,31 @@ All basic operations you need to do in a single place.
 - Quick Pick menu (use `Shift`+`Alt`+`D`)
 - All commands results are outputted in output window named `Git Flow`. There is a parameter that also allow to show all internal `git` commands run inside `git flow`.
 
-#### Multiple Folder Workspace
+### Options
+
+- `gitflow.showAllCommands` - This option allows to see in GitFlow output window underground git commands run by git-flow.
+- `gitflow.path` - Allow manually set path for Git Flow executable including `flow`. For instance `/usr/bit/git flow`.
+- `gitflow.autoBumpVersion` - Either it should automatically bump a version in `package.json` file on `feature` or `hotfix` creation, and commit it to git.
+
+## Feature Details
+
+### Multiple Folder Workspace
 
 Multiple folder workspace was long awaited feature of VS Code for many people. It would be a shame not to support it.
 
 ![Gitflow multiple folder workspace](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/mfw.png)
 
-#### Quick Pick
+### Quick Pick
 
 Quick Pick is a popup with essential Git Flow commands, like creating a new flow branch or appling actions to the currently selected flow brunch. You can call it with `Shift`+`Alt`+`d` short key. Note this command is available only if extension was initialized successfully.
 
 ![Git flow quick pik](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/qp.png)
 
-#### Automatic version bump
+### Automatic version bump
 
 This extension can automatically update your `package.json` file on creating a new tag - but only on `release` and `hotfix` branches. When you create one, as a name use version standard. For example create a `1.0.1` release which will result in a `release/1.0.1` branch. The `version` property of `package.json` will be updated to `1.0.1` and automatically committed to git.
 
-#### Automatic changelog update
+### Automatic changelog update
 
 This extension can automatically update your `CHANGELOG.md`. If you have there something like
 
@@ -81,9 +89,9 @@ or
 
 Or any combination of `[Unreleased]`, `[unreleased]`, `[UNRELEASED]`, `yyyy`, `mm` or `dd` and all uppercase variations, these will be replaced with the relevent info.
 
-## How to work with Support branch
+### How to work with Support branch
 
-### What is Git Flow Support branch for?
+#### What is Git Flow Support branch for?
 
 Support branches are similar to LTS version of Linux distros.
 
@@ -93,7 +101,7 @@ Say you had a project, and you were happily releasing new versions. Maybe your c
 
 For this to happen you have to create `support/6.0` at some point of time. Basically you can create support branch on all major version change.
 
-### Workflow
+#### Workflow
 
 First create your support branch. When you create you can select the tag version to start from. Use the latest version in major set.
 
@@ -163,7 +171,8 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
-- 1.3.9
+- 1.3.10
+  - add - Option to automatically bump version on release or not.
   - add - replace spaces in branch name with `_`
   - fix - tmp dir for message files on release and hotfix
   - add - parameter `gitflow.path` to manually set gitflow executable.
