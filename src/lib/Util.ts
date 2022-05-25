@@ -13,6 +13,7 @@ type CmdResult = {
 
 export class Util {
     public path: string = '';
+    public flowPath: string = '';
     constructor(public workspaceRoot: string, private logger: Logger) {
         this.path = vscode.workspace.getConfiguration('git').get('path') || "";
         if (this.path.trim().length === 0) {
@@ -21,8 +22,10 @@ export class Util {
             this.path = git.git.path;
         }
         if (this.path.trim().length === 0) {
-            vscode.window.showWarningMessage("Git is not found");
+            vscode.window.showWarningMessage("Git is not found", this.path);
+            return;
         }
+        this.flowPath = vscode.workspace.getConfiguration('gitflow').get('path') || `"${this.path}" flow`;
         this.logger.log("Git found (path)", this.path);
     }
 
@@ -110,7 +113,7 @@ export class Util {
             return false;
         }
 
-        if (this.execSync(`"${this.path}" flow log`).toLowerCase().search("is not a git command") !== -1) {
+        if (this.execSync(`${this.flowPath} log`).toLowerCase().search("is not a git command") !== -1) {
             let installLink = "Install";
             vscode.window
                 .showWarningMessage("To use Git Flow extension please install Git flow (AVH).", installLink)

@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import { Util } from "./lib/Util";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import path from "path";
+import os from "os";
 import { Tag } from './ViewVersions';
 
 interface BranchList {
@@ -58,7 +59,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let tree: Flow[] = [];
 
         if (element === undefined) {
-            let list = this.util.execSync(`"${this.util.path}" flow config list`);
+            let list = this.util.execSync(`${this.util.flowPath} config list`);
 
             if (list.toLowerCase().search("not a gitflow-enabled repo yet") > 0) {
                 let initLink = "Init";
@@ -77,7 +78,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
             this.curBranch = this.util.execSync(`"${this.util.path}" rev-parse --abbrev-ref HEAD`).trim();
 
-            let b = this.util.execSync(`"${this.util.path}" flow config list`).replace("\r", "").split("\n");
+            let b = this.util.execSync(`${this.util.flowPath} config list`).replace("\r", "").split("\n");
             this.branches.master = b[0].split(": ")[1].trim();
             this.branches.develop = b[1].split(": ")[1].trim();
             this.branches.feature = b[2].split(": ")[1].trim();
@@ -306,14 +307,15 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 }
 
                 name = await vscode.window.showInputBox({
-                    title: `Enter ${ucf(feature)} name [a-zA-Z0-9-.]*`,
+                    title: `Enter ${ucf(feature)} name [a-zA-Z0-9_-.]*`,
                     value: version,
                 });
                 if (name === undefined) {
                     return;
                 }
-                if (name?.match(/^([a-zA-Z0-9\-\.]*)$/) === null) {
-                    vscode.window.showErrorMessage(`${feature} name have to match [a-zA-Z0-9\\-\\.]*`);
+                name = name.replace(/\s/igm, "_");
+                if (name?.match(/^([a-zA-Z0-9\_\-\.]*)$/) === null) {
+                    vscode.window.showErrorMessage(`${feature} name have to match [a-zA-Z0-9_\\-\\.]*`);
                     return;
                 }
 
@@ -435,7 +437,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         msg = `Finish ${ucf(feature)}: ${name}`;
                     }
 
-                    let tmpMsgFile = path.join(process.env.TMPDIR, `vscode-git-flow-${Math.floor(Math.random() * 10000000)}.msg`);
+                    let tmpMsgFile = path.join(`${os.tmpdir()}`, `vscode-git-flow-${Math.floor(Math.random() * 10000000)}.msg`);
                     writeFileSync(tmpMsgFile, msg, "utf-8");
                     option = `${option} -f ${tmpMsgFile} -T "${name}"`;
 
@@ -449,7 +451,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                                 el = el
                                     .replace(/\[unreleased\]/i, `[${name}]`)
                                     .replace(/\byyyy\b/i, `${date.getFullYear()}`)
-                                    .replace(/\bmm\b/i, `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`)
+                                    .replace(/\bmm\b/i, `${date.getMonth() < 9 ? '0' : ''}${date.getMonth() + 1}`)
                                     .replace(/\bdd\b/i, `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`);
                             }
                             return el;
@@ -467,8 +469,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
         let config = vscode.workspace.getConfiguration("gitflow");
         let command = config.get("showAllCommands") === true ? " --showcommands " : " ";
-        let cmd = `"${this.util.path}" flow ${feature} ${what}${command}${option} ${name} ${base}`;
-        //console.log(cmd);
+        let cmd = `${this.util.flowPath} ${feature} ${what}${command}${option} ${name} ${base}`;
+        console.log(cmd);
 
         this.util.exec(cmd, progress, (s) => {
             this._onDidChangeTreeData.fire();
@@ -766,7 +768,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     //#endregion
 
     version(): string {
-        return this.util.execSync(`"${this.util.path}" flow version`);
+        return this.util.execSync(`${this.util.flowPath} version`);
     }
 
     refresh(): void {
@@ -813,7 +815,10 @@ export class Flow extends vscode.TreeItem {
         public parent?: string
     ) {
         super(label, collapsibleState);
-        this.description = current ? "Current" : "";
+        if (current) {
+            this.description = "Current";
+            this.iconPath = new vscode.ThemeIcon("home", new vscode.ThemeColor("green"));
+        }
         this.contextValue = parent ? parent : full.replace("* ", "").split("/")[0];
     }
 
