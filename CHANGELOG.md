@@ -2,7 +2,7 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [unreleased] mm/dd/yyyy
+## [1.3.10] 05/25/2022
 
 - add - Option to automatically bump version on release or not.
 
