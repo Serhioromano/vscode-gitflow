@@ -467,10 +467,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 break;
         }
 
-        let command =
-            vscode.workspace.getConfiguration("gitflow").get("showAllCommands") === true
-                ? " --showcommands "
-                : " ";
+        let config = vscode.workspace.getConfiguration("gitflow");
+        let command = config.get("showAllCommands") === true ? " --showcommands " : " ";
         let cmd = `${this.util.flowPath} ${feature} ${what}${command}${option} ${name} ${base}`;
         console.log(cmd);
 
@@ -479,7 +477,10 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             if (["hotfix", "release"].includes(feature)) {
                 vscode.commands.executeCommand("gitflow.refreshT");
             }
-            if (["hotfix", "release"].includes(feature) && exist && what === 'start') {
+
+            // Bump version
+            const shouldBumpVersion = config.get("autoBumpVersion");
+            if (shouldBumpVersion && ["hotfix", "release"].includes(feature) && exist && what === 'start') {
                 version =
                     JSON.parse(readFileSync(this.util.workspaceRoot + "/package.json", "utf8")).version ||
                     "";
@@ -492,7 +493,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         )
                     );
                     this.util.execSync(`"${this.util.path}" add ./package.json`);
-                    this.util.execSync(`"${this.util.path}" commit ./package.json -m"Version bump"`);
+                    this.util.execSync(`"${this.util.path}" commit ./package.json -m "Version bump to ${name}"`);
                 }
             }
         });

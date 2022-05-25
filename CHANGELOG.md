@@ -2,6 +2,10 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [1.3.10] 05/25/2022
+
+- add - Option to automatically bump version on release or not.
+
 ## [1.3.9] 05/18/2022
 
 - add - replace spaces in branch name with `_`

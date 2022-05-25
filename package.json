@@ -2,7 +2,7 @@
     "name": "vscode-gitflow",
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
-    "version": "1.3.9",
+    "version": "1.3.10",
     "engines": {
         "vscode": "^1.64.0"
     },
@@ -60,6 +60,11 @@
                     "type": "string",
                     "default": "",
                     "description": "Set you git-flow path manually"
+                },
+                "gitflow.autoBumpVersion": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Bump package version post start release/hotfix."
                 }
             }
         },
