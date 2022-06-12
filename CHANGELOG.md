@@ -2,7 +2,7 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [unreleased] mm/dd/yyyy
+## [1.3.11] 06/12/2022
 
 - enhance - Branch name creation now is checked through `git check-ref-format --branch ***` with allows create any qualified branch name.
 
