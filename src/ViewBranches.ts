@@ -307,15 +307,17 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 }
 
                 name = await vscode.window.showInputBox({
-                    title: `Enter ${ucf(feature)} name [a-zA-Z0-9_-.]*`,
+                    title: `Enter a valid ${ucf(feature)} git branch name`,
                     value: version,
                 });
                 if (name === undefined) {
                     return;
                 }
                 name = name.replace(/\s/igm, "_");
-                if (name?.match(/^([a-zA-Z0-9\_\-\.]*)$/) === null) {
-                    vscode.window.showErrorMessage(`${feature} name have to match [a-zA-Z0-9_\\-\\.]*`);
+                const checked = this.util.execSync(`git check-ref-format --branch ${name}`).trim();
+
+                if (checked !== name) {
+                    vscode.window.showErrorMessage(`Error creating a branch: ${checked}`);
                     return;
                 }
 

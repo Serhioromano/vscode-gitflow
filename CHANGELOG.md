@@ -2,6 +2,10 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [1.3.11] 06/12/2022
+
+- enhance - Branch name creation now is checked through `git check-ref-format --branch ***` with allows create any qualified branch name.
+
 ## [1.3.10] 05/25/2022
 
 - add - Option to automatically bump version on release or not.
