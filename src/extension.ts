@@ -15,7 +15,6 @@ export function activate(context: vscode.ExtensionContext) {
     logger.log("Extension activate", "activate");
     logger.log(rootPath, "Root");
 
-    const util = new Util(rootPath, logger);
 
     let statBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 10);
     statBar.command = "gitflow.quickPick";
@@ -23,6 +22,9 @@ export function activate(context: vscode.ExtensionContext) {
     statBar.tooltip = "Show Git Flow Quick Pick menu";
     statBar.show();
     context.subscriptions.push(statBar);
+    
+
+    const util = new Util(rootPath, logger, statBar);
 
     const viewBranches = new TreeViewBranches(util);
     const a = vscode.window.createTreeView("gitflowExplorer", {

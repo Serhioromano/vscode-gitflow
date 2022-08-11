@@ -14,7 +14,7 @@ type CmdResult = {
 export class Util {
     public path: string = '';
     public flowPath: string = '';
-    constructor(public workspaceRoot: string, private logger: Logger) {
+    constructor(public workspaceRoot: string, private logger: Logger, public sb: vscode.StatusBarItem) {
         this.path = vscode.workspace.getConfiguration('git').get('path') || "";
         if (this.path.trim().length === 0) {
             const gitExtension = vscode.extensions.getExtension<GitExtension>("vscode.git")!.exports;
@@ -61,11 +61,14 @@ export class Util {
         if (this.path.trim().length === 0) {
             return "";
         }
+        this.sb.text = "$(sync~spin) Git Flow in progress...";
         try {
             let out = execSync(cmd, { cwd: this.workspaceRoot }).toString();
             this.logger.log(out, cmd);
+            this.sb.text = "$(list-flat) Git Flow";
             return out;
         } catch (e) {
+            this.sb.text = "$(list-flat) Git Flow";
             this.logger.log(`ERROR: ${e}`, cmd, LogLevels.error);
             vscode.window.showErrorMessage(`Error executing: ${cmd} : ${e}`);
             return "" + e;
@@ -77,9 +80,11 @@ export class Util {
         if (this.path.trim().length === 0) {
             return;
         }
+        this.sb.text = "$(sync~spin) Git Flow in progress...";
         exec(
             cmd, { cwd: this.workspaceRoot, },
             (err, stdout, stderr) => {
+                this.sb.text = "$(list-flat) Git Flow";
                 if (err) {
                     vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
                     this.logger.log(`${err} ${stderr}`, cmd, LogLevels.error);
@@ -113,7 +118,7 @@ export class Util {
             return false;
         }
 
-        if (this.execSync(`${this.flowPath} log`).toLowerCase().search("is not a git command") !== -1) {
+        if (this.execSync(`${this.flowPath} status`).toLowerCase().search("is not a git command") !== -1) {
             let installLink = "Install";
             vscode.window
                 .showWarningMessage("To use Git Flow extension please install Git flow (AVH).", installLink)

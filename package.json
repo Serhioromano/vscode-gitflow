@@ -2,9 +2,12 @@
     "name": "vscode-gitflow",
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
-    "version": "1.3.11",
+    "version": "1.3.12",
     "engines": {
         "vscode": "^1.64.0"
+    },
+    "sponsor": {
+        "url": "https://www.paypal.com/donate/?hosted_button_id=UTU4EMPLLLX54"
     },
     "publisher": "Serhioromano",
     "author": "Sergey Romanov",
@@ -24,8 +27,12 @@
         "hot fix",
         "support",
         "version",
+        "version manager",
         "versions",
-        "versioning"
+        "versioning",
+        "DevOps",
+        "CI/CD",
+        "SCM"
     ],
     "categories": [
         "Other",
