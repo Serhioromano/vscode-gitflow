@@ -14,6 +14,14 @@
 3. When VS Code opens a Windows directory while on a remote WSL, sometimes this might cause problems. But who is gonna do that, right?
 4. When authentication is not configured, commands that make `push` to remote commands may fail. (see: [How to setup](#how-to-setup))
 
+## What is Git Flow
+
+Git Flow is an abstract idea of a Git workflow. It helps with continuous software development and implementing DevOps practices. The Git Flow Workflow defines a strict branching model designed around the project release. This provides a robust framework for managing larger projects.
+
+Git Flow is ideally suited for projects that have a scheduled release cycle and for the DevOps best practice of continuous delivery. It assigns very specific roles to different branches and defines how and when they should interact. It uses individual branches for preparing, maintaining, and recording releases.
+
+[Read more](https://blog.knoldus.com/introduction-to-git-flow/).
+
 ## How to use
 
 When installed, you will find 2 new views in SCM side bar, GITFLOW and VERSIONS. Also in status bar you will find **Git Flow** button to launch Quick Pick menu, or you can use `Shift`+`Alt`+`D` short key.
