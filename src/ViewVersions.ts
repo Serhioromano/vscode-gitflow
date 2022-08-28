@@ -102,7 +102,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
         let name = node?.label;
         if (node === undefined) {
             let tags = this.util
-                .execSync("git tag --sort=-v:refname")
+                .execSync(`"${this.util.path}" tag --sort=-v:refname`)
                 .split("\n")
                 .map((el) => el.trim())
                 .filter((el) => el !== "");

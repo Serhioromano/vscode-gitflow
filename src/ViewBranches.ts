@@ -314,7 +314,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     return;
                 }
                 name = name.replace(/\s/igm, "_");
-                const checked = this.util.execSync(`git check-ref-format --branch ${name}`).trim();
+                const checked = this.util.execSync(`"${this.util.path}" check-ref-format --branch ${name}`).trim();
 
                 if (checked !== name) {
                     vscode.window.showErrorMessage(`Error creating a branch: ${checked}`);
