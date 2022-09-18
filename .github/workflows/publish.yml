@@ -26,7 +26,7 @@ jobs:
       run: |
         npm -v
         npm ci
-        npm install -g vsce ovsx npx
+        npm install -g vsce ovsx
     - run: vsce publish -p ${{ secrets.VSCE_TOKEN }}
     - name: Generate Package and Create Release
       env:
