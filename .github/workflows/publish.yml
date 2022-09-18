@@ -24,11 +24,6 @@ jobs:
         cache: 'npm'
     - name: Install NPM Packages
       run: |
-        sudo apt-get remove nodejs
-        sudo apt-get remove npm
-        sudo rm -rf ~/.npm
-        sudo rm -rf /usr/local/lib/node_modules
-        curl -0 -L https://npmjs.org/install.sh | sudo sh
         npm -v
         npm ci
         npm install -g vsce ovsx npx
@@ -39,5 +34,5 @@ jobs:
       run: |
         vsce package
         file=$(realpath $(ls -t *.vsix | head -1))
-        ovsx publish $file -p ${{ secrets.OVSX_TOKEN }}
+        npx ovsx publish $file -p ${{ secrets.OVSX_TOKEN }}
         gh release create '${{ github.ref_name }}' -n "See [Changelog](https://github.com/Serhioromano/vscode-gitflow/blob/master/CHANGELOG.md) for details."  $file
