@@ -179,7 +179,8 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
-- 1.3.11
+- 1.3.18
+  - add - publish to OVSX.
   - enhance - Branch name creation now is checked through `git check-ref-format --branch ***` with allows create any qualified branch name.
   - add - Option to automatically bump version on release or not.
   - add - replace spaces in branch name with `_`

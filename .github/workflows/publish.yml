@@ -5,13 +5,13 @@ name: Publish
 
 on:
   push:
-    tags: 
+    tags:
       - v*
 jobs:
   publish:
     name: Publish VS Code Extension
     runs-on: ubuntu-latest
- 
+
     steps:
     - name: Checkout Tag
       uses: actions/checkout@v2
@@ -25,7 +25,7 @@ jobs:
     - name: Install NPM Packages
       run: |
         npm ci
-        npm install -g vsce
+        npm install -g vsce ovsx
     - run: vsce publish -p ${{ secrets.VSCE_TOKEN }}
     - name: Generate Package and Create Release
       env:
@@ -33,4 +33,5 @@ jobs:
       run: |
         vsce package
         file=$(realpath $(ls -t *.vsix | head -1))
+        ovsx publish $file -p ${{ secrets.OVSX_TOKEN }}
         gh release create '${{ github.ref_name }}' -n "See [Changelog](https://github.com/Serhioromano/vscode-gitflow/blob/master/CHANGELOG.md) for details."  $file

@@ -51,5 +51,5 @@
         "titleBar.inactiveForeground": "#e7e7e799",
         "commandCenter.border": "#e7e7e799"
     },
-    "editor.experimental.stickyScroll.enabled": true
+    "editor.stickyScroll.enabled": true
 }
