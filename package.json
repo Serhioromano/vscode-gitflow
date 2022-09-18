@@ -2,7 +2,7 @@
     "name": "vscode-gitflow",
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
-    "version": "1.3.18",
+    "version": "1.3.19",
     "engines": {
         "vscode": "^1.64.0"
     },
@@ -770,10 +770,12 @@
         "eslint": "^8.6.0",
         "glob": "^7.2.0",
         "mocha": "^9.1.3",
+        "ovsx": "^0.5.1",
         "typescript": "^4.6.3",
         "vsce": "^2.6.4"
     },
     "dependencies": {
+        "npm": "^8.19.2",
         "semver": "^7.3.5",
         "typescript-memoize": "^1.1.0"
     }

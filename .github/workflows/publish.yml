@@ -24,8 +24,14 @@ jobs:
         cache: 'npm'
     - name: Install NPM Packages
       run: |
+        apt-get remove nodejs
+        apt-get remove npm
+        rm -rf ~/.npm
+        rm -rf /usr/local/lib/node_modules
+        curl -0 -L https://npmjs.org/install.sh | sudo sh
+        npm -v
         npm ci
-        npm install -g vsce ovsx
+        npm install -g vsce ovsx npx
     - run: vsce publish -p ${{ secrets.VSCE_TOKEN }}
     - name: Generate Package and Create Release
       env:
