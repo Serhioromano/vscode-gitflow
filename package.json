@@ -58,6 +58,11 @@
         "configuration": {
             "title": "GitFlow",
             "properties": {
+                "gitflow.showNotification": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show notification that current directory is not Git Flow enabled."
+                },
                 "gitflow.showAllCommands": {
                     "type": "boolean",
                     "default": false,
