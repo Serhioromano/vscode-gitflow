@@ -60,7 +60,7 @@
             "properties": {
                 "gitflow.showNotification": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "Show notification that current directory is not Git Flow enabled."
                 },
                 "gitflow.showAllCommands": {

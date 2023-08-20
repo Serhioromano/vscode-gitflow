@@ -61,6 +61,7 @@ All basic operations you need to do in a single place.
 
 ### Options
 
+- `gitflow.showNotification` - Show notification that current directory is not Git Flow enabled.
 - `gitflow.showAllCommands` - This option allows to see in GitFlow output window underground git commands run by git-flow.
 - `gitflow.path` - Allow manually set path for Git Flow executable including `flow`. For instance `/usr/bit/git flow`.
 - `gitflow.autoBumpVersion` - Either it should automatically bump a version in `package.json` file on `feature` or `hotfix` creation, and commit it to git.
