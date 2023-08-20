@@ -60,8 +60,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
         if (element === undefined) {
             let list = this.util.execSync(`${this.util.flowPath} config list`);
-
-            if (list.toLowerCase().search("not a gitflow-enabled repo yet") > 0) {
+            let config = vscode.workspace.getConfiguration("gitflow");
+            if (list.toLowerCase().search("not a gitflow-enabled repo yet") > 0 && config.get("showNotification") === true) {
                 let initLink = "Init";
                 vscode.window
                     .showWarningMessage(
@@ -472,7 +472,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let config = vscode.workspace.getConfiguration("gitflow");
         let command = config.get("showAllCommands") === true ? " --showcommands " : " ";
         let cmd = `${this.util.flowPath} ${feature} ${what}${command}${option} ${name} ${base}`;
-        console.log(cmd);
+        // console.log(cmd);
 
         this.util.exec(cmd, progress, (s) => {
             this._onDidChangeTreeData.fire();

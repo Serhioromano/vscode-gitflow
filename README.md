@@ -61,6 +61,7 @@ All basic operations you need to do in a single place.
 
 ### Options
 
+- `gitflow.showNotification` - Show notification that current directory is not Git Flow enabled.
 - `gitflow.showAllCommands` - This option allows to see in GitFlow output window underground git commands run by git-flow.
 - `gitflow.path` - Allow manually set path for Git Flow executable including `flow`. For instance `/usr/bit/git flow`.
 - `gitflow.autoBumpVersion` - Either it should automatically bump a version in `package.json` file on `feature` or `hotfix` creation, and commit it to git.
@@ -179,6 +180,8 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
+- 1.3.23
+  - add - Extension parameter to turn notification off
 - 1.3.18
   - add - publish to OVSX.
   - enhance - Branch name creation now is checked through `git check-ref-format --branch ***` with allows create any qualified branch name.
