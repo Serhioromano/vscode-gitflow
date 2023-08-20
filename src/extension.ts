@@ -22,7 +22,6 @@ export function activate(context: vscode.ExtensionContext) {
     statBar.tooltip = "Show Git Flow Quick Pick menu";
     statBar.show();
     context.subscriptions.push(statBar);
-    
 
     const util = new Util(rootPath, logger, statBar);
 
