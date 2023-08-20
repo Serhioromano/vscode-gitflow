@@ -1,12 +1,11 @@
 {
 	"recommendations": [
-		"dbaeumer.vscode-eslint",
+        "dbaeumer.vscode-eslint",
         "akamud.vscode-theme-onelight",
         "steoates.autoimport",
         "alefragnani.bookmarks",
         "streetsidesoftware.code-spell-checker",
         "editorconfig.editorconfig",
-        "dbaeumer.vscode-eslint",
         "serhioromano.vscode-gitflow",
         "mhutchie.git-graph",
         "christian-kohler.npm-intellisense",
@@ -18,6 +17,7 @@
         "yzhang.markdown-all-in-one",
         "jebbs.markdown-extended",
         "davidanson.vscode-markdownlint",
-        "tgreen7.vs-code-node-require"
-	]
+        "tgreen7.vs-code-node-require",
+        "github.vscode-github-actions"
+    ]
 }
