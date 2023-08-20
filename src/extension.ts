@@ -66,19 +66,3 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() { }
-
-// const gitBaseExtension = extensions.getExtension<GitBaseExtension>("vscode.git-base")!.exports;
-// const gitbase = gitExtension.getAPI(1);
-
-// gitbase.onDidChangeState((e) => {
-//     if (e.toString().toLowerCase() === "initialized") {
-//         console.log(git.repositories);
-//         git.onDidChangeState((e) => {
-//             console.log("state", e);
-//         });
-//         git.repositories[0].state.onDidChange((e) => {
-//             console.log("repo", e);
-//         });
-//     }
-//     console.log("base", e);
-// });
