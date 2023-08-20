@@ -52,5 +52,13 @@
         "commandCenter.border": "#e7e7e799"
     },
     "editor.stickyScroll.enabled": true,
-    "files.autoSave": "afterDelay"
+    "files.autoSave": "afterDelay",
+    "spellright.language": [
+        "en"
+    ],
+    "spellright.documentTypes": [
+        "markdown",
+        "latex",
+        "plaintext"
+    ]
 }

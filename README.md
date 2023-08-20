@@ -180,6 +180,8 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
+- 1.3.23
+  - add - Extension parameter to turn notification off
 - 1.3.18
   - add - publish to OVSX.
   - enhance - Branch name creation now is checked through `git check-ref-format --branch ***` with allows create any qualified branch name.

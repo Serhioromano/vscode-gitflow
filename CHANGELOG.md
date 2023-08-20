@@ -2,6 +2,10 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [1.3.23] 07/20/2023
+
+- add - Extension parameter to turn notification off
+
 ## [1.3.18] 06/12/2022
 
 - add - publish to OVSX.
