@@ -26,7 +26,7 @@
         "showcommands",
         "vsix"
     ],
-    "workbench.colorTheme": "Dracula",
+    "workbench.colorTheme": "Default Dark Modern",
     "[typescript]": {
         "editor.defaultFormatter": "vscode.typescript-language-features"
     },
