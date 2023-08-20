@@ -1,5 +1,3 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT) ![workflow](https://github.com/Serhioromano/vscode-gitflow/actions/workflows/publish.yml/badge.svg) [![Version](https://vsmarketplacebadge.apphb.com/version-short/serhioromano.vscode-gitflow.svg)](https://marketplace.visualstudio.com/items?itemName=serhioromano.vscode-gitflow) [![Installs](https://vsmarketplacebadge.apphb.com/installs-short/serhioromano.vscode-gitflow.svg)](https://marketplace.visualstudio.com/items?itemName=serhioromano.vscode-gitflow) [![Ratings](https://vsmarketplacebadge.apphb.com/rating-short/serhioromano.vscode-gitflow.svg)](https://marketplace.visualstudio.com/items?itemName=serhioromano.vscode-gitflow)
-
 # Git FLow Support for VS Code
 
 > **Attention!!!**. From version 0.5.11 it requires latest VS Code `>=1.64.0`.
