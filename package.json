@@ -3,6 +3,7 @@
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
     "version": "1.3.23",
+    "version": "1.3.25",
     "engines": {
         "vscode": "^1.64.0"
     },
