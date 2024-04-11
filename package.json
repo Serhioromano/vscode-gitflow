@@ -779,7 +779,7 @@
         "vsce": "^2.6.4"
     },
     "dependencies": {
-        "npm": "^8.19.2",
+        "npm": "^10.5.2",
         "semver": "^7.5.2",
         "typescript-memoize": "^1.1.0"
     }
