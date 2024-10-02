@@ -6,17 +6,29 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run Extension",
-            "type": "extensionHost",
-            "request": "launch",
+            "name": "Launch Extension",
             "args": [
                 "--profile=ExtensionDebug",
                 "--extensionDevelopmentPath=${workspaceFolder}"
             ],
             "outFiles": [
-                "${workspaceFolder}/out/extension.js"
+                "${workspaceFolder}/out/**/*.js"
             ],
-            "preLaunchTask": "${defaultBuildTask}"
+            "preLaunchTask": "npm: compile",
+            "request": "launch",
+            "type": "extensionHost"
+        },
+        {
+            "name": "Run Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "preLaunchTask": "watch"
         },
         {
             "name": "Extension Tests",
