@@ -24,9 +24,9 @@ Git Flow is ideally suited for projects that have a scheduled release cycle and 
 
 When installed, you will find 2 new views in SCM side bar, GITFLOW and VERSIONS. Also in status bar you will find **Git Flow** button to launch Quick Pick menu, or you can use `Shift`+`Alt`+`D` short key.
 
-To see list of all commands use `F1` or `Ctrl`+`Shift`+`P` and type gitflow.
+To see list of all commands use `F1` or `Ctrl`+`Shift`+`P` and type GitFlow.
 
-![ext](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/ss.png)
+![ext.](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/ss.png)
 
 > We suggest [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph) to complement this extension.
 
@@ -34,7 +34,7 @@ To see list of all commands use `F1` or `Ctrl`+`Shift`+`P` and type gitflow.
 
 All basic operations you need to do in a single place.
 
-### Gitflow
+### GitFlow
 
 - Init git flow
 - Feature (Start, Finish, Checkout, Delete, Rebase, Publish, Track)
@@ -70,13 +70,13 @@ All basic operations you need to do in a single place.
 
 Multiple folder workspace was long awaited feature of VS Code for many people. It would be a shame not to support it.
 
-![Gitflow multiple folder workspace](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/mfw.png)
+![GitFlow multiple folder workspace](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/mfw.png)
 
 ### Quick Pick
 
-Quick Pick is a popup with essential Git Flow commands, like creating a new flow branch or appling actions to the currently selected flow brunch. You can call it with `Shift`+`Alt`+`d` short key. Note this command is available only if extension was initialized successfully.
+Quick Pick is a popup with essential Git Flow commands, like creating a new flow branch or applying actions to the currently selected flow brunch. You can call it with `Shift`+`Alt`+`d` short key. Note this command is available only if extension was initialized successfully.
 
-![Git flow quick pik](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/qp.png)
+![Git flow quick pick](https://raw.githubusercontent.com/Serhioromano/vscode-gitflow/main/resources/media/qp.png)
 
 ### Automatic version bump
 
@@ -94,7 +94,7 @@ or
 ### [UNRELEASED] (DD-MM-YYYY)
 ```
 
-Or any combination of `[Unreleased]`, `[unreleased]`, `[UNRELEASED]`, `yyyy`, `mm` or `dd` and all uppercase variations, these will be replaced with the relevent info.
+Or any combination of `[Unreleased]`, `[unreleased]`, `[UNRELEASED]`, `yyyy`, `mm` or `dd` and all uppercase variations, these will be replaced with the relevant info.
 
 ### How to work with Support branch
 
@@ -128,14 +128,14 @@ Thus your `master` or `main` branch contain most recent version of your product 
 
 ### Working remotely
 
-In order to push branches to or delete branches from a remote repository like GitHub, you must be authenticated. For github there are 2 main ways to work with repositories - over SSH protocol or over HTTPS. Those 2 different protocols usually refer to repository with different URL. Here is example of the SSH and HTTPS urls for this extension.
+In order to push branches to or delete branches from a remote repository like GitHub, you must be authenticated. For GitHub there are 2 main ways to work with repositories - over SSH protocol or over HTTPS. Those 2 different protocols usually refer to repository with different URL. Here is example of the SSH and HTTPS URLs for this extension.
 
 ```text
 https://github.com/Serhioromano/vscode-gitflow.git
 git@github.com:Serhioromano/vscode-gitflow.git
 ```
 
-You can clone a repository with either url.
+You can clone a repository with either URL.
 
 #### SSH (recommended)
 
@@ -185,8 +185,8 @@ GitHub CLI will automatically store your Git credentials for you when you choose
   - enhance - Branch name creation now is checked through `git check-ref-format --branch ***` with allows create any qualified branch name.
   - add - Option to automatically bump version on release or not.
   - add - replace spaces in branch name with `_`
-  - fix - tmp dir for message files on release and hotfix
-  - add - parameter `gitflow.path` to manually set gitflow executable.
+  - fix - `tmp` directory for message files on release and hotfix
+  - add - parameter `gitflow.path` to manually set GitFlow executable.
   - fix - Month updated in changelog one month less.
   - fix - Some words in command message `-m"Something"` caused command failed. Fixed by using file.
   - add - use `git.path` settings.
@@ -202,7 +202,7 @@ GitHub CLI will automatically store your Git credentials for you when you choose
   - add - update changelog automatically
   - enhance - Allow change finish message when finish hotfix or release
 - 1.1.0
-  - optimize - performance improvement using memoization technique.
+  - optimize - performance improvement using memorization technique.
 - 1.0.0
   - add - Parameter to show all internal git commands run in `git flow` in output window
   - add - Output logger named Git Flow
@@ -230,9 +230,9 @@ GitHub CLI will automatically store your Git credentials for you when you choose
   - enhance - CI flow was created for fast delivery of new versions.
 - 0.2.11
   - fix - take name of flow branches from configuration
-  - fix - ui buttons
+  - fix - UI buttons
 - 0.2.9
-  - add - single command to sync all root branches (develop and master ot main)
+  - add - single command to sync all root branches (develop and master or main)
   - add - command to checkout root branches
   - enhance - better icons
 - 0.2.2
