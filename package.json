@@ -73,6 +73,11 @@
                     "default": "",
                     "description": "Set you git-flow path manually"
                 },
+                "gitflow.replaceRymbol": {
+                    "type": "string",
+                    "default": "_",
+                    "description": "Replace whitespaces in branch names with this simbol"
+                },
                 "gitflow.autoBumpVersion": {
                     "type": "boolean",
                     "default": true,
