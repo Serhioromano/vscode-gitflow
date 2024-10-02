@@ -751,8 +751,8 @@
     },
     "main": "./out/extension.js",
     "scripts": {
-        "_vscode:prepublish": "npm run esbuild-base -- --minify",
-        "vscode:prepublish": "npm run compile",
+        "vscode:prepublish": "npm run esbuild-base -- --minify",
+        "_vscode:prepublish": "npm run compile",
         "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
         "esbuild": "npm run esbuild-base -- --sourcemap",
         "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
