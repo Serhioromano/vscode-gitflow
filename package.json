@@ -40,10 +40,7 @@
     ],
     "icon": "icon.drawio.png",
     "activationEvents": [
-        "workspaceContains:.git",
-        "onCommand:gitflow.quickPick",
-        "onView:gitflowExplorer",
-        "onView:gitflowTags"
+        "workspaceContains:.git"
     ],
     "extensionDependencies": [
         "vscode.git",
@@ -73,10 +70,10 @@
                     "default": "",
                     "description": "Set you git-flow path manually"
                 },
-                "gitflow.replaceRymbol": {
+                "gitflow.replaceSymbol": {
                     "type": "string",
                     "default": "_",
-                    "description": "Replace whitespaces in branch names with this simbol"
+                    "description": "Replace whitespace in branch names with this symbol"
                 },
                 "gitflow.autoBumpVersion": {
                     "type": "boolean",
