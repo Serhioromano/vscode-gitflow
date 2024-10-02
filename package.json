@@ -2,8 +2,7 @@
     "name": "vscode-gitflow",
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
-    "version": "1.3.23",
-    "version": "1.3.25",
+    "version": "1.3.26",
     "engines": {
         "vscode": "^1.64.0"
     },
@@ -41,10 +40,7 @@
     ],
     "icon": "icon.drawio.png",
     "activationEvents": [
-        "workspaceContains:.git",
-        "onCommand:gitflow.quickPick",
-        "onView:gitflowExplorer",
-        "onView:gitflowTags"
+        "workspaceContains:.git"
     ],
     "extensionDependencies": [
         "vscode.git",
@@ -73,6 +69,11 @@
                     "type": "string",
                     "default": "",
                     "description": "Set you git-flow path manually"
+                },
+                "gitflow.replaceSymbol": {
+                    "type": "string",
+                    "default": "_",
+                    "description": "Replace whitespace in branch names with this symbol"
                 },
                 "gitflow.autoBumpVersion": {
                     "type": "boolean",

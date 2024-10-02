@@ -6,8 +6,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Extension",
+            "args": [
+                "--profile=ExtensionDebug",
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "preLaunchTask": "npm: compile",
+            "request": "launch",
+            "type": "extensionHost"
+        },
+        {
             "name": "Run Extension",
-            "type": "pwa-extensionHost",
+            "type": "extensionHost",
             "request": "launch",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}"
@@ -15,7 +28,7 @@
             "outFiles": [
                 "${workspaceFolder}/out/**/*.js"
             ],
-            "preLaunchTask": "${defaultBuildTask}"
+            "preLaunchTask": "watch"
         },
         {
             "name": "Extension Tests",

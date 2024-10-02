@@ -313,7 +313,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 if (name === undefined) {
                     return;
                 }
-                name = name.replace(/\s/igm, "_");
+                let config = vscode.workspace.getConfiguration("gitflow");
+                name = name.replace(/\s/igm, `${config.get("replaceSymbol")}`);
                 const checked = this.util.execSync(`"${this.util.path}" check-ref-format --branch ${name}`).trim();
 
                 if (checked !== name) {
