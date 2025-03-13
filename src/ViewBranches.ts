@@ -49,9 +49,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         return element;
     }
 
-    getChildren(element?: Flow): Thenable<Flow[]> {
+    async getChildren(element?: Flow): Promise<Flow[]> {
 
-        if (!checked && !this.util.check()) {
+        if (!checked && !(await this.util.check())) {
             return Promise.resolve([]);
         }
         checked = true;
@@ -59,7 +59,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let tree: Flow[] = [];
 
         if (element === undefined) {
-            let list = this.util.execSync(`${this.util.flowPath} config list`);
+            let list = (await this.util.execSync(`${this.util.flowPath} config list`));
             let config = vscode.workspace.getConfiguration("gitflow");
             if (list.toLowerCase().search("not a gitflow-enabled repo yet") > 0 && config.get("showNotification") === true) {
                 let disabled = config.get("disableOnRepo");
@@ -85,9 +85,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 return Promise.resolve([]);
             }
 
-            this.curBranch = this.util.execSync(`"${this.util.path}" rev-parse --abbrev-ref HEAD`).trim();
+            this.curBranch = (await this.util.execSync(`"${this.util.path}" rev-parse --abbrev-ref HEAD`));
 
-            let b = this.util.execSync(`${this.util.flowPath} config list`).replace("\r", "").split("\n");
+            let b = (await this.util.execSync(`${this.util.flowPath} config list`)).replace("\r", "").split("\n");
             this.branches.master = b[0].split(": ")[1].trim();
             this.branches.develop = b[1].split(": ")[1].trim();
             this.branches.feature = b[2].split(": ")[1].trim();
@@ -96,20 +96,12 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             this.branches.hotfix = b[5].split(": ")[1].trim();
             this.branches.support = b[6].split(": ")[1].trim();
 
-            // this.listRemotes = [...new Set(
-            //     this.util.execSync(`"${this.util.path}" remote -v')
-            //         .split("\n")
-            //         .map(el => el.split("\t")[0].trim())
-            //         .filter(el => el !== '')
-            // )];
-            this.listBranches = this.util
-                .execSync(`"${this.util.path}" branch`)
+            this.listBranches = (await this.util.execSync(`"${this.util.path}" branch`))
                 .split("\n")
                 .map((el) => el.trim().replace("* ", ""))
                 .filter((el) => el !== "");
 
-            this.listRemoteBranches = this.util
-                .execSync(`"${this.util.path}" branch -r`)
+            this.listRemoteBranches = (await this.util.execSync(`"${this.util.path}" branch -r`))
                 .split("\n")
                 .map((el) => {
                     if (el.toLowerCase().search("origin/") !== -1) {
@@ -251,11 +243,11 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                         setTimeout(() => {
                             this.listBranches
                                 .filter((el) => el.split("/").length < 2)
-                                .forEach((el) => {
+                                .forEach(async (el) => {
                                     if (this.listRemoteBranches.includes(el)) {
-                                        this.util.execSync(`"${this.util.path}" pull origin ${el}`);
+                                        await this.util.execSync(`"${this.util.path}" pull origin ${el}`);
                                     }
-                                    this.util.execSync(`"${this.util.path}" push origin ${el}:${el}`);
+                                    await this.util.execSync(`"${this.util.path}" push origin ${el}:${el}`);
                                 });
                             resolve();
                         }, 100);
@@ -324,7 +316,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 }
                 let config = vscode.workspace.getConfiguration("gitflow");
                 name = name.replace(/\s/igm, `${config.get("replaceSymbol")}`);
-                const checked = this.util.execSync(`"${this.util.path}" check-ref-format --branch ${name}`).trim();
+                const checked = (await this.util.execSync(`"${this.util.path}" check-ref-format --branch ${name}`));
 
                 if (checked !== name) {
                     vscode.window.showErrorMessage(`Error creating a branch: ${checked}`);
@@ -340,8 +332,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 }
                 if (feature === "support") {
                     base = await vscode.window.showQuickPick(
-                        this.util
-                            .execSync(`"${this.util.path}" tag --sort=-v:refname`)
+                        (await this.util.execSync(`"${this.util.path}" tag --sort=-v:refname`))
                             .split("\n")
                             .map((el) => el.trim().replace("* ", ""))
                             .filter((el) => el !== ""),
@@ -396,8 +387,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 switch (feature) {
                     case "support":
                         let root = this.listBranches.filter((el) => el.split("/").length < 2);
-                        let tags = this.util
-                            .execSync(`"${this.util.path}" tag --sort=-v:refname`)
+                        let tags = (await this.util.execSync(`"${this.util.path}" tag --sort=-v:refname`))
                             .split("\n")
                             .map((el) => el.trim().replace("* ", ""))
                             .filter((el) => el !== "");
@@ -471,8 +461,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
                         if (updated) {
                             writeFileSync(this.util.workspaceRoot + "/CHANGELOG.md", chc);
-                            this.util.execSync(`"${this.util.path}" add ./CHANGELOG.md`);
-                            this.util.execSync(`"${this.util.path}" commit ./CHANGELOG.md -m"Update Changelog"`);
+                            await this.util.execSync(`"${this.util.path}" add ./CHANGELOG.md`);
+                            await this.util.execSync(`"${this.util.path}" commit ./CHANGELOG.md -m"Update Changelog"`);
                         }
                     }
                 }
@@ -484,7 +474,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let cmd = `${this.util.flowPath} ${feature} ${what}${command}${option} ${name} ${base}`;
         // console.log(cmd);
 
-        this.util.exec(cmd, progress, (s) => {
+        this.util.exec(cmd, progress, async (s) => {
             this._onDidChangeTreeData.fire();
             if (["hotfix", "release"].includes(feature)) {
                 vscode.commands.executeCommand("gitflow.refreshT");
@@ -504,8 +494,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                             `${name}`
                         )
                     );
-                    this.util.execSync(`"${this.util.path}" add ./package.json`);
-                    this.util.execSync(`"${this.util.path}" commit ./package.json -m "Version bump to ${name}"`);
+                    await this.util.execSync(`"${this.util.path}" add ./package.json`);
+                    await this.util.execSync(`"${this.util.path}" commit ./package.json -m "Version bump to ${name}"`);
                 }
             }
         });
@@ -617,8 +607,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         });
         let option = options?.includes("[-f] Force deletion") ? "-D" : "-d";
 
-        this.util.execSync(`"${this.util.path}" checkout -d ${this.branches.develop}`);
-        this.util.execSync(`"${this.util.path}" branch ${option} ${name}`);
+        await this.util.execSync(`"${this.util.path}" checkout -d ${this.branches.develop}`);
+        await this.util.execSync(`"${this.util.path}" branch ${option} ${name}`);
 
         if (options?.includes("[-r] Delete remote branch")) {
             this.util.exec(`"${this.util.path}" push --delete origin ${name}`, true, () => {
@@ -779,8 +769,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     }
     //#endregion
 
-    version(): string {
-        return this.util.execSync(`${this.util.flowPath} version`);
+    async version(): Promise<string> {
+        return await this.util.execSync(`${this.util.flowPath} version`);
     }
 
     refresh(): void {

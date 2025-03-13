@@ -25,13 +25,12 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
         return element;
     }
 
-    getChildren(element?: Tag): Thenable<Tag[]> {
+    async getChildren(element?: Tag): Promise<Tag[]> {
         if (!checked && !this.util.check()) {
             return Promise.resolve([]);
         }
         checked = true;
-        this.util
-            .execSync(`"${this.util.path}" remote`)
+        (await this.util.execSync(`"${this.util.path}" remote`))
             .split("\n")
             .map((el) => {
                 if (el.toLowerCase().trim() === "origin") {
@@ -40,15 +39,13 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
             });
 
         if (this.hasOrigin) {
-            this.remotes = this.util
-                .execSync(`"${this.util.path}" ls-remote --tags origin`)
+            this.remotes = (await this.util.execSync(`"${this.util.path}" ls-remote --tags origin`))
                 .split("\n")
                 .filter((el) => el.trim().search("refs/tags/") > 0)
                 .map((el) => el.split("/")[2].replace("^{}", ""));
         }
 
-        this.tags = this.util
-            .execSync(`"${this.util.path}" tag --sort=-v:refname`)
+        this.tags = (await this.util.execSync(`"${this.util.path}" tag --sort=-v:refname`))
             .split("\n")
             .map((el) => el.trim())
             .filter((el) => el !== "");
@@ -66,8 +63,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     async deleteTag(node: Tag | undefined) {
         let name = node?.label;
         if (node === undefined) {
-            let tags = this.util
-                .execSync(`"${this.util.path}" tag --sort=-v:refname`)
+            let tags = (await this.util.execSync(`"${this.util.path}" tag --sort=-v:refname`))
                 .split("\n")
                 .map((el) => el.trim())
                 .filter((el) => el !== "");
@@ -86,10 +82,10 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
                 })) || [];
         }
         if (remotes.includes("Delete Remote")) {
-            this.util.execSync(`"${this.util.path}" push --delete origin ${name}`);
+            await this.util.execSync(`"${this.util.path}" push --delete origin ${name}`);
         }
         if (remotes.includes("Delete local")) {
-            this.util.execSync(`"${this.util.path}" tag -d ${name}`);
+            await this.util.execSync(`"${this.util.path}" tag -d ${name}`);
         }
         this._onDidChangeTreeData.fire();
     }
@@ -101,8 +97,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
         }
         let name = node?.label;
         if (node === undefined) {
-            let tags = this.util
-                .execSync(`"${this.util.path}" tag --sort=-v:refname`)
+            let tags = (await this.util.execSync(`"${this.util.path}" tag --sort=-v:refname`))
                 .split("\n")
                 .map((el) => el.trim())
                 .filter((el) => el !== "");

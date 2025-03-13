@@ -14,7 +14,11 @@ type CmdResult = {
 export class Util {
     public path: string = '';
     public flowPath: string = '';
-    constructor(public workspaceRoot: string, private logger: Logger, public sb: vscode.StatusBarItem) {
+    constructor(
+        public workspaceRoot: string,
+        private logger: Logger,
+        public sb: vscode.StatusBarItem
+    ) {
         this.path = vscode.workspace.getConfiguration('git').get('path') || "";
         if (this.path.trim().length === 0) {
             const gitExtension = vscode.extensions.getExtension<GitExtension>("vscode.git")!.exports;
@@ -57,23 +61,37 @@ export class Util {
     }
 
     @MemoizeExpiring(1000)
-    public execSync(cmd: string): string {
+    public async execSync(command: string): Promise<string> {
         if (this.path.trim().length === 0) {
             return "";
         }
         this.sb.text = "$(sync~spin) Git Flow in progress...";
+
+        const session = await vscode.authentication.getSession('github', ['repo'], { createIfNone: true });
+        const token = session.accessToken;
+        const authCommand = `GIT_ASKPASS="echo ${token}" ${command}`;
+
         try {
-            let out = execSync(cmd, { cwd: this.workspaceRoot }).toString();
-            this.logger.log(out, cmd);
+            let out = execSync(authCommand, { cwd: this.workspaceRoot }).toString().trim();
+            this.logger.log(out, command);
             this.sb.text = "$(list-flat) Git Flow";
             return out;
         } catch (e) {
             this.sb.text = "$(list-flat) Git Flow";
-            this.logger.log(`ERROR: ${e}`, cmd, LogLevels.error);
-            vscode.window.showErrorMessage(`Error executing: ${cmd} : ${e}`);
+            this.logger.log(`ERROR: ${e}`, command, LogLevels.error);
+            vscode.window.showErrorMessage(`Error executing: ${command} : ${e}`);
             return "" + e;
         }
     }
+
+    // @MemoizeExpiring(1000)
+    // public async execAuthenticated(command: string): Promise<string> {
+    //     const session = await vscode.authentication.getSession('github', ['repo'], { createIfNone: true });
+    //     const token = session.accessToken;
+
+    //     const authCommand = `GIT_ASKPASS="echo ${token}" ${command}`;
+    //     return execSync(authCommand, { cwd: this.workspaceRoot }).toString();
+    // }
 
     @MemoizeExpiring(1000)
     private execCb(cmd: string, cb: (s: string) => void, resolve?: any): void {
@@ -81,6 +99,11 @@ export class Util {
             return;
         }
         this.sb.text = "$(sync~spin) Git Flow in progress...";
+
+        // const session = await vscode.authentication.getSession('github', ['repo'], { createIfNone: true });
+        // const token = session.accessToken;
+        // const authCommand = `GIT_ASKPASS="echo ${token}" ${cmd}`;
+
         exec(
             cmd, { cwd: this.workspaceRoot, },
             (err, stdout, stderr) => {
@@ -100,25 +123,25 @@ export class Util {
         );
     }
 
-    public check(): boolean {
+    public async check(): Promise<boolean> {
         if (!this.workspaceRoot) {
             vscode.window.showErrorMessage("No folder opened");
             return false;
         }
-        let status = this.execSync(`"${this.path}" version`).toLowerCase();
+        let status = (await this.execSync(`"${this.path}" version`)).toLowerCase();
         if (status.search("git version") === -1) {
             vscode.window.showWarningMessage("Looks like git CLI is not installed.");
             return false;
         }
 
-        status = this.execSync(`"${this.path}" status`).toLowerCase();
+        status = (await this.execSync(`"${this.path}" status`)).toLowerCase();
 
         if (status.search("not a git repository") !== -1) {
             vscode.window.showWarningMessage("This project is not a Git repository.");
             return false;
         }
 
-        if (this.execSync(`${this.flowPath} version`).toLowerCase().search("is not a git command") !== -1) {
+        if ((await this.execSync(`${this.flowPath} version`)).toLowerCase().search("is not a git command") !== -1) {
             let installLink = "Install";
             vscode.window
                 .showWarningMessage("To use Git Flow extension please install Git flow (AVH).", installLink)
