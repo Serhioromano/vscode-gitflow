@@ -62,15 +62,24 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             let list = this.util.execSync(`${this.util.flowPath} config list`);
             let config = vscode.workspace.getConfiguration("gitflow");
             if (list.toLowerCase().search("not a gitflow-enabled repo yet") > 0 && config.get("showNotification") === true) {
+                let disabled = config.get("disableOnRepo");
+                if (disabled) {
+                    return Promise.resolve([]);
+                }
+
                 let initLink = "Init";
+                let disableCheck = "Disable";
                 vscode.window
                     .showWarningMessage(
                         "Not a gitflow-enabled repo yet. Please, open a terminal and run `git flow init` command.",
-                        initLink
+                        initLink, disableCheck
                     )
                     .then((selection) => {
                         if (selection === initLink) {
                             vscode.commands.executeCommand("gitflow.init");
+                        }
+                        if (selection === disableCheck) {
+                            config.update("disableOnRepo", true, vscode.ConfigurationTarget.Workspace);
                         }
                     });
                 return Promise.resolve([]);
@@ -103,7 +112,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                 .execSync(`"${this.util.path}" branch -r`)
                 .split("\n")
                 .map((el) => {
-                    if(el.toLowerCase().search("origin/") !== -1){
+                    if (el.toLowerCase().search("origin/") !== -1) {
                         this.hasOrigin = true;
                     }
                     let a = el.split("/");
@@ -226,7 +235,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     }
 
     syncAll() {
-        if(!this.hasOrigin) {
+        if (!this.hasOrigin) {
             vscode.window.showWarningMessage("No ORIGIN remote has been found!");
             return;
         }
@@ -621,7 +630,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         this._onDidChangeTreeData.fire();
     }
     async publishSupport(node: Flow | undefined) {
-        if(!this.hasOrigin) {
+        if (!this.hasOrigin) {
             vscode.window.showWarningMessage("No ORIGIN remote has been found!");
             return;
         }
