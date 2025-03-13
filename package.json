@@ -79,6 +79,11 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Bump package version post start release/hotfix."
+                },
+                "gitflow.disableOnRepo": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Disable GitFlow check on this repo"
                 }
             }
         },

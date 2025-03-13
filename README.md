@@ -178,6 +178,8 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 ## Changelog
 
+- 1.3.28
+  - add - Parameter to disable gitflow check on the repository
 - 1.3.23
   - add - Extension parameter to turn notification off
 - 1.3.18

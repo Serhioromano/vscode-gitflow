@@ -2,6 +2,10 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [1.3.28] 03/17/2025
+
+- add - Setting to disable gitflow check on repository open. It also adds button to disable check on warning.
+
 ## [1.3.23] 07/20/2023
 
 - add - Extension parameter to turn notification off
