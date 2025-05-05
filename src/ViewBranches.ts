@@ -808,7 +808,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
     _runTerminal(cmd: string): void {
         this._initTerminal();
         this.terminal?.show();
-        this.terminal?.sendText(`cd ${this.util.workspaceRoot}`);
+        // this.terminal?.sendText(`cd ${this.util.workspaceRoot}`);
+        const safePath = this.util.workspaceRoot.replace(/([\"\\\s\'\$\`])/g, '\\$1');
+        this.terminal?.sendText(`cd "${safePath}"`);
         this.terminal?.sendText(cmd);
     }
 
