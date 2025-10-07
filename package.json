@@ -762,6 +762,8 @@
         "esbuild": "npm run esbuild-base -- --sourcemap",
         "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
         "watch": "tsc -watch -p ./",
+        "gf": "sudo apt-get install git-flow",
+        "gf2": "wget -q  https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh && sudo bash gitflow-installer.sh install develop; rm gitflow-installer.sh",
         "publish": "vsce package && gh release create $(node -pe \"require('./package.json')['version']\") --generate-notes \"./vscode-gitflow-$(node -pe \"require('./package.json')['version']\").vsix\" && vsce publish",
         "compile": "tsc -p ./",
         "pretest": "npm run compile && npm run lint",
