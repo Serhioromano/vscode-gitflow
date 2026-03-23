@@ -49,6 +49,74 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         return element;
     }
 
+    private parseFlowConfig(configOutput: string): BranchList {
+        const lines = configOutput.replace(/\r/g, "").split("\n");
+        const parsed: BranchList = {
+            develop: "",
+            master: "",
+            release: "",
+            feature: "",
+            hotfix: "",
+            bugfix: "",
+            support: "",
+        };
+
+        // Support older git-flow output such as "Branch name for production releases: master".
+        const legacyMappings: Array<{ key: keyof BranchList; pattern: RegExp }> = [
+            { key: "master", pattern: /Branch name for production releases:\s*(.+)$/i },
+            { key: "develop", pattern: /Branch name for "next release" development:\s*(.+)$/i },
+            { key: "feature", pattern: /Feature branches\?\s*(.+)$/i },
+            { key: "bugfix", pattern: /Bugfix branches\?\s*(.+)$/i },
+            { key: "release", pattern: /Release branches\?\s*(.+)$/i },
+            { key: "hotfix", pattern: /Hotfix branches\?\s*(.+)$/i },
+            { key: "support", pattern: /Support branches\?\s*(.+)$/i },
+        ];
+
+        for (const line of lines) {
+            for (const mapping of legacyMappings) {
+                const match = line.match(mapping.pattern);
+                if (match) {
+                    parsed[mapping.key] = match[1].trim();
+                }
+            }
+        }
+
+        // Support newer git-flow output that contains base branches and topic sections.
+        let currentTopic: keyof BranchList | null = null;
+        for (const rawLine of lines) {
+            const line = rawLine.trim();
+            if (!line) {
+                currentTopic = null;
+                continue;
+            }
+
+            const rootMatch = line.match(/^([^\s].*?)\s+→\s+\(root\)$/);
+            if (rootMatch && !parsed.master) {
+                parsed.master = rootMatch[1].trim();
+                continue;
+            }
+
+            const developMatch = line.match(/^develop\s+→\s+(.+)$/i);
+            if (developMatch && !parsed.develop) {
+                parsed.develop = "develop";
+                continue;
+            }
+
+            const topicMatch = line.match(/^(release|feature|bugfix|hotfix|support):$/i);
+            if (topicMatch) {
+                currentTopic = topicMatch[1].toLowerCase() as keyof BranchList;
+                continue;
+            }
+
+            const prefixMatch = line.match(/^Prefix:\s*(.+)$/i);
+            if (currentTopic && prefixMatch) {
+                parsed[currentTopic] = prefixMatch[1].trim();
+            }
+        }
+
+        return parsed;
+    }
+
     getChildren(element?: Flow): Thenable<Flow[]> {
 
         if (!checked && !this.util.check()) {
@@ -61,7 +129,12 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         if (element === undefined) {
             let list = this.util.execSync(`${this.util.flowPath} config list`);
             let config = vscode.workspace.getConfiguration("gitflow");
-            if (list.toLowerCase().search("not a gitflow-enabled repo yet") > 0 && config.get("showNotification") === true) {
+            const normalizedList = list.toLowerCase();
+            if (
+                (normalizedList.includes("not a gitflow-enabled repo yet") ||
+                    normalizedList.includes("git-flow is not initialized in this repository")) &&
+                config.get("showNotification") === true
+            ) {
                 let disabled = config.get("disableOnRepo");
                 if (disabled) {
                     return Promise.resolve([]);
@@ -87,14 +160,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
 
             this.curBranch = this.util.execSync(`"${this.util.path}" rev-parse --abbrev-ref HEAD`).trim();
 
-            let b = this.util.execSync(`${this.util.flowPath} config list`).replace("\r", "").split("\n");
-            this.branches.master = b[0].split(": ")[1].trim();
-            this.branches.develop = b[1].split(": ")[1].trim();
-            this.branches.feature = b[2].split(": ")[1].trim();
-            this.branches.bugfix = b[3].split(": ")[1].trim();
-            this.branches.release = b[4].split(": ")[1].trim();
-            this.branches.hotfix = b[5].split(": ")[1].trim();
-            this.branches.support = b[6].split(": ")[1].trim();
+            this.branches = this.parseFlowConfig(list);
 
             // this.listRemotes = [...new Set(
             //     this.util.execSync(`"${this.util.path}" remote -v')
