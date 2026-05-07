@@ -88,13 +88,13 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             this.curBranch = this.util.execSync(`"${this.util.path}" rev-parse --abbrev-ref HEAD`).trim();
 
             let b = this.util.execSync(`${this.util.flowPath} config list`).replace("\r", "").split("\n");
-            this.branches.master = b[0].split(": ")[1].trim();
-            this.branches.develop = b[1].split(": ")[1].trim();
-            this.branches.feature = b[2].split(": ")[1].trim();
-            this.branches.bugfix = b[3].split(": ")[1].trim();
-            this.branches.release = b[4].split(": ")[1].trim();
-            this.branches.hotfix = b[5].split(": ")[1].trim();
-            this.branches.support = b[6].split(": ")[1].trim();
+            this.branches.master = `${b[0].split(": ")[1]}`.trim();
+            this.branches.develop = `${b[1].split(": ")[1]}`.trim();
+            this.branches.feature = `${b[2].split(": ")[1]}`.trim();
+            this.branches.bugfix = `${b[3].split(": ")[1]}`.trim();
+            this.branches.release = `${b[4].split(": ")[1]}`.trim();
+            this.branches.hotfix = `${b[5].split(": ")[1]}`.trim();
+            this.branches.support = `${b[6].split(": ")[1]}`.trim();
 
             // this.listRemotes = [...new Set(
             //     this.util.execSync(`"${this.util.path}" remote -v')
