@@ -59,13 +59,14 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let tree: Flow[] = [];
 
         if (element === undefined) {
-            let list = this.util.execSync(`${this.util.flowPath} config list`);
             let config = vscode.workspace.getConfiguration("gitflow");
+            // Check disableOnRepo BEFORE running any git-flow commands
+            if (config.get("disableOnRepo")) {
+                return Promise.resolve([]);
+            }
+
+            let list = this.util.execSync(`${this.util.flowPath} config list`);
             if (list.toLowerCase().search("not a gitflow-enabled repo yet") > 0 && config.get("showNotification") === true) {
-                let disabled = config.get("disableOnRepo");
-                if (disabled) {
-                    return Promise.resolve([]);
-                }
 
                 let initLink = "Init";
                 let disableCheck = "Disable";

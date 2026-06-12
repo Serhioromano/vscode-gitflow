@@ -1,0 +1,5 @@
+strictModeWhiteList:
+  - ^ls\b
+  - ^find\b
+  - ^cd\b
+  - ^npm run compile\b
