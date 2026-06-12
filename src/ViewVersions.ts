@@ -30,6 +30,11 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
             return Promise.resolve([]);
         }
         checked = true;
+
+        let config = vscode.workspace.getConfiguration("gitflow");
+        if (config.get("disableOnRepo")) {
+            return Promise.resolve([]);
+        }
         this.util
             .execSync(`"${this.util.path}" remote`)
             .split("\n")
