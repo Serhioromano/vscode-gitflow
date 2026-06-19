@@ -3,6 +3,7 @@ import { execSync, exec, spawn, SpawnOptions } from "child_process";
 import { Logger, LogLevels } from "./logger";
 import { Memoize, MemoizeExpiring } from "typescript-memoize";
 import { GitExtension, API as GitAPI } from "./git";
+import { platform } from "os";
 // import { GitBaseExtension, API as GitBaseAPI } from "./lib/git-base";
 
 type CmdResult = {
@@ -14,6 +15,10 @@ type CmdResult = {
 export class Util {
     public path: string = '';
     public flowPath: string = '';
+    private get shell(): string | undefined {
+        const usePowerShell = vscode.workspace.getConfiguration('gitflow').get('usePowerShell', false);
+        return (platform() === 'win32' && usePowerShell) ? 'powershell.exe' : undefined;
+    }
     constructor(public workspaceRoot: string, private logger: Logger, public sb: vscode.StatusBarItem) {
         this.path = vscode.workspace.getConfiguration('git').get('path') || "";
         if (this.path.trim().length === 0) {
@@ -27,6 +32,7 @@ export class Util {
         }
         this.flowPath = vscode.workspace.getConfiguration('gitflow').get('path') || `"${this.path}" flow`;
         this.logger.log("Git found (path)", this.path);
+        
     }
 
     private progress(cmd: string, cb: (s: string) => void) {
@@ -56,6 +62,18 @@ export class Util {
         }
     }
 
+    /**
+     * When using PowerShell, wrap the command with the invocation operator &
+     * so that paths with spaces are properly handled.
+     * Example: "git.exe" version → & "git.exe" version
+     */
+    private prepareCommand(cmd: string): string {
+        if (this.shell === 'powershell.exe') {
+            return `& ${cmd}`;
+        }
+        return cmd;
+    }
+
     @MemoizeExpiring(1000)
     public execSync(cmd: string): string {
         if (this.path.trim().length === 0) {
@@ -63,7 +81,8 @@ export class Util {
         }
         this.sb.text = "$(sync~spin) Git Flow in progress...";
         try {
-            let out = execSync(cmd, { cwd: this.workspaceRoot }).toString();
+            const preparedCmd = this.prepareCommand(cmd);
+            let out = execSync(preparedCmd, { cwd: this.workspaceRoot, shell: this.shell }).toString();
             this.logger.log(out, cmd);
             this.sb.text = "$(list-flat) Git Flow";
             return out;
@@ -81,8 +100,9 @@ export class Util {
             return;
         }
         this.sb.text = "$(sync~spin) Git Flow in progress...";
+        const preparedCmd = this.prepareCommand(cmd);
         exec(
-            cmd, { cwd: this.workspaceRoot, },
+            preparedCmd, { cwd: this.workspaceRoot, shell: this.shell },
             (err, stdout, stderr) => {
                 this.sb.text = "$(list-flat) Git Flow";
                 if (err) {
