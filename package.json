@@ -84,6 +84,12 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Disable GitFlow check on this repo"
+                },
+                "gitflow.usePowerShell": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use PowerShell instead of CMD.exe on Windows. Enable this for UNC path (\\\\server\\share) support.",
+                    "scope": "machine-overridable"
                 }
             }
         },
