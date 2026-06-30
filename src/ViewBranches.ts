@@ -517,7 +517,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         }
     }
 
-    async _getFinishOptions(what: string): Promise<string[]> {
+    async _getFinishOptions(what: string): Promise<string[] | undefined> {
         return new Promise(async (resolve) => {
             let list: string[] = [];
             switch (what) {
@@ -581,10 +581,10 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
                     break;
             }
             resolve(
-                (await vscode.window.showQuickPick(list, {
+                await vscode.window.showQuickPick(list, {
                     title: "Select delete options",
                     canPickMany: true,
-                })) || []
+                })
             );
         });
     }
@@ -616,6 +616,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             title: "Select options",
             canPickMany: true,
         });
+        if (options === undefined) {
+            return;
+        }
         let option = options?.includes("[-f] Force deletion") ? "-D" : "-d";
 
         this.util.execSync(`"${this.util.path}" checkout -d ${this.branches.develop}`);
