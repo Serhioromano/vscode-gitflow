@@ -2,7 +2,7 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [Unreleased] 07/05/2026
+## [1.4.1] 07/05/2026
 
 - feat: add multi-language localization support (Russian, German, Spanish, French, Japanese, Chinese Simplified)
 - add: `vscode.l10n.t()` API for all user-facing strings in source code
