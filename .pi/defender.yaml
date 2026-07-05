@@ -1,0 +1,4 @@
+strictModeWhiteList:
+  - ^git checkout\b
+  - ^git status\b
+  - ^mv\b

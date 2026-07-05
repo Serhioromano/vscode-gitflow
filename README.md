@@ -63,6 +63,7 @@ All basic operations you need to do in a single place.
 - `gitflow.showAllCommands` - This option allows to see in GitFlow output window underground git commands run by git-flow.
 - `gitflow.path` - Allow manually set path for Git Flow executable including `flow`. For instance `/usr/bit/git flow`.
 - `gitflow.autoBumpVersion` - Either it should automatically bump a version in `package.json` file on `feature` or `hotfix` creation, and commit it to git.
+- `gitflow.usePowerShell` - (Windows only) Use PowerShell instead of CMD.exe. Enable this to work with repositories in a workspace under a UNC path (e.g., `\\server\share\repo`). Defaults to `false`.
 
 ## Feature Details
 
