@@ -1,9 +1,4 @@
-# Git FLow Support for VS Code
-
-> **Attention!!!**. From version 0.5.11 it requires latest VS Code `>=1.64.0`.
-
-
-> Looking for an artist to contribute the extension icon.
+# Git Flow Support for VS Code
 
 ## Known Issues
 
@@ -177,72 +172,18 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 - [Install GitHub CLI](https://cli.github.com/manual/installation) on macOS, Windows, or Linux.
 - In the command line, enter `gh auth login`, then follow the prompts.
 
-## Changelog
+## Localization 🌍
 
-- 1.3.28
-  - add - Parameter to disable gitflow check on the repository
-- 1.3.23
-  - add - Extension parameter to turn notification off
-- 1.3.18
-  - add - publish to OVSX.
-  - enhance - Branch name creation now is checked through `git check-ref-format --branch ***` with allows create any qualified branch name.
-  - add - Option to automatically bump version on release or not.
-  - add - replace spaces in branch name with `_`
-  - fix - `tmp` directory for message files on release and hotfix
-  - add - parameter `gitflow.path` to manually set GitFlow executable.
-  - fix - Month updated in changelog one month less.
-  - fix - Some words in command message `-m"Something"` caused command failed. Fixed by using file.
-  - add - use `git.path` settings.
-  - enhance - better find git executable path on windows.
-- 1.2.9
-  - security - fix string sanitization
-  - fix - stop command on ESC.
-  - fix - run version bump only when released or hotfix is started
-  - enhance - `CHANGELOG.md` update conditions
-  - fix -  changelog update `mm` not to be replaced in a word like co**mm**and.
-  - fix - release message is undefined
-  - change - Now version bump happens on hotfix or release start rather than finish
-  - add - update changelog automatically
-  - enhance - Allow change finish message when finish hotfix or release
-- 1.1.0
-  - optimize - performance improvement using memorization technique.
-- 1.0.0
-  - add - Parameter to show all internal git commands run in `git flow` in output window
-  - add - Output logger named Git Flow
-  - fix - Readme was not visible in marketplace.
-  - optimize - code refactor.
-- 0.5.11
-  - add - Status bar button to call Quick Pick menu
-  - add -  Groups in Quick Pick (require VS Code ^1.64.0)
-- 0.5.9
-  - add - Delete tags local and remote
-  - fix - Release checkout
-- 0.5.2
-  - add - Quick Pick popup
-  - optimize - Code was refactored and optimized. 1800 lines to 580.
-- 0.4.3
-  - add - Multiple folder workspaces
-  - fix - Progress notification not resolving
-- 0.3.1
-  - add - Support (Start, Checkout, Rebase, Delete)
-  - add - Release checkout
-  - add - Hotfix checkout
-- 0.2.14
-  - enhance - Order and group context menu elements.
-  - enhance - use VS Code theme icons instead of SVG.
-  - enhance - CI flow was created for fast delivery of new versions.
-- 0.2.11
-  - fix - take name of flow branches from configuration
-  - fix - UI buttons
-- 0.2.9
-  - add - single command to sync all root branches (develop and master or main)
-  - add - command to checkout root branches
-  - enhance - better icons
-- 0.2.2
-  - add - progress bas during process
-  - add - icons to menu elements
-  - add - bugfix support
-  - delete - configurations
-  - fix - git commands with remote
-  - update - README
-- 0.1.0 - Initial release of ...
+This extension supports 7 languages:
+
+| Language | VS Code Display Language |
+|---|---|
+| English (default) | `en` |
+| Русский | `ru` |
+| Deutsch | `de` |
+| Español | `es` |
+| Français | `fr` |
+| 日本語 | `ja` |
+| 简体中文 | `zh-cn` |
+
+The extension automatically uses your VS Code display language. Set it via **Configure Display Language** command or the `"locale"` setting in `argv.json`.

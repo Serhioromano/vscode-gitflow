@@ -2,3 +2,11 @@ strictModeWhiteList:
   - ^git checkout\b
   - ^git status\b
   - ^mv\b
+  - ^npx tsc\b
+  - ^npx @vscode/l10n-dev\b
+  - ^npm run(\s+--?[a-zA-Z][\w-]*)*\s+esbuild\b
+  - ^head\b
+  - ^wc\b
+  - ^for\b
+  - ^done\b
+  - ^git diff\b

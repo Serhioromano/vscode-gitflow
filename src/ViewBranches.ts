@@ -161,11 +161,11 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
             let list = this.util.execSync(`${this.util.flowPath} config list`);
             if (list.toLowerCase().search("not a gitflow-enabled repo yet") > 0 && config.get("showNotification") === true) {
 
-                let initLink = "Init";
-                let disableCheck = "Disable";
+                let initLink = vscode.l10n.t('Init');
+                let disableCheck = vscode.l10n.t('Disable');
                 vscode.window
                     .showWarningMessage(
-                        "Not a gitflow-enabled repo yet. Please, open a terminal and run `git flow init` command.",
+                        vscode.l10n.t('Not a gitflow-enabled repo yet. Please, open a terminal and run `git flow init` command.'),
                         initLink, disableCheck
                     )
                     .then((selection) => {
@@ -231,7 +231,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
             tree.push(
                 new Flow(
                     this.branches.release.replace("/", ""),
-                    "Releases",
+                    vscode.l10n.t('Releases'),
                     "tag",
                     vscode.TreeItemCollapsibleState.Expanded,
                     false,
@@ -241,7 +241,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
             tree.push(
                 new Flow(
                     this.branches.feature.replace("/", ""),
-                    "Features",
+                    vscode.l10n.t('Features'),
                     "test-view-icon",
                     vscode.TreeItemCollapsibleState.Expanded,
                     false,
@@ -251,7 +251,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
             tree.push(
                 new Flow(
                     this.branches.bugfix.replace("/", ""),
-                    "BugFixes",
+                    vscode.l10n.t('BugFixes'),
                     "callstack-view-session",
                     vscode.TreeItemCollapsibleState.Expanded,
                     false,
@@ -261,7 +261,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
             tree.push(
                 new Flow(
                     this.branches.hotfix.replace("/", ""),
-                    "HotFixes",
+                    vscode.l10n.t('HotFixes'),
                     "flame",
                     vscode.TreeItemCollapsibleState.Expanded,
                     false,
@@ -271,7 +271,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
             tree.push(
                 new Flow(
                     this.branches.support.replace("/", ""),
-                    "Support",
+                    vscode.l10n.t('Support'),
                     "history",
                     vscode.TreeItemCollapsibleState.Expanded,
                     false,
@@ -332,14 +332,14 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
 
     syncAll() {
         if (!this.hasOrigin) {
-            vscode.window.showWarningMessage("No ORIGIN remote has been found!");
+            vscode.window.showWarningMessage(vscode.l10n.t('No ORIGIN remote has been found!'));
             return;
         }
         vscode.window
             .withProgress(
                 {
                     location: vscode.ProgressLocation.Notification,
-                    title: `Sync all root branches`,
+                    title: vscode.l10n.t('Sync all root branches'),
                     cancellable: false,
                 },
                 (progress, token) =>
@@ -367,7 +367,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
                 this.listBranches,
-                { title: "Select branch" }
+                { title: vscode.l10n.t('Select branch') }
             );
         }
 
@@ -382,11 +382,11 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
         if (branch === undefined && search !== undefined) {
             let branches = this.listBranches.filter((el) => el.search(search) !== -1);
             if (branches.length === 0) {
-                vscode.window.showWarningMessage(`Could not find any ${ucf(search)}`);
+                vscode.window.showWarningMessage(vscode.l10n.t('Could not find any {0}', ucf(search)));
                 return;
             }
             branch = await vscode.window.showQuickPick(branches, {
-                title: `Select `,
+                title: vscode.l10n.t('Select branch'),
             });
         }
         if (branch === undefined) {
@@ -413,7 +413,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
                 }
 
                 name = await vscode.window.showInputBox({
-                    title: `Enter a valid ${ucf(feature)} git branch name`,
+                    title: vscode.l10n.t('Enter a valid {0} branch name', ucf(feature)),
                     value: version,
                 });
                 if (name === undefined) {
@@ -424,16 +424,16 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
                 const checked = this.util.execSync(`"${this.util.path}" check-ref-format --branch ${name}`).trim();
 
                 if (checked !== name) {
-                    vscode.window.showErrorMessage(`Error creating a branch: ${checked}`);
+                    vscode.window.showErrorMessage(vscode.l10n.t('Error creating a branch: {0}', checked));
                     return;
                 }
 
                 if (this.curBranch.search(this.branches.support) !== -1) {
                     let b =
-                        (await vscode.window.showQuickPick(["Yes", "No"], {
-                            title: `Start release based on ${this.curBranch}?`,
-                        })) || "No";
-                    base = b === "Yes" ? this.curBranch : "";
+                        (await vscode.window.showQuickPick([vscode.l10n.t('Yes'), vscode.l10n.t('No')], {
+                            title: vscode.l10n.t('Start release based on {0}?', this.curBranch),
+                        })) || vscode.l10n.t('No');
+                    base = b === vscode.l10n.t('Yes') ? this.curBranch : "";
                 }
                 if (feature === "support") {
                     base = await vscode.window.showQuickPick(
@@ -442,7 +442,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
                             .split("\n")
                             .map((el) => el.trim().replace("* ", ""))
                             .filter((el) => el !== ""),
-                        { title: "Start support branch based on a tag" }
+                        { title: vscode.l10n.t('Start support branch based on a tag') }
                     );
                     if (base === undefined) {
                         return;
@@ -451,18 +451,20 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
 
                 break;
             case "delete":
-                list = ["[-f] Force deletion"];
+                let forceDel = `[-f] ${vscode.l10n.t('Force deletion')}`;
+                let remoteDel = `[-r] ${vscode.l10n.t('Delete remote branch')}`;
+                list = [forceDel];
                 if (this.listRemoteBranches.includes(branch)) {
-                    list.push("[-r] Delete remote branch");
+                    list.push(remoteDel);
                 }
                 options = await vscode.window.showQuickPick(list, {
-                    title: "Select options",
+                    title: vscode.l10n.t('Select options'),
                     canPickMany: true,
                 });
                 if (options === undefined) {
                     return;
                 }
-                if (options.includes("[-r] Delete remote branch")) {
+                if (options.includes(remoteDel)) {
                     progress = true;
                 }
                 option = options
@@ -473,10 +475,12 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
                     .join(" ");
                 break;
             case "rebase":
+                let interactiveRebase = `[-i] ${vscode.l10n.t('Interactive rebase')}`;
+                let preserveMerges = `[-p] ${vscode.l10n.t('Preserve merges')}`;
                 options = await vscode.window.showQuickPick(
-                    ["[-i] An interactive rebase", "[-p] Preserve merges"],
+                    [interactiveRebase, preserveMerges],
                     {
-                        title: "Select options",
+                        title: vscode.l10n.t('Select options'),
                         canPickMany: true,
                     }
                 );
@@ -500,14 +504,14 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
                             .filter((el) => el !== "");
                         base =
                             (await vscode.window.showQuickPick([...root, ...tags], {
-                                title: "Select base branch",
+                                title: vscode.l10n.t('Select base branch'),
                             })) || "";
                         break;
                     default:
                         base =
                             (await vscode.window.showQuickPick(
                                 this.listBranches.filter((el) => el.split("/").length < 2),
-                                { title: "Select base branch" }
+                                { title: vscode.l10n.t('Select base branch') }
                             )) || "";
                 }
                 if (base === undefined) {
@@ -518,7 +522,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
                 options = await this._getFinishOptions(feature);
                 if (
                     this.listRemoteBranches.includes(branch) &&
-                    !options?.includes("[--keepremote] Keep the remote branch")
+                    !options?.includes(`[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`)
                 ) {
                     progress = true;
                 }
@@ -535,15 +539,15 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
 
                 if (["hotfix", "release"].includes(feature)) {
                     msg = await vscode.window.showInputBox({
-                        title: 'Message',
-                        value: `Finish ${ucf(feature)}: ${name}`,
+                        title: vscode.l10n.t('Message'),
+                        value: vscode.l10n.t('Finish {0}: {1}', ucf(feature), name),
                     });
                     if (msg === undefined) {
                         return;
                     }
                     msg = `${msg}`.trim();
                     if (msg === "") {
-                        msg = `Finish ${ucf(feature)}: ${name}`;
+                        msg = vscode.l10n.t('Finish {0}: {1}', ucf(feature), name);
                     }
 
                     let tmpMsgFile = path.join(`${os.tmpdir()}`, `vscode-git-flow-${Math.floor(Math.random() * 10000000)}.msg`);
@@ -619,66 +623,66 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
             switch (what) {
                 case "bugfix":
                     list = [
-                        "[-F] Fetch from origin before performing finish",
-                        "[-r] Rebase before merging",
-                        "[-p] Preserve merges while rebasing",
-                        "[-k] Keep branch after performing finish",
-                        "[--keepremote] Keep the remote branch",
-                        "[--keeplocal] Keep the local branch",
-                        "[-D] Force delete bugfix branch after finish",
-                        "[-S] Squash bugfix during merge",
-                        "[--no-ff] Never fast-forward during the merge",
+                        `[-F] ${vscode.l10n.t('Fetch from origin before performing finish')}`,
+                        `[-r] ${vscode.l10n.t('Rebase before merging')}`,
+                        `[-p] ${vscode.l10n.t('Preserve merges while rebasing')}`,
+                        `[-k] ${vscode.l10n.t('Keep branch after performing finish')}`,
+                        `[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`,
+                        `[--keeplocal] ${vscode.l10n.t('Keep the local branch')}`,
+                        `[-D] ${vscode.l10n.t('Force delete branch after finish')}`,
+                        `[-S] ${vscode.l10n.t('Squash branch during merge')}`,
+                        `[--no-ff] ${vscode.l10n.t('Never fast-forward during the merge')}`,
                     ];
                     break;
                 case "hotfix":
                     list = [
-                        "[-F] Fetch from origin before performing finish",
-                        "[-p] Push to origin after performing finish",
-                        "[-k] Keep branch after performing finish",
-                        "[--keepremote] Keep the remote branch",
-                        "[--keeplocal] Keep the local branch",
-                        "[-D] Force delete hotfix branch after finish",
-                        "[-n] Don't tag this hotfix",
-                        "[-b] Don't back-merge master, or tag if applicable, in develop",
-                        "[-S] Squash hotfix during merge",
+                        `[-F] ${vscode.l10n.t('Fetch from origin before performing finish')}`,
+                        `[-p] ${vscode.l10n.t('Push to origin after performing finish')}`,
+                        `[-k] ${vscode.l10n.t('Keep branch after performing finish')}`,
+                        `[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`,
+                        `[--keeplocal] ${vscode.l10n.t('Keep the local branch')}`,
+                        `[-D] ${vscode.l10n.t('Force delete branch after finish')}`,
+                        `[-n] ${vscode.l10n.t("Don't tag this hotfix")}`,
+                        `[-b] ${vscode.l10n.t("Don't back-merge master, or tag if applicable, in develop")}`,
+                        `[-S] ${vscode.l10n.t('Squash branch during merge')}`,
                     ];
                     break;
                 case "feature":
                     list = [
-                        "[-F] Fetch from origin before performing finish",
-                        "[-r] Rebase before merging",
-                        "[-p] Preserve merges while rebasing",
-                        "[--push] Push to origin after performing finish",
-                        "[-k] Keep branch after performing finish",
-                        "[--keepremote] Keep the remote branch",
-                        "[--keeplocal] Keep the local branch",
-                        "[-D] Force delete feature branch after finish",
-                        "[-S] Squash feature during merge",
-                        "[--no-ff] Never fast-forward during the merge",
+                        `[-F] ${vscode.l10n.t('Fetch from origin before performing finish')}`,
+                        `[-r] ${vscode.l10n.t('Rebase before merging')}`,
+                        `[-p] ${vscode.l10n.t('Preserve merges while rebasing')}`,
+                        `[--push] ${vscode.l10n.t('Push to origin after performing finish')}`,
+                        `[-k] ${vscode.l10n.t('Keep branch after performing finish')}`,
+                        `[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`,
+                        `[--keeplocal] ${vscode.l10n.t('Keep the local branch')}`,
+                        `[-D] ${vscode.l10n.t('Force delete branch after finish')}`,
+                        `[-S] ${vscode.l10n.t('Squash branch during merge')}`,
+                        `[--no-ff] ${vscode.l10n.t('Never fast-forward during the merge')}`,
                     ];
                     break;
                 case "release":
                     list = [
-                        "[-F] Fetch from origin before performing finish",
-                        "[-p] Push to origin after performing finish",
-                        "[-D] Force delete release branch after finish",
-                        "[--pushproduction] Push the production branch",
-                        "[--pushdevelop] Push the develop branch",
-                        "[--pushtag] Push the tag",
-                        "[-k] Keep branch after performing finish",
-                        "[--keepremote] Keep the remote branch",
-                        "[--keeplocal] Keep the local branch",
-                        "[-n] Don't tag this release",
-                        "[-b] Don't back-merge master, or tag if applicable, in develop",
-                        "[-S] Squash release during merge",
-                        "[--ff-master] Fast forward master branch if possible",
-                        "[--nodevelopmerge] Don't back-merge develop branch",
+                        `[-F] ${vscode.l10n.t('Fetch from origin before performing finish')}`,
+                        `[-p] ${vscode.l10n.t('Push to origin after performing finish')}`,
+                        `[-D] ${vscode.l10n.t('Force delete branch after finish')}`,
+                        `[--pushproduction] ${vscode.l10n.t('Push the production branch')}`,
+                        `[--pushdevelop] ${vscode.l10n.t('Push the develop branch')}`,
+                        `[--pushtag] ${vscode.l10n.t('Push the tag')}`,
+                        `[-k] ${vscode.l10n.t('Keep branch after performing finish')}`,
+                        `[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`,
+                        `[--keeplocal] ${vscode.l10n.t('Keep the local branch')}`,
+                        `[-n] ${vscode.l10n.t("Don't tag this release")}`,
+                        `[-b] ${vscode.l10n.t("Don't back-merge master, or tag if applicable, in develop")}`,
+                        `[-S] ${vscode.l10n.t('Squash branch during merge')}`,
+                        `[--ff-master] ${vscode.l10n.t('Fast forward master branch if possible')}`,
+                        `[--nodevelopmerge] ${vscode.l10n.t("Don't back-merge develop branch")}`,
                     ];
                     break;
             }
             resolve(
                 await vscode.window.showQuickPick(list, {
-                    title: "Select delete options",
+                    title: vscode.l10n.t('Select delete options'),
                     canPickMany: true,
                 })
             );
@@ -697,30 +701,32 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
                 this.listBranches.filter((el) => el.search(this.branches.support) !== -1),
-                { title: "Select bugfix" }
+                { title: vscode.l10n.t('Select bugfix') }
             );
         }
         if (name === undefined) {
             return;
         }
 
-        let list: string[] = ["[-f] Force deletion"];
+        let sForceDel = `[-f] ${vscode.l10n.t('Force deletion')}`;
+        let sRemoteDel = `[-r] ${vscode.l10n.t('Delete remote branch')}`;
+        let list: string[] = [sForceDel];
         if (this.listRemoteBranches.includes(`${name}`)) {
-            list.push("[-r] Delete remote branch");
+            list.push(sRemoteDel);
         }
         let options = await vscode.window.showQuickPick(list, {
-            title: "Select options",
+            title: vscode.l10n.t('Select options'),
             canPickMany: true,
         });
         if (options === undefined) {
             return;
         }
-        let option = options?.includes("[-f] Force deletion") ? "-D" : "-d";
+        let option = options?.includes(sForceDel) ? "-D" : "-d";
 
         this.util.execSync(`"${this.util.path}" checkout -d ${this.branches.develop}`);
         this.util.execSync(`"${this.util.path}" branch ${option} ${name}`);
 
-        if (options?.includes("[-r] Delete remote branch")) {
+        if (options?.includes(sRemoteDel)) {
             this.util.exec(`"${this.util.path}" push --delete origin ${name}`, true, () => {
                 this._onDidChangeTreeData.fire();
             });
@@ -731,14 +737,14 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
     }
     async publishSupport(node: Flow | undefined) {
         if (!this.hasOrigin) {
-            vscode.window.showWarningMessage("No ORIGIN remote has been found!");
+            vscode.window.showWarningMessage(vscode.l10n.t('No ORIGIN remote has been found!'));
             return;
         }
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
                 this.listBranches.filter((el) => el.search(this.branches.support) !== -1),
-                { title: "Select support branch" }
+                { title: vscode.l10n.t('Select support branch') }
             );
         }
         if (name === undefined) {
@@ -756,7 +762,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
                 this.listBranches.filter((el) => el.search(this.branches.support) !== -1),
-                { title: "Select support branch" }
+                { title: vscode.l10n.t('Select support branch') }
             );
         }
         if (name === undefined) {
@@ -850,7 +856,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
                 this.listBranches.filter((el) => el.search(this.branches.release) !== -1),
-                { title: "Select release branch" }
+                { title: vscode.l10n.t('Select release branch') }
             );
         }
         if (name === undefined) {
@@ -930,7 +936,7 @@ export class Flow extends vscode.TreeItem {
     ) {
         super(label, collapsibleState);
         if (current) {
-            this.description = "Current";
+            this.description = vscode.l10n.t('Current');
             this.iconPath = new vscode.ThemeIcon("home", new vscode.ThemeColor("green"));
         }
         this.contextValue = parent ? parent : full.replace("* ", "").split("/")[0];

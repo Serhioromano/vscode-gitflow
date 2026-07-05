@@ -2,10 +2,11 @@
     "name": "vscode-gitflow",
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "engines": {
-        "vscode": "^1.64.0"
+        "vscode": "^1.73.0"
     },
+    "l10n": "./l10n",
     "sponsor": {
         "url": "https://www.paypal.com/donate/?hosted_button_id=UTU4EMPLLLX54"
     },
@@ -53,42 +54,42 @@
     "homepage": "https://marketplace.visualstudio.com/items?itemName=serhioromano.vscode-gitflow",
     "contributes": {
         "configuration": {
-            "title": "GitFlow",
+            "title": "%gitflow.configuration.title%",
             "properties": {
                 "gitflow.showNotification": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Show notification that current directory is not Git Flow enabled."
+                    "description": "%gitflow.showNotification.description%"
                 },
                 "gitflow.showAllCommands": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Show all `git` commands that `git flow` runs in output window."
+                    "description": "%gitflow.showAllCommands.description%"
                 },
                 "gitflow.path": {
                     "type": "string",
                     "default": "",
-                    "description": "Set you git-flow path manually"
+                    "description": "%gitflow.path.description%"
                 },
                 "gitflow.replaceSymbol": {
                     "type": "string",
                     "default": "_",
-                    "description": "Replace whitespace in branch names with this symbol"
+                    "description": "%gitflow.replaceSymbol.description%"
                 },
                 "gitflow.autoBumpVersion": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Bump package version post start release/hotfix."
+                    "description": "%gitflow.autoBumpVersion.description%"
                 },
                 "gitflow.disableOnRepo": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Disable GitFlow check on this repo"
+                    "description": "%gitflow.disableOnRepo.description%"
                 },
                 "gitflow.usePowerShell": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Use PowerShell instead of CMD.exe on Windows. Enable this for UNC path (\\\\server\\share) support.",
+                    "description": "%gitflow.usePowerShell.description%",
                     "scope": "machine-overridable"
                 }
             }
@@ -103,259 +104,259 @@
         "commands": [
             {
                 "command": "gitflow.switchRepo",
-                "title": "Switch active repository",
-                "category": "Git-Flow",
+                "title": "%gitflow.switchRepo.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(remote)"
             },
             {
                 "command": "gitflow.checkoutBranch",
-                "title": "Checkout",
-                "category": "Git-Flow",
+                "title": "%gitflow.checkoutBranch.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(plug)"
             },
             {
                 "command": "gitflow.quickPick",
-                "title": "Quick Pick",
-                "category": "Git-Flow",
+                "title": "%gitflow.quickPick.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(extensions-rating)"
             },
             {
                 "command": "gitflow.syncAll",
-                "title": "Sync all root branches",
-                "category": "Git-Flow",
+                "title": "%gitflow.syncAll.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(repo-sync)"
             },
             {
                 "command": "gitflow.refreshB",
-                "title": "Refresh branches view",
-                "category": "Git-Flow",
+                "title": "%gitflow.refreshB.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(refresh)"
             },
             {
                 "command": "gitflow.refreshT",
-                "title": "Refresh versions view",
-                "category": "Git-Flow",
+                "title": "%gitflow.refreshT.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(refresh)"
             },
             {
                 "command": "gitflow.pushTags",
-                "title": "Push all tags to origin",
-                "category": "Git-Flow",
+                "title": "%gitflow.pushTags.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.pushTag",
-                "title": "Push tag to origin",
-                "category": "Git-Flow",
+                "title": "%gitflow.pushTag.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.deleteTag",
-                "title": "Delete tag",
-                "category": "Git-Flow",
+                "title": "%gitflow.deleteTag.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(trash)"
             },
             {
                 "command": "gitflow.fetchAllBranches",
-                "title": "Fetch all remote branches",
-                "category": "Git-Flow",
+                "title": "%gitflow.fetchAllBranches.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.init",
-                "title": "Init Git Flow",
-                "category": "Git-Flow"
+                "title": "%gitflow.init.title%",
+                "category": "%gitflow.command.category%"
             },
             {
                 "command": "gitflow.newSupport",
-                "title": "Support - Start",
-                "category": "Git-Flow",
+                "title": "%gitflow.newSupport.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(debug-start)"
             },
             {
                 "command": "gitflow.rebaseSupport",
-                "title": "Support - Rebase",
-                "category": "Git-Flow",
+                "title": "%gitflow.rebaseSupport.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(git-merge)"
             },
             {
                 "command": "gitflow.publishSupport",
-                "title": "Support - Publish",
-                "category": "Git-Flow",
+                "title": "%gitflow.publishSupport.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.deleteSupport",
-                "title": "Support - Delete",
-                "category": "Git-Flow",
+                "title": "%gitflow.deleteSupport.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(trash)"
             },
             {
                 "command": "gitflow.checkoutSupport",
-                "title": "Support - Checkout",
-                "category": "Git-Flow",
+                "title": "%gitflow.checkoutSupport.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(plug)"
             },
             {
                 "command": "gitflow.newFeature",
-                "title": "Feature - Start",
-                "category": "Git-Flow",
+                "title": "%gitflow.newFeature.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(debug-start)"
             },
             {
                 "command": "gitflow.trackFeature",
-                "title": "Feature - Track",
-                "category": "Git-Flow",
+                "title": "%gitflow.trackFeature.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.checkoutFeature",
-                "title": "Feature - Checkout",
-                "category": "Git-Flow",
+                "title": "%gitflow.checkoutFeature.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(plug)"
             },
             {
                 "command": "gitflow.finishFeature",
-                "title": "Feature - Finish",
-                "category": "Git-Flow",
+                "title": "%gitflow.finishFeature.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(debug-stop)"
             },
             {
                 "command": "gitflow.publishFeature",
-                "title": "Feature - Publish",
-                "category": "Git-Flow",
+                "title": "%gitflow.publishFeature.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.rebaseFeature",
-                "title": "Feature - Rebase",
-                "category": "Git-Flow",
+                "title": "%gitflow.rebaseFeature.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(git-merge)"
             },
             {
                 "command": "gitflow.deleteFeature",
-                "title": "Feature - Delete",
-                "category": "Git-Flow",
+                "title": "%gitflow.deleteFeature.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(trash)"
             },
             {
                 "command": "gitflow.newRelease",
-                "title": "Release - Start",
-                "category": "Git-Flow",
+                "title": "%gitflow.newRelease.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(debug-start)"
             },
             {
                 "command": "gitflow.trackRelease",
-                "title": "Release - Track",
-                "category": "Git-Flow",
+                "title": "%gitflow.trackRelease.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.checkoutRelease",
-                "title": "Release - Checkout",
-                "category": "Git-Flow",
+                "title": "%gitflow.checkoutRelease.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(plug)"
             },
             {
                 "command": "gitflow.publishRelease",
-                "title": "Release - Publish",
-                "category": "Git-Flow",
+                "title": "%gitflow.publishRelease.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.deleteRelease",
-                "title": "Release - Delete",
-                "category": "Git-Flow",
+                "title": "%gitflow.deleteRelease.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(trash)"
             },
             {
                 "command": "gitflow.finishRelease",
-                "title": "Release - Finish",
-                "category": "Git-Flow",
+                "title": "%gitflow.finishRelease.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(debug-stop)"
             },
             {
                 "command": "gitflow.rebaseRelease",
-                "title": "Release - Rebase",
-                "category": "Git-Flow",
+                "title": "%gitflow.rebaseRelease.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(git-merge)"
             },
             {
                 "command": "gitflow.newHotfix",
-                "title": "Hotfix - Start",
-                "category": "Git-Flow",
+                "title": "%gitflow.newHotfix.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(debug-start)"
             },
             {
                 "command": "gitflow.finishHotfix",
-                "title": "Hotfix - Finish",
-                "category": "Git-Flow",
+                "title": "%gitflow.finishHotfix.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(debug-stop)"
             },
             {
                 "command": "gitflow.publishHotfix",
-                "title": "Hotfix - Publish",
-                "category": "Git-Flow",
+                "title": "%gitflow.publishHotfix.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.deleteHotfix",
-                "title": "Hotfix - Delete",
-                "category": "Git-Flow",
+                "title": "%gitflow.deleteHotfix.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(trash)"
             },
             {
                 "command": "gitflow.rebaseHotfix",
-                "title": "Hotfix - Rebase",
-                "category": "Git-Flow",
+                "title": "%gitflow.rebaseHotfix.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(git-merge)"
             },
             {
                 "command": "gitflow.checkoutHotfix",
-                "title": "Hotfix - Checkout",
-                "category": "Git-Flow",
+                "title": "%gitflow.checkoutHotfix.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(plug)"
             },
             {
                 "command": "gitflow.newBugfix",
-                "title": "Bugfix - Start",
-                "category": "Git-Flow",
+                "title": "%gitflow.newBugfix.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(debug-start)"
             },
             {
                 "command": "gitflow.trackBugfix",
-                "title": "Bugfix - Track",
-                "category": "Git-Flow",
+                "title": "%gitflow.trackBugfix.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.checkoutBugfix",
-                "title": "Bugfix - Checkout",
-                "category": "Git-Flow",
+                "title": "%gitflow.checkoutBugfix.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(plug)"
             },
             {
                 "command": "gitflow.finishBugfix",
-                "title": "Bugfix - Finish",
-                "category": "Git-Flow",
+                "title": "%gitflow.finishBugfix.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(debug-stop)"
             },
             {
                 "command": "gitflow.publishBugfix",
-                "title": "Bugfix - Publish",
-                "category": "Git-Flow",
+                "title": "%gitflow.publishBugfix.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(cloud-upload)"
             },
             {
                 "command": "gitflow.deleteBugfix",
-                "title": "Bugfix - Delete",
-                "category": "Git-Flow",
+                "title": "%gitflow.deleteBugfix.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(trash)"
             },
             {
                 "command": "gitflow.rebaseBugfix",
-                "title": "Bugfix - Rebase",
-                "category": "Git-Flow",
+                "title": "%gitflow.rebaseBugfix.title%",
+                "category": "%gitflow.command.category%",
                 "icon": "$(git-merge)"
             }
         ],
@@ -363,11 +364,11 @@
             "scm": [
                 {
                     "id": "gitflowExplorer",
-                    "name": "Gitflow"
+                    "name": "%gitflow.views.gitflowExplorer%"
                 },
                 {
                     "id": "gitflowTags",
-                    "name": "Versions"
+                    "name": "%gitflow.views.gitflowTags%"
                 }
             ]
         },
@@ -784,6 +785,7 @@
         "@types/vscode": "^1.64.0",
         "@typescript-eslint/eslint-plugin": "^5.9.1",
         "@typescript-eslint/parser": "^8.62.1",
+        "@vscode/l10n-dev": "^0.0.35",
         "@vscode/test-electron": "^2.0.3",
         "esbuild": "^0.25.0",
         "eslint": "^8.6.0",

@@ -18,8 +18,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     let statBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 10);
     statBar.command = "gitflow.quickPick";
-    statBar.text = "$(list-flat) Git Flow";
-    statBar.tooltip = "Show Git Flow Quick Pick menu";
+    statBar.text = `$(list-flat) ${vscode.l10n.t('Git Flow')}`;
+    statBar.tooltip = vscode.l10n.t('Show Git Flow Quick Pick menu');
     statBar.show();
     context.subscriptions.push(statBar);
 
@@ -38,8 +38,8 @@ export function activate(context: vscode.ExtensionContext) {
     viewVersions.getChildren();
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 1) {
-        a.message = "Current repo: " + rootPath.split("/").reverse()[0];
-        b.message = "Current repo: " + rootPath.split("/").reverse()[0];
+        a.message = vscode.l10n.t('Current repo: {0}', rootPath.split('/').reverse()[0]);
+        b.message = vscode.l10n.t('Current repo: {0}', rootPath.split('/').reverse()[0]);
     }
 
     const cm: CommandManager = new CommandManager(context, logger, viewBranches, viewVersions);
@@ -47,19 +47,19 @@ export function activate(context: vscode.ExtensionContext) {
     cm.rc("gitflow.switchRepo", async () => {
         let list: string[] = vscode.workspace.workspaceFolders?.map((el) => el.uri.fsPath) || [];
         if (list.length < 2) {
-            vscode.window.showInformationMessage("Not a multi folder vscode.workspace");
+            vscode.window.showInformationMessage(vscode.l10n.t('Not a multi-folder workspace'));
             return;
         }
         let repo = await vscode.window.showQuickPick(list, {
-            title: "Select active repository",
+            title: vscode.l10n.t('Select active repository'),
         });
         if (repo === undefined) {
             return;
         }
 
         util.workspaceRoot = `${repo}`;
-        a.message = "Current repo: " + `${repo}`.split("/").reverse()[0];
-        b.message = "Current repo: " + `${repo}`.split("/").reverse()[0];
+        a.message = vscode.l10n.t('Current repo: {0}', `${repo}`.split('/').reverse()[0]);
+        b.message = vscode.l10n.t('Current repo: {0}', `${repo}`.split('/').reverse()[0]);
         viewBranches.refresh();
         viewVersions.refresh();
     });
