@@ -2,6 +2,13 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [Unreleased] 07/05/2025
+
+- fix - Properly render deeply nested branch folders in tree view (#84)
+- fix - Properly handle Escape key cancellation in finish and deleteSupport commands (#86)
+- feat - Add PowerShell support on Windows for UNC paths (#83)
+- docs - Add usePowerShell to Options section in README
+
 ## [1.3.28] 03/17/2025
 
 - add - Setting to disable gitflow check on repository open. It also adds button to disable check on warning.
