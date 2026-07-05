@@ -1,4 +1,4 @@
-import {commands, ExtensionContext, QuickPickItemKind, window, workspace} from "vscode";
+import {commands, ExtensionContext, l10n, QuickPickItemKind, window, workspace} from "vscode";
 import {Flow, TreeViewBranches} from "../ViewBranches";
 import {Tag, TreeViewVersions} from "../ViewVersions";
 import {Disposable} from "./disposables";
@@ -15,57 +15,57 @@ export class CommandManager extends Disposable {
 
         this.rc("gitflow.quickPick", async () => {
             if (viewBranches.listBranches.length < 2) {
-                window.showWarningMessage("Looks like view was not yet initialized");
+                window.showWarningMessage(l10n.t('Looks like view was not yet initialized'));
                 return;
             }
 
             let list = [
-                {label: "Start new branch", id: "", kind: QuickPickItemKind.Separator},
-                {label: "$(test-view-icon) Start Feature", id: "newFeature", description: ""},
-                {label: "$(callstack-view-session) Start Bugfix", id: "newBugfix", description: ""},
-                {label: "$(history) Start Support", id: "newSupport", description: ""},
+                {label: l10n.t('Start new branch'), id: "", kind: QuickPickItemKind.Separator},
+                {label: `$(test-view-icon) ${l10n.t('Start Feature')}`, id: "newFeature", description: ""},
+                {label: `$(callstack-view-session) ${l10n.t('Start Bugfix')}`, id: "newBugfix", description: ""},
+                {label: `$(history) ${l10n.t('Start Support')}`, id: "newSupport", description: ""},
             ];
             // Only single release might be at a time
             if (viewBranches.listBranches.filter((el) => el.search("release/") !== -1).length === 0) {
-                list.push({label: "$(tag) Start Release", id: "newRelease", description: ""});
+                list.push({label: `$(tag) ${l10n.t('Start Release')}`, id: "newRelease", description: ""});
             }
             // Only single hotfix at a time
             if (viewBranches.listBranches.filter((el) => el.search("hotfix/") !== -1).length === 0) {
-                list.push({label: "$(flame) Start Hotfix", id: "newHotfix", description: ""});
+                list.push({label: `$(flame) ${l10n.t('Start Hotfix')}`, id: "newHotfix", description: ""});
             }
 
             let cur = viewBranches.curBranch.split("/")[0];
             if (["feature", "release", "hotfix", "bugfix"].includes(cur)) {
                 list.push({
-                    label: "Current branch",
+                    label: l10n.t('Current branch'),
                     id: "",
                     kind: QuickPickItemKind.Separator,
                 });
                 list.push({
-                    label: `$(trash) Delete ${ucf(cur)}`,
+                    label: `$(trash) ${l10n.t('Delete {0}', ucf(cur))}`,
                     description: viewBranches.curBranch,
                     id: "delete",
                 });
                 list.push({
-                    label: `$(debug-stop) Finalize ${ucf(cur)}`,
+                    label: `$(debug-stop) ${l10n.t('Finalize {0}', ucf(cur))}`,
                     description: viewBranches.curBranch,
                     id: "finish",
                 });
                 list.push({
-                    label: `$(git-merge) Rebase ${ucf(cur)}`,
+                    label: `$(git-merge) ${l10n.t('Rebase {0}', ucf(cur))}`,
                     description: viewBranches.curBranch,
                     id: "rebase",
                 });
                 if (!viewBranches.listRemoteBranches.includes(viewBranches.curBranch)) {
                     list.push({
-                        label: `$(cloud-upload) Publish ${ucf(cur)}`,
+                        label: `$(cloud-upload) ${l10n.t('Publish {0}', ucf(cur))}`,
                         description: viewBranches.curBranch,
                         id: "publish",
                     });
                 }
             }
             let action = await window.showQuickPick(list, {
-                title: "Select an action",
+                title: l10n.t('Select an action'),
             });
             if (action === undefined) {
                 return;

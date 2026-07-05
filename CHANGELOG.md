@@ -2,6 +2,15 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [Unreleased] 07/05/2026
+
+- feat: add multi-language localization support (Russian, German, Spanish, French, Japanese, Chinese Simplified)
+- add: `vscode.l10n.t()` API for all user-facing strings in source code
+- add: `package.nls.json` system for command titles, view names, and configuration descriptions
+- add: `l10n/bundle.l10n.{locale}.json` translation bundles for 6 languages
+- bump `engines.vscode` to `^1.73.0` (required by `vscode.l10n` API)
+- fix: add `moduleResolution: "node"` and `types: ["node"]` to tsconfig to resolve `@types/node` globals (child_process, setTimeout, etc.)
+
 ## [1.4.0] 07/05/2025
 
 - fix - Properly render deeply nested branch folders in tree view (#84)

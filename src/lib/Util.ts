@@ -27,7 +27,7 @@ export class Util {
             this.path = git.git.path;
         }
         if (this.path.trim().length === 0) {
-            vscode.window.showWarningMessage("Git is not found", this.path);
+            vscode.window.showWarningMessage(vscode.l10n.t('Git is not found'));
             return;
         }
         this.flowPath = vscode.workspace.getConfiguration('gitflow').get('path') || `"${this.path}" flow`;
@@ -39,7 +39,7 @@ export class Util {
         vscode.window.withProgress(
             {
                 location: vscode.ProgressLocation.Notification,
-                title: `Executing ${cmd}`,
+                title: vscode.l10n.t('Executing {0}', cmd),
                 cancellable: false,
             },
             (progress, token) =>
@@ -79,17 +79,17 @@ export class Util {
         if (this.path.trim().length === 0) {
             return "";
         }
-        this.sb.text = "$(sync~spin) Git Flow in progress...";
+        this.sb.text = `$(sync~spin) ${vscode.l10n.t('Git Flow in progress...')}`;
         try {
             const preparedCmd = this.prepareCommand(cmd);
             let out = execSync(preparedCmd, { cwd: this.workspaceRoot, shell: this.shell }).toString();
             this.logger.log(out, cmd);
-            this.sb.text = "$(list-flat) Git Flow";
+            this.sb.text = `$(list-flat) ${vscode.l10n.t('Git Flow')}`;
             return out;
         } catch (e) {
-            this.sb.text = "$(list-flat) Git Flow";
+            this.sb.text = `$(list-flat) ${vscode.l10n.t('Git Flow')}`;
             this.logger.log(`ERROR: ${e}`, cmd, LogLevels.error);
-            vscode.window.showErrorMessage(`Error executing: ${cmd} : ${e}`);
+            vscode.window.showErrorMessage(vscode.l10n.t('Error executing: {0} : {1}', cmd, `${e}`));
             return "" + e;
         }
     }
@@ -99,14 +99,14 @@ export class Util {
         if (this.path.trim().length === 0) {
             return;
         }
-        this.sb.text = "$(sync~spin) Git Flow in progress...";
+        this.sb.text = `$(sync~spin) ${vscode.l10n.t('Git Flow in progress...')}`;
         const preparedCmd = this.prepareCommand(cmd);
         exec(
             preparedCmd, { cwd: this.workspaceRoot, shell: this.shell },
             (err, stdout, stderr) => {
-                this.sb.text = "$(list-flat) Git Flow";
+                this.sb.text = `$(list-flat) ${vscode.l10n.t('Git Flow')}`;
                 if (err) {
-                    vscode.window.showErrorMessage(`Error executing: ${cmd} : ${err}`);
+                    vscode.window.showErrorMessage(vscode.l10n.t('Error executing: {0} : {1}', cmd, `${err}`));
                     this.logger.log(`${err} ${stderr}`, cmd, LogLevels.error);
                     if (resolve !== undefined) {
                         resolve();
@@ -122,26 +122,26 @@ export class Util {
 
     public check(): boolean {
         if (!this.workspaceRoot) {
-            vscode.window.showErrorMessage("No folder opened");
+            vscode.window.showErrorMessage(vscode.l10n.t('No folder opened'));
             return false;
         }
         let status = this.execSync(`"${this.path}" version`).toLowerCase();
         if (status.search("git version") === -1) {
-            vscode.window.showWarningMessage("Looks like git CLI is not installed.");
+            vscode.window.showWarningMessage(vscode.l10n.t('Git CLI is not installed.'));
             return false;
         }
 
         status = this.execSync(`"${this.path}" status`).toLowerCase();
 
         if (status.search("not a git repository") !== -1) {
-            vscode.window.showWarningMessage("This project is not a Git repository.");
+            vscode.window.showWarningMessage(vscode.l10n.t('This project is not a Git repository.'));
             return false;
         }
 
         if (this.execSync(`${this.flowPath} version`).toLowerCase().search("is not a git command") !== -1) {
-            let installLink = "Install";
+            let installLink = vscode.l10n.t('Install');
             vscode.window
-                .showWarningMessage("To use Git Flow extension please install Git flow (AVH).", installLink)
+                .showWarningMessage(vscode.l10n.t('To use Git Flow extension please install Git flow (AVH).'), installLink)
                 .then((selection) => {
                     if (selection === installLink) {
                         vscode.env.openExternal(
