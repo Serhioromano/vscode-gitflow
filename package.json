@@ -783,7 +783,7 @@
         "@types/mocha": "^9.0.0",
         "@types/node": "14.x",
         "@types/vscode": "^1.64.0",
-        "@typescript-eslint/eslint-plugin": "^5.9.1",
+        "@typescript-eslint/eslint-plugin": "^8.62.1",
         "@typescript-eslint/parser": "^8.62.1",
         "@vscode/l10n-dev": "^0.0.35",
         "@vscode/test-electron": "^2.0.3",
