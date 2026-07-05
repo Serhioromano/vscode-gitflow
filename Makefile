@@ -15,8 +15,7 @@ sync:
 	git checkout main
 	@if [ -n "$(PRS)" ]; then \
 		echo "🔗 ==> Merging PRs on GitHub: $(PRS)..."; \
-		IFS=','; \
-		for pr in $(PRS); do \
+		for pr in $$(echo $(PRS) | tr ',' ' '); do \
 			echo "  🫧 -> Squash-merging PR #$$pr into main..."; \
 			gh pr merge $$pr --squash --delete-branch || { echo "❌ ERROR: Failed to merge PR #$$pr."; exit 1; }; \
 		done; \
