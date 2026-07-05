@@ -1,11 +1,4 @@
 strictModeWhiteList:
-  - ^ls\b
-  - ^find\b
-  - ^cd\b
-  - ^npm run compile\b
-  - ^gh\b
-  - ^git log\b
   - ^git checkout\b
-  - ^git pull\b
-  - ^git tag\b
-  - ^node\b
+  - ^git status\b
+  - ^mv\b
