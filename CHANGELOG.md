@@ -2,7 +2,7 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [Unreleased] 07/05/2025
+## [1.4.0] 07/05/2025
 
 - fix - Properly render deeply nested branch folders in tree view (#84)
 - fix - Properly handle Escape key cancellation in finish and deleteSupport commands (#86)
