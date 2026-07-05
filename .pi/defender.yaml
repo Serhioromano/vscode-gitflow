@@ -13,3 +13,8 @@ strictModeWhiteList:
   - ^node\b
   - ^npm install\b
   - ^npm ci\b
+  - ^git tag\b
+  - ^gh\b
+  - ^VERSION=\b
+  - ^git log\b
+  - ^grep\b

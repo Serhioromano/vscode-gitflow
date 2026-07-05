@@ -2,6 +2,12 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [Unreleased] 07/05/2026
+
+## [1.4.2] 07/05/2026
+
+- fix: GitHub release body empty — add [Unreleased] fallback to publish workflow changelog extraction
+
 ## [1.4.1] 07/05/2026
 
 - feat: add multi-language localization support (Russian, German, Spanish, French, Japanese, Chinese Simplified)
