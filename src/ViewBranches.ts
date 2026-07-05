@@ -15,12 +15,29 @@ interface BranchList {
     bugfix: string;
     support: string;
 }
-type Emitter = Flow | undefined | null | void;
+type Emitter = Flow | FolderNode | undefined | null | void;
 let checked: boolean = false;
 
 
+/**
+ * Represents an intermediate folder node in the branch tree hierarchy.
+ * Used for branches with multiple slash-separated segments (e.g., feature/a/b/c).
+ */
+export class FolderNode extends vscode.TreeItem {
+    constructor(
+        public readonly label: string,
+        public readonly full: string,       // partial path: "feature/sub1/sub2"
+        public readonly prefix: string,     // gitflow prefix: "feature", "release", etc.
+        public readonly depth: number       // nesting level (0 = direct child of category)
+    ) {
+        super(label, vscode.TreeItemCollapsibleState.Expanded);
+        this.iconPath = new vscode.ThemeIcon("folder");
+        this.contextValue = "folder";
+    }
+}
 
-export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
+
+export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNode> {
     private _onDidChangeTreeData: vscode.EventEmitter<Emitter> = new vscode.EventEmitter<Emitter>();
     readonly onDidChangeTreeData: vscode.Event<Emitter> = this._onDidChangeTreeData.event;
 
@@ -45,18 +62,94 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         };
     }
 
-    getTreeItem(element: Flow): vscode.TreeItem {
+    getTreeItem(element: Flow | FolderNode): vscode.TreeItem {
         return element;
     }
 
-    getChildren(element?: Flow): Thenable<Flow[]> {
+    /**
+     * Recursively build a tree of FolderNode and Flow items from a list of branch names.
+     * Each slash-separated segment after the prefix becomes a folder level.
+     */
+    private buildBranchTree(
+        branches: string[],
+        prefix: string,
+        currentPath: string,
+        depth: number
+    ): (Flow | FolderNode)[] {
+        const result: (Flow | FolderNode)[] = [];
+        const folders = new Map<string, string[]>();
+
+        for (const branch of branches) {
+            // Get the remaining path after stripping the currentPath prefix
+            let remaining = branch;
+            if (currentPath) {
+                remaining = branch.substring(currentPath.length + 1);
+            }
+
+            const segments = remaining.split("/");
+            const firstSegment = segments[0];
+
+            if (segments.length === 1) {
+                // This is a leaf branch - create a Flow node
+                const branchKey = currentPath ? `${currentPath}/${firstSegment}` : firstSegment;
+                const isLocal = this.listBranches.includes(branchKey);
+                const isRemote = this.listRemoteBranches.includes(branchKey);
+                let contextSuffix = prefix;
+
+                if (isLocal && !isRemote) {
+                    contextSuffix = `${prefix}_local`;
+                } else if (isRemote && !isLocal) {
+                    contextSuffix = `origin_${prefix}`;
+                }
+
+                const label = isRemote && !isLocal ? `ORIGIN/${firstSegment}` : firstSegment;
+                result.push(
+                    new Flow(
+                        branchKey,
+                        label,
+                        "git-branch",
+                        vscode.TreeItemCollapsibleState.None,
+                        this._isCurrent(branchKey),
+                        contextSuffix
+                    )
+                );
+            } else {
+                // More segments - group into folder
+                const folderPath = currentPath ? `${currentPath}/${firstSegment}` : firstSegment;
+                if (!folders.has(firstSegment)) {
+                    folders.set(firstSegment, []);
+                }
+                folders.get(firstSegment)!.push(branch);
+            }
+        }
+
+        // Add folder nodes (sorted)
+        for (const [folderName, folderBranches] of Array.from(folders.entries()).sort()) {
+            const folderPath = currentPath ? `${currentPath}/${folderName}` : folderName;
+            const folderNode = new FolderNode(folderName, folderPath, prefix, depth);
+            // Store children lazily by attaching them to the node
+            // We'll handle this in getChildren by checking the full path
+            result.push(folderNode);
+        }
+
+        // Sort: folders first, then branches
+        result.sort((a, b) => {
+            if (a instanceof FolderNode && !(b instanceof FolderNode)) return -1;
+            if (!(a instanceof FolderNode) && b instanceof FolderNode) return 1;
+            return a.label.localeCompare(b.label);
+        });
+
+        return result;
+    }
+
+    getChildren(element?: Flow | FolderNode): Thenable<(Flow | FolderNode)[]> {
 
         if (!checked && !this.util.check()) {
             return Promise.resolve([]);
         }
         checked = true;
 
-        let tree: Flow[] = [];
+        let tree: (Flow | FolderNode)[] = [];
 
         if (element === undefined) {
             let config = vscode.workspace.getConfiguration("gitflow");
@@ -190,42 +283,44 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
             return Promise.resolve(tree);
         }
 
-        this.listBranches
-            .filter((el) => el.split("/")[0] === element.full)
-            .forEach((el) => {
-                tree.push(
-                    new Flow(
-                        el,
-                        el.split("/")[1],
-                        "git-branch",
-                        vscode.TreeItemCollapsibleState.None,
-                        this._isCurrent(el),
-                        element.full + (!this.listRemoteBranches.includes(el) ? "_local" : "")
-                    )
-                );
+        // Handle FolderNode (intermediate folder in nested branch structure)
+        if (element instanceof FolderNode) {
+            // Get all branches (local + remote) that start with the folder's path
+            const allBranches = [...this.listBranches, ...this.listRemoteBranches];
+            const matchingBranches = allBranches.filter((el) => {
+                return el.startsWith(element.full + "/");
             });
 
-        this.listRemoteBranches
-            .filter((el) => {
-                return (
-                    el.split("/").length > 1 &&
-                    el.search("HEAD") === -1 &&
-                    !this.listBranches.includes(el) &&
-                    el.split("/")[0] === element.full
-                );
-            })
-            .forEach((el) => {
-                tree.push(
-                    new Flow(
-                        el,
-                        "ORIGIN/" + el.split("/")[1],
-                        "git-branch",
-                        vscode.TreeItemCollapsibleState.None,
-                        false,
-                        "origin_" + element.full
-                    )
-                );
-            });
+            // Remove duplicates while preserving order
+            const uniqueBranches = Array.from(new Set(matchingBranches));
+
+            tree = this.buildBranchTree(
+                uniqueBranches,
+                element.prefix,
+                element.full,
+                element.depth + 1
+            );
+            return Promise.resolve(tree);
+        }
+
+        // Handle category nodes (Features, Releases, etc.)
+        // Get the prefix from element.full (e.g., "feature", "release", etc.)
+        const prefix = element.full;
+
+        // Collect local branches matching this prefix
+        const localBranches = this.listBranches.filter((el) => {
+            return el.startsWith(prefix + "/");
+        });
+
+        // Collect remote branches matching this prefix (not already local)
+        const remoteBranches = this.listRemoteBranches.filter((el) => {
+            return el.startsWith(prefix + "/") && !this.listBranches.includes(el);
+        });
+
+        // Combine all branches for this prefix
+        const allBranches = [...localBranches, ...remoteBranches];
+
+        tree = this.buildBranchTree(allBranches, prefix, prefix, 0);
         return Promise.resolve(tree);
     }
 
@@ -271,7 +366,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let name = node?.full;
         if (name === undefined) {
             name = await vscode.window.showQuickPick(
-                this.listBranches.filter((el) => el.split("/").length < 2),
+                this.listBranches,
                 { title: "Select branch" }
             );
         }
@@ -303,7 +398,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow> {
         let base: string | undefined = "";
         let options: string[] | undefined;
         let feature = branch.split("/")[0];
-        let name: string | undefined = branch.split("/")[1];
+        // Get the full name after the prefix (preserves nested segments like "a/b/c")
+        let name: string | undefined = branch.substring(branch.indexOf("/") + 1);
         let progress = false;
         let version = "";
         let exist: boolean = existsSync(this.util.workspaceRoot + "/package.json");
