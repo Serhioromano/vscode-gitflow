@@ -10,3 +10,6 @@ strictModeWhiteList:
   - ^for\b
   - ^done\b
   - ^git diff\b
+  - ^node\b
+  - ^npm install\b
+  - ^npm ci\b

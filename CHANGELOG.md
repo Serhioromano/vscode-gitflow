@@ -10,6 +10,7 @@ All notable changes to the "gitflow" extension will be documented in this file.
 - add: `l10n/bundle.l10n.{locale}.json` translation bundles for 6 languages
 - bump `engines.vscode` to `^1.73.0` (required by `vscode.l10n` API)
 - fix: add `moduleResolution: "node"` and `types: ["node"]` to tsconfig to resolve `@types/node` globals (child_process, setTimeout, etc.)
+- fix: align `@typescript-eslint/eslint-plugin` to v8 to resolve peer dependency conflict with `@typescript-eslint/parser@8` during `npm ci`
 
 ## [1.4.0] 07/05/2025
 
