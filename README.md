@@ -1,4 +1,4 @@
-# Git FLow Support for VS Code
+# Git Flow Support for VS Code
 
 ## Known Issues
 
@@ -171,3 +171,19 @@ GitHub CLI will automatically store your Git credentials for you when you choose
 
 - [Install GitHub CLI](https://cli.github.com/manual/installation) on macOS, Windows, or Linux.
 - In the command line, enter `gh auth login`, then follow the prompts.
+
+## Localization 🌍
+
+This extension supports 7 languages:
+
+| Language | VS Code Display Language |
+|---|---|
+| English (default) | `en` |
+| Русский | `ru` |
+| Deutsch | `de` |
+| Español | `es` |
+| Français | `fr` |
+| 日本語 | `ja` |
+| 简体中文 | `zh-cn` |
+
+The extension automatically uses your VS Code display language. Set it via **Configure Display Language** command or the `"locale"` setting in `argv.json`.

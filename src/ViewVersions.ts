@@ -82,18 +82,18 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
             return;
         }
 
-        let remotes = ["Delete local"];
+        let remotes = [vscode.l10n.t('Delete local')];
         if (this.remotes.includes(name)) {
             remotes =
-                (await vscode.window.showQuickPick(["Delete local", "Delete Remote"], {
-                    title: `Where to delete from?`,
+                (await vscode.window.showQuickPick([vscode.l10n.t('Delete local'), vscode.l10n.t('Delete remote')], {
+                    title: vscode.l10n.t('Where to delete from?'),
                     canPickMany: true,
                 })) || [];
         }
-        if (remotes.includes("Delete Remote")) {
+        if (remotes.includes(vscode.l10n.t('Delete remote'))) {
             this.util.execSync(`"${this.util.path}" push --delete origin ${name}`);
         }
-        if (remotes.includes("Delete local")) {
+        if (remotes.includes(vscode.l10n.t('Delete local'))) {
             this.util.execSync(`"${this.util.path}" tag -d ${name}`);
         }
         this._onDidChangeTreeData.fire();
@@ -101,7 +101,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
 
     async pushTag(node: Tag | undefined) {
         if(!this.hasOrigin) {
-            vscode.window.showWarningMessage("No ORIGIN remote has been found!");
+            vscode.window.showWarningMessage(vscode.l10n.t('No ORIGIN remote has been found!'));
             return;
         }
         let name = node?.label;
@@ -123,7 +123,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     }
     pushTags() {
         if(!this.hasOrigin) {
-            vscode.window.showWarningMessage("No ORIGIN remote has been found!");
+            vscode.window.showWarningMessage(vscode.l10n.t('No ORIGIN remote has been found!'));
             return;
         }
         this.util.exec(`"${this.util.path}" push origin --tags`, true, (s) => {
@@ -137,7 +137,7 @@ export class Tag extends vscode.TreeItem {
         super(label, vscode.TreeItemCollapsibleState.None);
         this.label = label;
         this.contextValue = descr ? "local" : "";
-        this.description = descr ? "local" : "";
+        this.description = descr ? vscode.l10n.t('local') : "";
     }
 
     iconPath = new vscode.ThemeIcon("tag");
