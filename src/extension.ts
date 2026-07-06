@@ -30,12 +30,10 @@ export function activate(context: vscode.ExtensionContext) {
         treeDataProvider: viewBranches,
         showCollapseAll: true,
     });
-    viewBranches.getChildren();
     const viewVersions = new TreeViewVersions(util);
     const b = vscode.window.createTreeView("gitflowTags", {
         treeDataProvider: viewVersions,
     });
-    viewVersions.getChildren();
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 1) {
         a.message = vscode.l10n.t('Current repo: {0}', rootPath.split('/').reverse()[0]);
@@ -60,6 +58,8 @@ export function activate(context: vscode.ExtensionContext) {
         util.workspaceRoot = `${repo}`;
         a.message = vscode.l10n.t('Current repo: {0}', `${repo}`.split('/').reverse()[0]);
         b.message = vscode.l10n.t('Current repo: {0}', `${repo}`.split('/').reverse()[0]);
+        util.resetReady();
+
         viewBranches.refresh();
         viewVersions.refresh();
     });

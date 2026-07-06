@@ -16,7 +16,6 @@ interface BranchList {
     support: string;
 }
 type Emitter = Flow | FolderNode | undefined | null | void;
-let checked: boolean = false;
 
 
 /**
@@ -144,22 +143,20 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
 
     getChildren(element?: Flow | FolderNode): Thenable<(Flow | FolderNode)[]> {
 
-        if (!checked && !this.util.check()) {
+        if (!this.util.isReady()) {
             return Promise.resolve([]);
         }
-        checked = true;
 
         let tree: (Flow | FolderNode)[] = [];
 
         if (element === undefined) {
             let config = vscode.workspace.getConfiguration("gitflow");
-            // Check disableOnRepo BEFORE running any git-flow commands
             if (config.get("disableOnRepo")) {
                 return Promise.resolve([]);
             }
 
-            let list = this.util.execSync(`${this.util.flowPath} config list`);
-            if (list.toLowerCase().search("not a gitflow-enabled repo yet") > 0 && config.get("showNotification") === true) {
+            let configList = this.util.execSync(`${this.util.flowPath} config list`);
+            if (configList.toLowerCase().search("not a gitflow-enabled repo yet") > 0 && config.get("showNotification") === true) {
 
                 let initLink = vscode.l10n.t('Init');
                 let disableCheck = vscode.l10n.t('Disable');
@@ -181,7 +178,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
 
             this.curBranch = this.util.execSync(`"${this.util.path}" rev-parse --abbrev-ref HEAD`).trim();
 
-            let b = this.util.execSync(`${this.util.flowPath} config list`).replace("\r", "").split("\n");
+            let b = configList.replace("\r", "").split("\n");
             this.branches.master = `${b[0].split(": ")[1]}`.trim();
             this.branches.develop = `${b[1].split(": ")[1]}`.trim();
             this.branches.feature = `${b[2].split(": ")[1]}`.trim();
@@ -189,13 +186,6 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
             this.branches.release = `${b[4].split(": ")[1]}`.trim();
             this.branches.hotfix = `${b[5].split(": ")[1]}`.trim();
             this.branches.support = `${b[6].split(": ")[1]}`.trim();
-
-            // this.listRemotes = [...new Set(
-            //     this.util.execSync(`"${this.util.path}" remote -v')
-            //         .split("\n")
-            //         .map(el => el.split("\t")[0].trim())
-            //         .filter(el => el !== '')
-            // )];
             this.listBranches = this.util
                 .execSync(`"${this.util.path}" branch`)
                 .split("\n")

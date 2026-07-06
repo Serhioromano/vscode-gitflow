@@ -155,6 +155,22 @@ export class Util {
         }
         return true;
     }
+
+    /**
+     * Check that git and git-flow are installed, caching the result.
+     * Called by tree views on first expansion (not during activation).
+     */
+    public isReady(): boolean {
+        if (this._ready) {
+            return true;
+        }
+        this._ready = this.check();
+        return this._ready;
+    }
+    public resetReady(): void {
+        this._ready = false;
+    }
+    private _ready: boolean = false;
 }
 // public cmd(cmd: string, args?: string[]): Promise<CmdResult> {
 //     let options: SpawnOptions = {};

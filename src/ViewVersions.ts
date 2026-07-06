@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { Util } from "./lib/Util";
 
-let checked: boolean = false;
 
 export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     private _onDidChangeTreeData: vscode.EventEmitter<Tag | undefined | null | void> =
@@ -26,11 +25,9 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     }
 
     getChildren(element?: Tag): Thenable<Tag[]> {
-        if (!checked && !this.util.check()) {
+        if (!this.util.isReady()) {
             return Promise.resolve([]);
         }
-        checked = true;
-
         let config = vscode.workspace.getConfiguration("gitflow");
         if (config.get("disableOnRepo")) {
             return Promise.resolve([]);
