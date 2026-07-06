@@ -1,9 +1,26 @@
 After every change to TypeScript source files in `src/`:
 
+## Verification
+
+Run both checks to confirm the code is correct:
+
+```bash
+npm run compile && npm run lint
+```
+
+- `compile` — TypeScript type-check (`tsc -p ./`). Must pass with zero errors.
+- `lint` — ESLint (`eslint src --ext ts`). Must pass with zero warnings/errors.
+- If either fails, fix the issues before proceeding.
+- The full test suite (`npm test`) requires the VS Code Electron runtime
+  and cannot run in a plain terminal; at minimum compilation + lint must pass.
+
 ## Changelog
 
-Append entry under `[Unreleased]` in `CHANGELOG.md`.
+Always append new entries under the `[Unreleased]` heading in `CHANGELOG.md`.
+Never add entries under a version tag heading (e.g., `[1.5.0]`).
 
+- If the `## [Unreleased] MM/DD/YYYY` heading does not exist at the top of
+  the file, create it with today's date.
 - Format: `- <tag>: <description> (#<PR number>)`
 - Allowed tags: `fix`, `feat`, `enhance`, `docs`, `add`, `change`
 - Update the `[Unreleased]` heading date to today in `MM/DD/YYYY` format
