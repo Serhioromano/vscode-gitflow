@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { Util } from "./lib/Util";
 
-let checked: boolean = false;
 
 export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     private _onDidChangeTreeData: vscode.EventEmitter<Tag | undefined | null | void> =
@@ -12,7 +11,8 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     private remotes: string[] = [];
     private tags: string[] = [];
     private hasOrigin: boolean = false;
-
+    private _remotesFetched: boolean = false;
+    private _fetchingRemotes: boolean = false;
     constructor(private util: Util) {
         this.terminal = null;
     }
@@ -26,11 +26,9 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     }
 
     getChildren(element?: Tag): Thenable<Tag[]> {
-        if (!checked && !this.util.check()) {
+        if (!this.util.isReady()) {
             return Promise.resolve([]);
         }
-        checked = true;
-
         let config = vscode.workspace.getConfiguration("gitflow");
         if (config.get("disableOnRepo")) {
             return Promise.resolve([]);
@@ -44,12 +42,8 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
                 }
             });
 
-        if (this.hasOrigin) {
-            this.remotes = this.util
-                .execSync(`"${this.util.path}" ls-remote --tags origin`)
-                .split("\n")
-                .filter((el) => el.trim().search("refs/tags/") > 0)
-                .map((el) => el.split("/")[2].replace("^{}", ""));
+        if (this.hasOrigin && !this._remotesFetched) {
+            this._fetchRemotes();
         }
 
         this.tags = this.util
@@ -62,10 +56,36 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
             if (el.search(" ") !== -1) {
                 return;
             }
-            list.push(new Tag(el, !this.remotes.includes(el)));
+            const localOnly = this._remotesFetched && !this.remotes.includes(el);
+            list.push(new Tag(el, localOnly));
         });
-
         return Promise.resolve(list);
+    }
+
+
+    /**
+     * Fetch remote tags asynchronously — defers the expensive `git ls-remote`
+     * call so getChildren() returns immediately with local-only data.
+     * Once complete, refreshes the tree so tags show their remote status.
+     */
+    private _fetchRemotes(): void {
+        if (this._fetchingRemotes) {
+            return;
+        }
+        this._fetchingRemotes = true;
+        setTimeout(() => {
+            try {
+                this.remotes = this.util
+                    .execSync(`"${this.util.path}" ls-remote --tags origin`)
+                    .split("\n")
+                    .filter((el) => el.trim().search("refs/tags/") > 0)
+                    .map((el) => el.split("/")[2].replace("^{}", ""));
+                this._remotesFetched = true;
+            } finally {
+                this._fetchingRemotes = false;
+                this._onDidChangeTreeData.fire();
+            }
+        }, 0);
     }
 
     async deleteTag(node: Tag | undefined) {

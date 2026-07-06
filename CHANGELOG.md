@@ -2,6 +2,16 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [1.5.0] 07/06/2026
+
+- enhance: defer tree-view loading from activation to first expansion — eliminates 12 sync git commands (including 3 network calls) blocking extension host startup (#23)
+- enhance: deduplicate `git flow config list` call in branch tree provider, cache `check()` result across both views (#23)
+- enhance: defer `git ls-remote --tags origin` from tree expansion to background — Tags view renders instantly with local tags, remote fetch runs asynchronously, push buttons hidden until remote data arrives (#23)
+
+## [1.4.2] 07/05/2026
+
+- fix: GitHub release body empty — add [1.5.0] fallback to publish workflow changelog extraction
+
 ## [1.4.1] 07/05/2026
 
 - feat: add multi-language localization support (Russian, German, Spanish, French, Japanese, Chinese Simplified)
