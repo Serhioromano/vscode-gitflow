@@ -78,5 +78,6 @@
   "This project is not a Git repository.": "此项目不是 Git 仓库。",
   "Install": "安装",
   "To use Git Flow extension please install Git flow (AVH).": "要使用 Git Flow 扩展，请安装 Git flow (AVH)。",
-  "Executing {0}": "正在执行 {0}"
+  "Executing {0}": "正在执行 {0}",
+  "Git Flow failed to load. See the Output panel for details.": "Git Flow 加载失败。请在输出面板中查看详细信息。"
 }

@@ -26,19 +26,13 @@ export function activate(context: vscode.ExtensionContext) {
     const util = new Util(rootPath, logger, statBar);
 
     const viewBranches = new TreeViewBranches(util);
-    const a = vscode.window.createTreeView("gitflowExplorer", {
-        treeDataProvider: viewBranches,
-        showCollapseAll: true,
-    });
     const viewVersions = new TreeViewVersions(util);
-    const b = vscode.window.createTreeView("gitflowTags", {
-        treeDataProvider: viewVersions,
-    });
 
-    if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 1) {
-        a.message = vscode.l10n.t('Current repo: {0}', rootPath.split('/').reverse()[0]);
-        b.message = vscode.l10n.t('Current repo: {0}', rootPath.split('/').reverse()[0]);
-    }
+    // Register switchRepo before creating tree views so it's always available,
+    // even if tree loading fails during activation (#56).
+    // Use let vars captured by closure — assigned after command registration.
+    let a: vscode.TreeView<Flow | import("./ViewBranches").FolderNode>;
+    let b: vscode.TreeView<Tag>;
 
     const cm: CommandManager = new CommandManager(context, logger, viewBranches, viewVersions);
 
@@ -63,6 +57,19 @@ export function activate(context: vscode.ExtensionContext) {
         viewBranches.refresh();
         viewVersions.refresh();
     });
+
+    a = vscode.window.createTreeView("gitflowExplorer", {
+        treeDataProvider: viewBranches,
+        showCollapseAll: true,
+    });
+    b = vscode.window.createTreeView("gitflowTags", {
+        treeDataProvider: viewVersions,
+    });
+
+    if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 1) {
+        a.message = vscode.l10n.t('Current repo: {0}', rootPath.split('/').reverse()[0]);
+        b.message = vscode.l10n.t('Current repo: {0}', rootPath.split('/').reverse()[0]);
+    }
 }
 
 export function deactivate() { }

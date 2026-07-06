@@ -1,9 +1,9 @@
 {
   "Git Flow": "Git Flow",
   "Show Git Flow Quick Pick menu": "Show Git Flow Quick Pick menu",
-  "Current repo: {0}": "Current repo: {0}",
   "Not a multi-folder workspace": "Not a multi-folder workspace",
   "Select active repository": "Select active repository",
+  "Current repo: {0}": "Current repo: {0}",
   "Delete local": "Delete local",
   "Delete remote": "Delete remote",
   "Where to delete from?": "Where to delete from?",
@@ -17,6 +17,7 @@
   "BugFixes": "BugFixes",
   "HotFixes": "HotFixes",
   "Support": "Support",
+  "Git Flow failed to load. See the Output panel for details.": "Git Flow failed to load. See the Output panel for details.",
   "Sync all root branches": "Sync all root branches",
   "Select branch": "Select branch",
   "Could not find any {0}": "Could not find any {0}",
@@ -71,12 +72,12 @@
   "Publish {0}": "Publish {0}",
   "Select an action": "Select an action",
   "Git is not found": "Git is not found",
+  "Executing {0}": "Executing {0}",
   "Git Flow in progress...": "Git Flow in progress...",
   "Error executing: {0} : {1}": "Error executing: {0} : {1}",
   "No folder opened": "No folder opened",
   "Git CLI is not installed.": "Git CLI is not installed.",
   "This project is not a Git repository.": "This project is not a Git repository.",
   "Install": "Install",
-  "To use Git Flow extension please install Git flow (AVH).": "To use Git Flow extension please install Git flow (AVH).",
-  "Executing {0}": "Executing {0}"
+  "To use Git Flow extension please install Git flow (AVH).": "To use Git Flow extension please install Git flow (AVH)."
 }

@@ -78,5 +78,6 @@
   "This project is not a Git repository.": "このプロジェクトは Git リポジトリではありません。",
   "Install": "インストール",
   "To use Git Flow extension please install Git flow (AVH).": "Git Flow 拡張機能を使用するには Git flow (AVH) をインストールしてください。",
-  "Executing {0}": "{0} を実行中"
+  "Executing {0}": "{0} を実行中",
+  "Git Flow failed to load. See the Output panel for details.": "Git Flow の読み込みに失敗しました。出力パネルで詳細を確認してください。"
 }

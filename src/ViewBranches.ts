@@ -150,6 +150,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
         let tree: (Flow | FolderNode)[] = [];
 
         if (element === undefined) {
+            try {
             let config = vscode.workspace.getConfiguration("gitflow");
             if (config.get("disableOnRepo")) {
                 return Promise.resolve([]);
@@ -178,14 +179,40 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
 
             this.curBranch = this.util.execSync(`"${this.util.path}" rev-parse --abbrev-ref HEAD`).trim();
 
-            let b = configList.replace("\r", "").split("\n");
-            this.branches.master = `${b[0].split(": ")[1]}`.trim();
-            this.branches.develop = `${b[1].split(": ")[1]}`.trim();
-            this.branches.feature = `${b[2].split(": ")[1]}`.trim();
-            this.branches.bugfix = `${b[3].split(": ")[1]}`.trim();
-            this.branches.release = `${b[4].split(": ")[1]}`.trim();
-            this.branches.hotfix = `${b[5].split(": ")[1]}`.trim();
-            this.branches.support = `${b[6].split(": ")[1]}`.trim();
+            // Robust config parsing: handles both human-readable ("Key: value") and
+            // git-config-style ("key=value") formats from different git-flow versions.
+            const configLines = configList.replace(/\r/g, "").split("\n").filter(l => l.trim() !== "");
+            const parsedConfig: Record<string, string> = {};
+            for (const line of configLines) {
+                // Extract value after ": " or "=" separator
+                const match = line.match(/(?:^[^:]*:\s*|^[^=]*=\s*)(.+)/);
+                if (!match) { continue; }
+                const value = match[1].trim();
+                const lower = line.toLowerCase();
+                if (lower.includes("production") || lower.includes("main") || lower.includes("master") || (lower.includes("branch.master") && !lower.includes("develop")) || lower.includes("branch.main"))
+                    { parsedConfig.master = value; }
+                else if (lower.includes("develop") || lower.includes("branch.develop"))
+                    { parsedConfig.develop = value; }
+                else if (lower.includes("feature"))
+                    { parsedConfig.feature = value; }
+                else if (lower.includes("bugfix"))
+                    { parsedConfig.bugfix = value; }
+                else if (lower.includes("release"))
+                    { parsedConfig.release = value; }
+                else if (lower.includes("hotfix"))
+                    { parsedConfig.hotfix = value; }
+                else if (lower.includes("support"))
+                    { parsedConfig.support = value; }
+            }
+            this.branches = {
+                master: parsedConfig.master || "",
+                develop: parsedConfig.develop || "",
+                feature: parsedConfig.feature || "",
+                bugfix: parsedConfig.bugfix || "",
+                release: parsedConfig.release || "",
+                hotfix: parsedConfig.hotfix || "",
+                support: parsedConfig.support || "",
+            };
             this.listBranches = this.util
                 .execSync(`"${this.util.path}" branch`)
                 .split("\n")
@@ -195,8 +222,10 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
             this.listRemoteBranches = this.util
                 .execSync(`"${this.util.path}" branch -r`)
                 .split("\n")
+                .map((el) => el.trim())
+                .filter((el) => el !== "")
                 .map((el) => {
-                    if (el.toLowerCase().search("origin/") !== -1) {
+                    if (el.toLowerCase().includes("origin/")) {
                         this.hasOrigin = true;
                     }
                     let a = el.split("/");
@@ -271,6 +300,11 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
 
             vscode.commands.executeCommand("setContext", "gitflow.initialized", true);
             return Promise.resolve(tree);
+            } catch (e) {
+                console.error(`Git Flow tree init error: ${e}`);
+                vscode.window.showErrorMessage(vscode.l10n.t('Git Flow failed to load. See the Output panel for details.'));
+                return Promise.resolve([]);
+            }
         }
 
         // Handle FolderNode (intermediate folder in nested branch structure)

@@ -2,6 +2,13 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [1.5.1] 07/06/2026
+
+- fix: robust `git flow config list` parser — handles both human-readable and git-config-style output formats, preventing "Cannot read properties of undefined (reading 'trim')" crash (#56)
+- fix: register `gitflow.switchRepo` command before tree view creation — prevents "command not found" error when activation fails during tree loading (#56)
+- fix: wrap tree initialization in try-catch — prevents extension activation crash from malformed git-flow config (#56)
+- fix: sanitize remote branch list — add .trim() and .filter() to prevent undefined entries (#56)
+
 ## [1.5.0] 07/06/2026
 
 - enhance: defer tree-view loading from activation to first expansion — eliminates 12 sync git commands (including 3 network calls) blocking extension host startup (#23)

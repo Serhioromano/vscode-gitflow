@@ -78,5 +78,6 @@
   "This project is not a Git repository.": "Этот проект не является Git репозиторием.",
   "Install": "Установить",
   "To use Git Flow extension please install Git flow (AVH).": "Для использования расширения установите Git flow (AVH).",
-  "Executing {0}": "Выполнение {0}"
+  "Executing {0}": "Выполнение {0}",
+  "Git Flow failed to load. See the Output panel for details.": "Не удалось загрузить Git Flow. Подробности в панели вывода."
 }
