@@ -94,7 +94,7 @@
                 },
                 "gitflow.variant": {
                     "type": "string",
-                    "enum": ["auto", "avh"],
+                    "enum": ["auto", "avh", "next"],
                     "default": "auto",
                     "description": "%gitflow.variant.description%"
                 }

@@ -155,7 +155,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
             }
 
             let configList = this.util.execSync(`${this.util.flowPath} config list`);
-            if (configList.toLowerCase().search("not a gitflow-enabled repo yet") > 0 && config.get("showNotification") === true) {
+            if (this.impl.isNotInitialized(configList) && config.get("showNotification") === true) {
 
                 let initLink = vscode.l10n.t('Init');
                 let disableCheck = vscode.l10n.t('Disable');
@@ -177,40 +177,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
 
             this.curBranch = this.util.execSync(`"${this.util.path}" rev-parse --abbrev-ref HEAD`).trim();
 
-            // Robust config parsing: handles both human-readable ("Key: value") and
-            // git-config-style ("key=value") formats from different git-flow versions.
-            const configLines = configList.replace(/\r/g, "").split("\n").filter(l => l.trim() !== "");
-            const parsedConfig: Record<string, string> = {};
-            for (const line of configLines) {
-                // Extract value after ": " or "=" separator
-                const match = line.match(/(?:^[^:]*:\s*|^[^=]*=\s*)(.+)/);
-                if (!match) { continue; }
-                const value = match[1].trim();
-                const lower = line.toLowerCase();
-                if (lower.includes("production") || lower.includes("main") || lower.includes("master") || (lower.includes("branch.master") && !lower.includes("develop")) || lower.includes("branch.main"))
-                    { parsedConfig.master = value; }
-                else if (lower.includes("develop") || lower.includes("branch.develop"))
-                    { parsedConfig.develop = value; }
-                else if (lower.includes("feature"))
-                    { parsedConfig.feature = value; }
-                else if (lower.includes("bugfix"))
-                    { parsedConfig.bugfix = value; }
-                else if (lower.includes("release"))
-                    { parsedConfig.release = value; }
-                else if (lower.includes("hotfix"))
-                    { parsedConfig.hotfix = value; }
-                else if (lower.includes("support"))
-                    { parsedConfig.support = value; }
-            }
-            this.branches = {
-                master: parsedConfig.master || "",
-                develop: parsedConfig.develop || "",
-                feature: parsedConfig.feature || "",
-                bugfix: parsedConfig.bugfix || "",
-                release: parsedConfig.release || "",
-                hotfix: parsedConfig.hotfix || "",
-                support: parsedConfig.support || "",
-            };
+            // Use variant-aware config parser (handles both AVH key=value and Next hierarchical formats)
+            this.branches = this.impl.parseConfigList(configList);
             this.listBranches = this.util
                 .execSync(`"${this.util.path}" branch`)
                 .split("\n")
