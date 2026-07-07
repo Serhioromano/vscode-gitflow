@@ -20,6 +20,7 @@
   "Sync all root branches": "同步所有根分支",
   "Select branch": "选择分支",
   "Could not find any {0}": "未找到任何 {0}",
+  "Force rebase strategy": "强制变基策略",
   "Enter a valid {0} branch name": "输入有效的 {0} 分支名称",
   "Error creating a branch: {0}": "创建分支错误: {0}",
   "Yes": "是",

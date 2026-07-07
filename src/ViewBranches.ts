@@ -1,10 +1,8 @@
 import { debounce, memoize, throttle } from './lib/decorators';
 import * as vscode from "vscode";
 import { Util } from "./lib/Util";
-import { readFileSync, writeFileSync, existsSync } from "fs";
-import path from "path";
-import os from "os";
 import { Tag } from './ViewVersions';
+import { GitFlowImplementation, OperationContext } from './lib/GitFlowImplementation';
 
 interface BranchList {
     develop: string;
@@ -157,7 +155,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
             }
 
             let configList = this.util.execSync(`${this.util.flowPath} config list`);
-            if (configList.toLowerCase().search("not a gitflow-enabled repo yet") > 0 && config.get("showNotification") === true) {
+            if (this.impl.isNotInitialized(configList) && config.get("showNotification") === true) {
 
                 let initLink = vscode.l10n.t('Init');
                 let disableCheck = vscode.l10n.t('Disable');
@@ -179,40 +177,8 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
 
             this.curBranch = this.util.execSync(`"${this.util.path}" rev-parse --abbrev-ref HEAD`).trim();
 
-            // Robust config parsing: handles both human-readable ("Key: value") and
-            // git-config-style ("key=value") formats from different git-flow versions.
-            const configLines = configList.replace(/\r/g, "").split("\n").filter(l => l.trim() !== "");
-            const parsedConfig: Record<string, string> = {};
-            for (const line of configLines) {
-                // Extract value after ": " or "=" separator
-                const match = line.match(/(?:^[^:]*:\s*|^[^=]*=\s*)(.+)/);
-                if (!match) { continue; }
-                const value = match[1].trim();
-                const lower = line.toLowerCase();
-                if (lower.includes("production") || lower.includes("main") || lower.includes("master") || (lower.includes("branch.master") && !lower.includes("develop")) || lower.includes("branch.main"))
-                    { parsedConfig.master = value; }
-                else if (lower.includes("develop") || lower.includes("branch.develop"))
-                    { parsedConfig.develop = value; }
-                else if (lower.includes("feature"))
-                    { parsedConfig.feature = value; }
-                else if (lower.includes("bugfix"))
-                    { parsedConfig.bugfix = value; }
-                else if (lower.includes("release"))
-                    { parsedConfig.release = value; }
-                else if (lower.includes("hotfix"))
-                    { parsedConfig.hotfix = value; }
-                else if (lower.includes("support"))
-                    { parsedConfig.support = value; }
-            }
-            this.branches = {
-                master: parsedConfig.master || "",
-                develop: parsedConfig.develop || "",
-                feature: parsedConfig.feature || "",
-                bugfix: parsedConfig.bugfix || "",
-                release: parsedConfig.release || "",
-                hotfix: parsedConfig.hotfix || "",
-                support: parsedConfig.support || "",
-            };
+            // Use variant-aware config parser (handles both AVH key=value and Next hierarchical formats)
+            this.branches = this.impl.parseConfigList(configList);
             this.listBranches = this.util
                 .execSync(`"${this.util.path}" branch`)
                 .split("\n")
@@ -402,363 +368,78 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
         });
     }
 
-    async general(what: string, branch: string | undefined, search?: string) {
-        if (branch === undefined && search !== undefined) {
-            let branches = this.listBranches.filter((el) => el.search(search) !== -1);
-            if (branches.length === 0) {
-                vscode.window.showWarningMessage(vscode.l10n.t('Could not find any {0}', ucf(search)));
-                return;
-            }
-            branch = await vscode.window.showQuickPick(branches, {
-                title: vscode.l10n.t('Select branch'),
-            });
-        }
-        if (branch === undefined) {
-            return;
-        }
+    // ═══════════════════════════════════════════════════════════
+    // Implementation access
+    // ═══════════════════════════════════════════════════════════
 
-        let option: string | undefined = "";
-        let list: string[];
-        let base: string | undefined = "";
-        let options: string[] | undefined;
-        let feature = branch.split("/")[0];
-        // Get the full name after the prefix (preserves nested segments like "a/b/c")
-        let name: string | undefined = branch.substring(branch.indexOf("/") + 1);
-        let progress = false;
-        let version = "";
-        let exist: boolean = existsSync(this.util.workspaceRoot + "/package.json");
+    private get impl(): GitFlowImplementation {
+        return this.util.gitFlowImpl;
+    }
 
-        switch (what) {
-            case "start":
-                if (["hotfix", "release"].includes(feature) && exist) {
-                    version =
-                        JSON.parse(readFileSync(this.util.workspaceRoot + "/package.json", "utf8")).version ||
-                        "";
-                }
+    private _ctx(): OperationContext {
+        return {
+            listBranches: this.listBranches,
+            listRemoteBranches: this.listRemoteBranches,
+            curBranch: this.curBranch,
+            branches: this.branches,
+            hasOrigin: this.hasOrigin,
+            workspaceRoot: this.util.workspaceRoot,
+            onComplete: () => this._onDidChangeTreeData.fire(),
+        };
+    }
 
-                name = await vscode.window.showInputBox({
-                    title: vscode.l10n.t('Enter a valid {0} branch name', ucf(feature)),
-                    value: version,
-                });
-                if (name === undefined) {
-                    return;
-                }
-                let config = vscode.workspace.getConfiguration("gitflow");
-                name = name.replace(/\s/igm, `${config.get("replaceSymbol")}`);
-                const checked = this.util.execSync(`"${this.util.path}" check-ref-format --branch ${name}`).trim();
-
-                if (checked !== name) {
-                    vscode.window.showErrorMessage(vscode.l10n.t('Error creating a branch: {0}', checked));
-                    return;
-                }
-
-                if (this.curBranch.search(this.branches.support) !== -1) {
-                    let b =
-                        (await vscode.window.showQuickPick([vscode.l10n.t('Yes'), vscode.l10n.t('No')], {
-                            title: vscode.l10n.t('Start release based on {0}?', this.curBranch),
-                        })) || vscode.l10n.t('No');
-                    base = b === vscode.l10n.t('Yes') ? this.curBranch : "";
-                }
-                if (feature === "support") {
-                    base = await vscode.window.showQuickPick(
-                        this.util
-                            .execSync(`"${this.util.path}" tag --sort=-v:refname`)
-                            .split("\n")
-                            .map((el) => el.trim().replace("* ", ""))
-                            .filter((el) => el !== ""),
-                        { title: vscode.l10n.t('Start support branch based on a tag') }
-                    );
-                    if (base === undefined) {
-                        return;
-                    }
-                }
-
-                break;
-            case "delete":
-                let forceDel = `[-f] ${vscode.l10n.t('Force deletion')}`;
-                let remoteDel = `[-r] ${vscode.l10n.t('Delete remote branch')}`;
-                list = [forceDel];
-                if (this.listRemoteBranches.includes(branch)) {
-                    list.push(remoteDel);
-                }
-                options = await vscode.window.showQuickPick(list, {
-                    title: vscode.l10n.t('Select options'),
-                    canPickMany: true,
-                });
-                if (options === undefined) {
-                    return;
-                }
-                if (options.includes(remoteDel)) {
-                    progress = true;
-                }
-                option = options
-                    ?.map((el) => {
-                        let m = el.match(/\[([^\]]*)\]/);
-                        return m === null ? "" : m[1];
-                    })
-                    .join(" ");
-                break;
-            case "rebase":
-                let interactiveRebase = `[-i] ${vscode.l10n.t('Interactive rebase')}`;
-                let preserveMerges = `[-p] ${vscode.l10n.t('Preserve merges')}`;
-                options = await vscode.window.showQuickPick(
-                    [interactiveRebase, preserveMerges],
-                    {
-                        title: vscode.l10n.t('Select options'),
-                        canPickMany: true,
-                    }
-                );
-                if (options === undefined) {
-                    return;
-                }
-                option = options
-                    .map((el) => {
-                        let m = el.match(/\[([^\]]*)\]/);
-                        return m === null ? "" : m[1];
-                    })
-                    .join(" ");
-
-                switch (feature) {
-                    case "support":
-                        let root = this.listBranches.filter((el) => el.split("/").length < 2);
-                        let tags = this.util
-                            .execSync(`"${this.util.path}" tag --sort=-v:refname`)
-                            .split("\n")
-                            .map((el) => el.trim().replace("* ", ""))
-                            .filter((el) => el !== "");
-                        base =
-                            (await vscode.window.showQuickPick([...root, ...tags], {
-                                title: vscode.l10n.t('Select base branch'),
-                            })) || "";
-                        break;
-                    default:
-                        base =
-                            (await vscode.window.showQuickPick(
-                                this.listBranches.filter((el) => el.split("/").length < 2),
-                                { title: vscode.l10n.t('Select base branch') }
-                            )) || "";
-                }
-                if (base === undefined) {
-                    return;
-                }
-                break;
-            case "finish":
-                options = await this._getFinishOptions(feature);
-                if (
-                    this.listRemoteBranches.includes(branch) &&
-                    !options?.includes(`[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`)
-                ) {
-                    progress = true;
-                }
-                if (options === undefined) {
-                    return;
-                }
-                option =
-                    options.map((el) => {
-                        let m = el.match(/\[([^\]]*)\]/);
-                        return m === null ? "" : m[1];
-                    }).join(" ") || "";
-
-                let msg;
-
-                if (["hotfix", "release"].includes(feature)) {
-                    msg = await vscode.window.showInputBox({
-                        title: vscode.l10n.t('Message'),
-                        value: vscode.l10n.t('Finish {0}: {1}', ucf(feature), name),
-                    });
-                    if (msg === undefined) {
-                        return;
-                    }
-                    msg = `${msg}`.trim();
-                    if (msg === "") {
-                        msg = vscode.l10n.t('Finish {0}: {1}', ucf(feature), name);
-                    }
-
-                    let tmpMsgFile = path.join(`${os.tmpdir()}`, `vscode-git-flow-${Math.floor(Math.random() * 10000000)}.msg`);
-                    writeFileSync(tmpMsgFile, msg, "utf-8");
-                    option = `${option} -f ${tmpMsgFile} -T "${name}"`;
-
-                    if (existsSync(this.util.workspaceRoot + "/CHANGELOG.md")) {
-                        let updated = false;
-                        let chc = `${readFileSync(this.util.workspaceRoot + "/CHANGELOG.md")}`;
-                        chc = chc.split("\n").map(el => {
-                            if (el.toLowerCase().includes("[unreleased]")) {
-                                let date = new Date();
-                                updated = true;
-                                el = el
-                                    .replace(/\[unreleased\]/i, `[${name}]`)
-                                    .replace(/\byyyy\b/i, `${date.getFullYear()}`)
-                                    .replace(/\bmm\b/i, `${date.getMonth() < 9 ? '0' : ''}${date.getMonth() + 1}`)
-                                    .replace(/\bdd\b/i, `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`);
-                            }
-                            return el;
-                        }).join("\n");
-
-                        if (updated) {
-                            writeFileSync(this.util.workspaceRoot + "/CHANGELOG.md", chc);
-                            this.util.execSync(`"${this.util.path}" add ./CHANGELOG.md`);
-                            this.util.execSync(`"${this.util.path}" commit ./CHANGELOG.md -m"Update Changelog"`);
-                        }
-                    }
-                }
-                break;
-        }
-
-        let config = vscode.workspace.getConfiguration("gitflow");
-        let command = config.get("showAllCommands") === true ? " --showcommands " : " ";
-        let cmd = `${this.util.flowPath} ${feature} ${what}${command}${option} ${name} ${base}`;
-        // console.log(cmd);
-
-        this.util.exec(cmd, progress, (s) => {
-            this._onDidChangeTreeData.fire();
-            if (["hotfix", "release"].includes(feature)) {
-                vscode.commands.executeCommand("gitflow.refreshT");
-            }
-
-            // Bump version
-            const shouldBumpVersion = config.get("autoBumpVersion");
-            if (shouldBumpVersion && ["hotfix", "release"].includes(feature) && exist && what === 'start') {
-                version =
-                    JSON.parse(readFileSync(this.util.workspaceRoot + "/package.json", "utf8")).version ||
-                    "";
-                if (version !== "" && name !== version && `${name}`.match(/^[0-9\.]*$/) !== null) {
-                    writeFileSync(
-                        this.util.workspaceRoot + "/package.json",
-                        readFileSync(this.util.workspaceRoot + "/package.json", "utf8").replace(
-                            version,
-                            `${name}`
-                        )
-                    );
-                    this.util.execSync(`"${this.util.path}" add ./package.json`);
-                    this.util.execSync(`"${this.util.path}" commit ./package.json -m "Version bump to ${name}"`);
-                }
-            }
-        });
-
-
-        function ucf(string: string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
+    /**
+     * Minimal dispatcher for the QuickPick command (cm.ts).
+     * Routes a what/branch pair to the correct typed method.
+     */
+    async generalOp(what: string, branch: string) {
+        const prefix = branch.split('/')[0];
+        const node = new Flow(branch, branch, '', vscode.TreeItemCollapsibleState.None);
+        const methods: Record<string, Record<string, (node: Flow) => Promise<void>>> = {
+            feature: { finish: this.finishFeature, delete: this.deleteFeature, rebase: this.rebaseFeature, publish: this.publishFeature },
+            bugfix: { finish: this.finishBugfix, delete: this.deleteBugfix, rebase: this.rebaseBugfix, publish: this.publishBugfix },
+            release: { finish: this.finishRelease, delete: this.deleteRelease, rebase: this.rebaseRelease, publish: this.publishRelease },
+            hotfix: { finish: this.finishHotfix, delete: this.deleteHotfix, rebase: this.rebaseHotfix, publish: this.publishHotfix },
+            support: { delete: this.deleteSupport, rebase: this.rebaseSupport, publish: this.publishSupport },
+        };
+        const fn = methods[prefix]?.[what];
+        if (fn) {
+            await fn.call(this, node);
+        } else {
+            vscode.window.showWarningMessage(
+                vscode.l10n.t('Unknown operation: {0} on {1}', what, branch)
+            );
         }
     }
 
-    async _getFinishOptions(what: string): Promise<string[] | undefined> {
-        return new Promise(async (resolve) => {
-            let list: string[] = [];
-            switch (what) {
-                case "bugfix":
-                    list = [
-                        `[-F] ${vscode.l10n.t('Fetch from origin before performing finish')}`,
-                        `[-r] ${vscode.l10n.t('Rebase before merging')}`,
-                        `[-p] ${vscode.l10n.t('Preserve merges while rebasing')}`,
-                        `[-k] ${vscode.l10n.t('Keep branch after performing finish')}`,
-                        `[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`,
-                        `[--keeplocal] ${vscode.l10n.t('Keep the local branch')}`,
-                        `[-D] ${vscode.l10n.t('Force delete branch after finish')}`,
-                        `[-S] ${vscode.l10n.t('Squash branch during merge')}`,
-                        `[--no-ff] ${vscode.l10n.t('Never fast-forward during the merge')}`,
-                    ];
-                    break;
-                case "hotfix":
-                    list = [
-                        `[-F] ${vscode.l10n.t('Fetch from origin before performing finish')}`,
-                        `[-p] ${vscode.l10n.t('Push to origin after performing finish')}`,
-                        `[-k] ${vscode.l10n.t('Keep branch after performing finish')}`,
-                        `[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`,
-                        `[--keeplocal] ${vscode.l10n.t('Keep the local branch')}`,
-                        `[-D] ${vscode.l10n.t('Force delete branch after finish')}`,
-                        `[-n] ${vscode.l10n.t("Don't tag this hotfix")}`,
-                        `[-b] ${vscode.l10n.t("Don't back-merge master, or tag if applicable, in develop")}`,
-                        `[-S] ${vscode.l10n.t('Squash branch during merge')}`,
-                    ];
-                    break;
-                case "feature":
-                    list = [
-                        `[-F] ${vscode.l10n.t('Fetch from origin before performing finish')}`,
-                        `[-r] ${vscode.l10n.t('Rebase before merging')}`,
-                        `[-p] ${vscode.l10n.t('Preserve merges while rebasing')}`,
-                        `[--push] ${vscode.l10n.t('Push to origin after performing finish')}`,
-                        `[-k] ${vscode.l10n.t('Keep branch after performing finish')}`,
-                        `[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`,
-                        `[--keeplocal] ${vscode.l10n.t('Keep the local branch')}`,
-                        `[-D] ${vscode.l10n.t('Force delete branch after finish')}`,
-                        `[-S] ${vscode.l10n.t('Squash branch during merge')}`,
-                        `[--no-ff] ${vscode.l10n.t('Never fast-forward during the merge')}`,
-                    ];
-                    break;
-                case "release":
-                    list = [
-                        `[-F] ${vscode.l10n.t('Fetch from origin before performing finish')}`,
-                        `[-p] ${vscode.l10n.t('Push to origin after performing finish')}`,
-                        `[-D] ${vscode.l10n.t('Force delete branch after finish')}`,
-                        `[--pushproduction] ${vscode.l10n.t('Push the production branch')}`,
-                        `[--pushdevelop] ${vscode.l10n.t('Push the develop branch')}`,
-                        `[--pushtag] ${vscode.l10n.t('Push the tag')}`,
-                        `[-k] ${vscode.l10n.t('Keep branch after performing finish')}`,
-                        `[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`,
-                        `[--keeplocal] ${vscode.l10n.t('Keep the local branch')}`,
-                        `[-n] ${vscode.l10n.t("Don't tag this release")}`,
-                        `[-b] ${vscode.l10n.t("Don't back-merge master, or tag if applicable, in develop")}`,
-                        `[-S] ${vscode.l10n.t('Squash branch during merge')}`,
-                        `[--ff-master] ${vscode.l10n.t('Fast forward master branch if possible')}`,
-                        `[--nodevelopmerge] ${vscode.l10n.t("Don't back-merge develop branch")}`,
-                    ];
-                    break;
-            }
-            resolve(
-                await vscode.window.showQuickPick(list, {
-                    title: vscode.l10n.t('Select delete options'),
-                    canPickMany: true,
-                })
+    /**
+     * Helper for simple git-flow operations (publish, track, checkout)
+     * that don't need variant-specific logic.
+     */
+    private async _simpleGitFlowOp(what: string, node: Flow | undefined, prefix: string, progress: boolean = false) {
+        let name = node?.full;
+        if (name === undefined) {
+            name = await vscode.window.showQuickPick(
+                this.listBranches.filter(el => el.search(prefix) !== -1),
+                { title: vscode.l10n.t('Select branch') }
             );
+        }
+        if (name === undefined) { return; }
+
+        const feature = name.split('/')[0];
+        const branchName = name.substring(name.indexOf('/') + 1);
+        const cmd = `${this.util.flowPath} ${feature} ${what}${this.impl.showCommands()}${branchName}`;
+
+        this.util.exec(cmd, progress, () => {
+            this._onDidChangeTreeData.fire();
         });
     }
 
     //#region Support
-    async startSupport() {
-        this.general("start", "support");
-    }
-    async rebaseSupport(node: Flow | undefined) {
-        this.general("rebase", node?.full, this.branches.support);
-    }
-    async deleteSupport(node: Flow | undefined) {
-        let name = node?.full;
-        if (name === undefined) {
-            name = await vscode.window.showQuickPick(
-                this.listBranches.filter((el) => el.search(this.branches.support) !== -1),
-                { title: vscode.l10n.t('Select bugfix') }
-            );
-        }
-        if (name === undefined) {
-            return;
-        }
+    async startSupport()              { await this.impl.startSupport(this._ctx()); }
+    async rebaseSupport(node?: Flow)  { await this.impl.rebaseSupport(node, this._ctx()); }
+    async deleteSupport(node?: Flow)  { await this.impl.deleteSupport(node, this._ctx()); }
 
-        let sForceDel = `[-f] ${vscode.l10n.t('Force deletion')}`;
-        let sRemoteDel = `[-r] ${vscode.l10n.t('Delete remote branch')}`;
-        let list: string[] = [sForceDel];
-        if (this.listRemoteBranches.includes(`${name}`)) {
-            list.push(sRemoteDel);
-        }
-        let options = await vscode.window.showQuickPick(list, {
-            title: vscode.l10n.t('Select options'),
-            canPickMany: true,
-        });
-        if (options === undefined) {
-            return;
-        }
-        let option = options?.includes(sForceDel) ? "-D" : "-d";
-
-        this.util.execSync(`"${this.util.path}" checkout -d ${this.branches.develop}`);
-        this.util.execSync(`"${this.util.path}" branch ${option} ${name}`);
-
-        if (options?.includes(sRemoteDel)) {
-            this.util.exec(`"${this.util.path}" push --delete origin ${name}`, true, () => {
-                this._onDidChangeTreeData.fire();
-            });
-            return;
-        }
-
-        this._onDidChangeTreeData.fire();
-    }
     async publishSupport(node: Flow | undefined) {
         if (!this.hasOrigin) {
             vscode.window.showWarningMessage(vscode.l10n.t('No ORIGIN remote has been found!'));
@@ -771,16 +452,12 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
                 { title: vscode.l10n.t('Select support branch') }
             );
         }
-        if (name === undefined) {
-            return;
-        }
+        if (name === undefined) { return; }
 
         let cmd = `"${this.util.path}" push origin ${name}`;
-
-        this.util.exec(cmd, true, (s) => {
-            this._onDidChangeTreeData.fire();
-        });
+        this.util.exec(cmd, true, (s) => { this._onDidChangeTreeData.fire(); });
     }
+
     async checkoutSupport(node: Flow | undefined) {
         let name = node?.full;
         if (name === undefined) {
@@ -789,92 +466,51 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
                 { title: vscode.l10n.t('Select support branch') }
             );
         }
-        if (name === undefined) {
-            return;
-        }
+        if (name === undefined) { return; }
 
         let cmd = `"${this.util.path}" checkout -q ${name}`;
-
-        this.util.exec(cmd, false, (s) => {
-            this._onDidChangeTreeData.fire();
-        });
+        this.util.exec(cmd, false, (s) => { this._onDidChangeTreeData.fire(); });
     }
 
     //#endregion
 
     //#region Bugfix
-    async startBugfix() {
-        this.general("start", "bugfix");
-    }
-    async finishBugfix(node: Flow | undefined) {
-        this.general("finish", node?.full, this.branches.bugfix);
-    }
-    async rebaseBugfix(node: Flow | undefined) {
-        this.general("rebase", node?.full, this.branches.bugfix);
-    }
-    async publishBugfix(node: Flow | undefined) {
-        this.general("publish", node?.full, this.branches.bugfix);
-    }
-    async deleteBugfix(node: Flow | undefined) {
-        this.general("delete", node?.full, this.branches.bugfix);
-    }
-    async checkoutBugfix(node: Flow | undefined) {
-        this.general("checkout", node?.full, this.branches.bugfix);
-    }
-    async trackBugfix(node: Flow | undefined) {
-        this.general("track", node?.full, this.branches.bugfix);
-    }
+    async startBugfix()              { await this.impl.startBugfix(this._ctx()); }
+    async finishBugfix(node?: Flow)  { await this.impl.finishBugfix(node, this._ctx()); }
+    async deleteBugfix(node?: Flow)  { await this.impl.deleteBugfix(node, this._ctx()); }
+    async rebaseBugfix(node?: Flow)  { await this.impl.rebaseBugfix(node, this._ctx()); }
+    async publishBugfix(node?: Flow) { await this._simpleGitFlowOp('publish', node, this.branches.bugfix); }
+    async checkoutBugfix(node?: Flow){ await this._simpleGitFlowOp('checkout', node, this.branches.bugfix); }
+    async trackBugfix(node?: Flow)   { await this._simpleGitFlowOp('track', node, this.branches.bugfix); }
     //#endregion
 
     //#region Features
-    async startFeature() {
-        this.general("start", "feature");
-    }
-    async finishFeature(node: Flow | undefined) {
-        this.general("finish", node?.full, this.branches.feature);
-    }
-    async rebaseFeature(node: Flow | undefined) {
-        this.general("rebase", node?.full, this.branches.feature);
-    }
-    async publishFeature(node: Flow | undefined) {
-        this.general("publish", node?.full, this.branches.feature);
-    }
-    async deleteFeature(node: Flow | undefined) {
-        this.general("delete", node?.full, this.branches.feature);
-    }
-    async checkoutFeature(node: Flow | undefined) {
-        this.general("checkout", node?.full, this.branches.feature);
-    }
-    async trackFeature(node: Flow | undefined) {
-        this.general("track", node?.full, this.branches.feature);
-    }
+    async startFeature()              { await this.impl.startFeature(this._ctx()); }
+    async finishFeature(node?: Flow)  { await this.impl.finishFeature(node, this._ctx()); }
+    async deleteFeature(node?: Flow)  { await this.impl.deleteFeature(node, this._ctx()); }
+    async rebaseFeature(node?: Flow)  { await this.impl.rebaseFeature(node, this._ctx()); }
+    async publishFeature(node?: Flow) { await this._simpleGitFlowOp('publish', node, this.branches.feature); }
+    async checkoutFeature(node?: Flow){ await this._simpleGitFlowOp('checkout', node, this.branches.feature); }
+    async trackFeature(node?: Flow)   { await this._simpleGitFlowOp('track', node, this.branches.feature); }
     //#endregion
 
     //#region Hotfix
-    async startHotfix() {
-        this.general("start", "hotfix");
-    }
-    async checkoutHotfix(node: Flow | undefined) {
-        this.general("checkout", node?.full, this.branches.hotfix);
-    }
-    async publishHotfix(node: Flow | undefined) {
-        this.general("publish", node?.full, this.branches.hotfix);
-    }
-    async deleteHotfix(node: Flow | undefined) {
-        this.general("delete", node?.full, this.branches.hotfix);
-    }
-    async rebaseHotfix(node: Flow | undefined) {
-        this.general("rebase", node?.full, this.branches.hotfix);
-    }
-    async finishHotfix(node: Flow | undefined) {
-        this.general("finish", node?.full, this.branches.hotfix);
-    }
+    async startHotfix()              { await this.impl.startHotfix(this._ctx()); }
+    async finishHotfix(node?: Flow)  { await this.impl.finishHotfix(node, this._ctx()); }
+    async deleteHotfix(node?: Flow)  { await this.impl.deleteHotfix(node, this._ctx()); }
+    async rebaseHotfix(node?: Flow)  { await this.impl.rebaseHotfix(node, this._ctx()); }
+    async publishHotfix(node?: Flow) { await this._simpleGitFlowOp('publish', node, this.branches.hotfix); }
+    async checkoutHotfix(node?: Flow){ await this._simpleGitFlowOp('checkout', node, this.branches.hotfix); }
     //#endregion
 
     //#region Releases
-    async startRelease() {
-        this.general("start", "release");
-    }
+    async startRelease()              { await this.impl.startRelease(this._ctx()); }
+    async finishRelease(node?: Flow)  { await this.impl.finishRelease(node, this._ctx()); }
+    async deleteRelease(node?: Flow)  { await this.impl.deleteRelease(node, this._ctx()); }
+    async rebaseRelease(node?: Flow)  { await this.impl.rebaseRelease(node, this._ctx()); }
+    async publishRelease(node?: Flow) { await this._simpleGitFlowOp('publish', node, this.branches.release); }
+    async trackRelease(node?: Flow)   { await this._simpleGitFlowOp('track', node, this.branches.release); }
+
     async checkoutRelease(node: Flow | undefined) {
         let name = node?.full;
         if (name === undefined) {
@@ -883,29 +519,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
                 { title: vscode.l10n.t('Select release branch') }
             );
         }
-        if (name === undefined) {
-            return;
-        }
+        if (name === undefined) { return; }
         let cmd = `"${this.util.path}" checkout -q ${name}`;
-
-        this.util.exec(cmd, false, (s) => {
-            this._onDidChangeTreeData.fire();
-        });
-    }
-    async publishRelease(node: Flow | undefined) {
-        this.general("publish", node?.full, this.branches.release);
-    }
-    async deleteRelease(node: Flow | undefined) {
-        this.general("delete", node?.full, this.branches.release);
-    }
-    async trackRelease(node: Flow | undefined) {
-        this.general("track", node?.full, this.branches.release);
-    }
-    async finishRelease(node: Flow | undefined) {
-        this.general("finish", node?.full, this.branches.release);
-    }
-    async rebaseRelease(node: Flow | undefined) {
-        this.general("rebase", node?.full, this.branches.release);
+        this.util.exec(cmd, false, (s) => { this._onDidChangeTreeData.fire(); });
     }
     //#endregion
 

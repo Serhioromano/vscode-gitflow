@@ -2,7 +2,7 @@
     "name": "vscode-gitflow",
     "displayName": "Git Flow",
     "description": "Git-Flow support for VS Code",
-    "version": "1.5.1",
+    "version": "1.6.0",
     "engines": {
         "vscode": "^1.73.0"
     },
@@ -91,6 +91,12 @@
                     "default": false,
                     "description": "%gitflow.usePowerShell.description%",
                     "scope": "machine-overridable"
+                },
+                "gitflow.variant": {
+                    "type": "string",
+                    "enum": ["auto", "avh", "next"],
+                    "default": "auto",
+                    "description": "%gitflow.variant.description%"
                 }
             }
         },

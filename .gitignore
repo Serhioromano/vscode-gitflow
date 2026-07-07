@@ -2,3 +2,5 @@ node_modules
 out
 .vscode-test
 *.vsix
+test-workspaces/next-repo-mount
+test-workspaces/avh-repo-mount

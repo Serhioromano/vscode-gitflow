@@ -52,5 +52,6 @@
   "gitflow.replaceSymbol.description": "Reemplazar espacios en nombres de rama con este símbolo",
   "gitflow.autoBumpVersion.description": "Incrementar versión del paquete tras iniciar release/hotfix.",
   "gitflow.disableOnRepo.description": "Desactivar verificación de GitFlow en este repositorio",
-  "gitflow.usePowerShell.description": "Usar PowerShell en lugar de CMD.exe en Windows para soporte de rutas UNC (\\\\server\\share)."
+  "gitflow.usePowerShell.description": "Usar PowerShell en lugar de CMD.exe en Windows para soporte de rutas UNC (\\\\server\\share).",
+  "gitflow.variant.description": "Implementación de Git Flow: 'auto' detecta automáticamente, 'avh' fuerza AVH Edition, 'next' fuerza git-flow-next."
 }

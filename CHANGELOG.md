@@ -2,6 +2,14 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [1.6.0] 07/07/2026
+
+- fix: `--showcommands` flag no longer leaked to git-flow-next operations — `_simpleGitFlowOp` now delegates to `GitFlowImplementation.showCommands()` instead of reading config directly (#80)
+- change: Docker `gitflow-next` image now installs git-flow-next v1.1.0 (Go binary from gittower/git-flow-next) instead of nvie/gitflow, fixing `config list` support
+- enhance: extract git-flow operations into abstract `GitFlowImplementation` with `GitFlowAVH` backend — enables future `git-flow-next` support without touching core routing (#78)
+- add: `gitflow.variant` setting (`auto`/`avh`/`next`) to control which git-flow implementation is used (#78)
+- add: `GitFlowNext` implementation with Next-compatible flags (`--fetch` instead of `-F`, `--messagefile` instead of `-f`, `update --rebase` instead of `rebase`, hides unsupported flags) — completes git-flow-next support (#78)
+
 ## [1.5.1] 07/06/2026
 
 - fix: robust `git flow config list` parser — handles both human-readable and git-config-style output formats, preventing "Cannot read properties of undefined (reading 'trim')" crash (#56)

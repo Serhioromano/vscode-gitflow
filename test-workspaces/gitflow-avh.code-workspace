@@ -1,0 +1,14 @@
+{
+    "folders": [
+        {
+            "name": "gitflow-avh-repo",
+            "path": "avh-repo-mount"
+        }
+    ],
+    "settings": {
+        "security.workspace.trust.enabled": false,
+        "gitflow.path": "/home/sergey/www/vscode-gitflow/scripts/git-flow-avh.sh",
+        "gitflow.showNotification": true,
+        "gitflow.showAllCommands": true
+    }
+}

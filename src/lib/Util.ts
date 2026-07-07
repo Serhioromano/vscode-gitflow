@@ -4,6 +4,9 @@ import { Logger, LogLevels } from "./logger";
 import { Memoize, MemoizeExpiring } from "typescript-memoize";
 import { GitExtension, API as GitAPI } from "./git";
 import { platform } from "os";
+import { GitFlowImplementation } from "./GitFlowImplementation";
+import { GitFlowAVH } from "./GitFlowAVH";
+import { GitFlowNext } from "./GitFlowNext";
 // import { GitBaseExtension, API as GitBaseAPI } from "./lib/git-base";
 
 type CmdResult = {
@@ -169,8 +172,39 @@ export class Util {
     }
     public resetReady(): void {
         this._ready = false;
+        this._gitFlowImpl = undefined;
     }
     private _ready: boolean = false;
+
+    /**
+     * Lazy-initialized git-flow implementation based on variant detection.
+     * Respects the `gitflow.variant` setting: 'auto' auto-detects, 'avh' forces AVH.
+     */
+    public get gitFlowImpl(): GitFlowImplementation {
+        if (this._gitFlowImpl) {
+            return this._gitFlowImpl;
+        }
+        const manual = vscode.workspace.getConfiguration('gitflow').get<string>('variant', 'auto');
+        if (manual === 'avh') {
+            this._gitFlowImpl = new GitFlowAVH(this, this.logger);
+            return this._gitFlowImpl;
+        }
+        if (manual === 'next') {
+            this._gitFlowImpl = new GitFlowNext(this, this.logger);
+            return this._gitFlowImpl;
+        }
+        // Auto-detect: check if Next is installed
+        try {
+            const ver = this.execSync(`${this.flowPath} version`).toLowerCase();
+            if (ver.includes('next')) {
+                this._gitFlowImpl = new GitFlowNext(this, this.logger);
+                return this._gitFlowImpl;
+            }
+        } catch { /* ignore */ }
+        this._gitFlowImpl = new GitFlowAVH(this, this.logger);
+        return this._gitFlowImpl;
+    }
+    private _gitFlowImpl: GitFlowImplementation | undefined;
 }
 // public cmd(cmd: string, args?: string[]): Promise<CmdResult> {
 //     let options: SpawnOptions = {};

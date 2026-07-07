@@ -52,5 +52,6 @@
   "gitflow.replaceSymbol.description": "ブランチ名の空白をこの記号に置き換えます",
   "gitflow.autoBumpVersion.description": "リリース/ホットフィックス開始時にパッケージバージョンを自動的に上げます。",
   "gitflow.disableOnRepo.description": "このリポジトリでの GitFlow チェックを無効にする",
-  "gitflow.usePowerShell.description": "Windows で CMD.exe の代わりに PowerShell を使用します。UNC パス (\\\\server\\share) サポートに有効にします。"
+  "gitflow.usePowerShell.description": "Windows で CMD.exe の代わりに PowerShell を使用します。UNC パス (\\\\server\\share) サポートに有効にします。",
+  "gitflow.variant.description": "使用する Git Flow 実装: 'auto' は自動検出、'avh' は AVH Edition を強制、'next' は git-flow-next を強制。"
 }

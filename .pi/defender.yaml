@@ -18,3 +18,15 @@ strictModeWhiteList:
   - ^VERSION=\b
   - ^git log\b
   - ^grep\b
+  - ^curl\b
+  - ^mkdir\b
+  - ^docker build\b
+  - ^tar\b
+  - ^docker run\b
+  - ^npm run(\s+--?[a-zA-Z][\w-]*)*\s+compile\b
+  - ^npm run(\s+--?[a-zA-Z][\w-]*)*\s+lint\b
+  - ^do\b
+  - ^chmod\b
+  - ^docker compose\b
+  - ^docker ps\b
+  - ^docker exec\b
