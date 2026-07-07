@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Wrapper: runs git-flow (nvie/original) inside the gitflow-next container.
+# Wrapper: runs git-flow-next inside the gitflow-next container.
 # Usage: git-flow-next.sh <subcommand> [args...]
 #
 # Set this path in VS Code settings: "gitflow.path"
