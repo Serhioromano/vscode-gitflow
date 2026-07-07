@@ -78,7 +78,12 @@ export interface OperationContext {
 }
 
 export abstract class GitFlowImplementation {
-    constructor(protected util: Util) {}
+    constructor(
+        protected util: Util,
+        protected logger: Logger
+    ) {}
+
+    abstract get variant(): 'avh' | 'next';
 
     abstract get variant(): 'avh' | 'next';
 
@@ -139,11 +144,13 @@ export class GitFlowAVH extends GitFlowImplementation {
 
     // ── Feature ──────────────────────────────────────────
     async startFeature(ctx: OperationContext): Promise<void> {
+        this.logger.log(`Starting feature branch...`, `git flow feature start`, LogLevels.info);
         // Current "start" case in general() — verbatim:
         //   1. showInputBox for branch name
         //   2. check-ref-format validation
         //   3. build: ${flowPath} feature start ${name}
         //   4. util.exec + ctx.onComplete()
+        //   5. logger.log(`Branch created: ${name}`, cmd, LogLevels.info);
     }
 
     async finishFeature(node: Flow | undefined, ctx: OperationContext): Promise<void> {
@@ -501,7 +508,70 @@ From `--help` output of both tools (Docker-tested):
 
 ---
 
-## 8. Implementation Order
+## 8. Logging Strategy
+
+Every operation method logs to the "Git Flow" output channel using the existing `Logger` class.
+
+### What gets logged
+
+| Point | Content | Level |
+|-------|---------|-------|
+| Method entry | `[avh|next] Starting feature finish for "my-branch"...` | `INFO` |
+| Command built | `[avh|next] CMD: git flow feature finish -k my-feature` | `INFO` |
+| Command output | (already logged by `Util.exec` / `Util.execSync`) | `INFO` |
+| Command error | (already logged by `Util.exec` on error) | `ERROR` |
+| Method complete | `[avh|next] Feature finish completed` | `INFO` |
+| User cancelled | `[avh|next] Feature finish cancelled by user` | `INFO` |
+
+### Variant prefix
+
+Each log line includes `[avh]` or `[next]` so the output channel makes it immediately clear which implementation is active:
+
+```
+INFO: (12ms) [avh] Starting feature finish for "login-fix"...
+INFO: (15ms) [avh] CMD: /usr/bin/git-flow feature finish -k login-fix
+INFO: (120ms) [/usr/bin/git-flow feature finish -k login-fix] Switched to branch 'develop'
+...
+INFO: (350ms) [avh] Feature finish completed
+```
+
+### Implementation
+
+```typescript
+// In each GitFlowAVH / GitFlowNext method:
+
+async finishFeature(node: Flow | undefined, ctx: OperationContext): Promise<void> {
+    const prefix = `[${this.variant}]`;
+    const name = /* resolve branch name */;
+
+    this.logger.log(
+        `${prefix} Starting feature finish for "${name}"...`,
+        `git flow feature finish`,
+        LogLevels.info
+    );
+
+    // ... show dialogs, build command ...
+
+    if (!flags) {
+        this.logger.log(`${prefix} Feature finish cancelled by user`, '', LogLevels.info);
+        return;
+    }
+
+    const cmd = `${this.util.flowPath} feature finish ${flags} ${name}`;
+    this.logger.log(`${prefix} CMD: ${cmd}`, `git flow feature finish`, LogLevels.info);
+
+    this.util.exec(cmd, progress, () => {
+        this.logger.log(`${prefix} Feature finish completed`, '', LogLevels.info);
+        ctx.onComplete();
+    });
+}
+```
+
+This is additive — the existing `Util.exec`/`Util.execSync` logging of raw command output continues unchanged.
+
+---
+
+## 9. Implementation Order
 
 ### Phase 1 — Interface + AVH Extraction + Detection
 1. Create `GitFlowImplementation.ts` — abstract class + `OperationContext`
