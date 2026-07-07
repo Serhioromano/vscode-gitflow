@@ -2,7 +2,7 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [Unreleased] 07/07/2026
+## [1.6.0] 07/07/2026
 
 - fix: `--showcommands` flag no longer leaked to git-flow-next operations — `_simpleGitFlowOp` now delegates to `GitFlowImplementation.showCommands()` instead of reading config directly (#80)
 - change: Docker `gitflow-next` image now installs git-flow-next v1.1.0 (Go binary from gittower/git-flow-next) instead of nvie/gitflow, fixing `config list` support
