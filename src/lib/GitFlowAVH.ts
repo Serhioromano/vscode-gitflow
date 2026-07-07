@@ -126,11 +126,7 @@ export class GitFlowAVH extends GitFlowImplementation {
         const flags = this._parseOptionFlags(options);
 
         const fn = (type === 'support'
-            ? async () => vscode.window.showQuickPick(
-                ctx.listBranches.filter(el => el.split('/').length < 2),
-                { title: vscode.l10n.t('Select base branch') }
-            )
-            : async () => {
+            ? async () => {
                 const root = ctx.listBranches.filter(el => el.split('/').length < 2);
                 const tags = this.util
                     .execSync(`"${this.util.path}" tag --sort=-v:refname`)
@@ -140,7 +136,11 @@ export class GitFlowAVH extends GitFlowImplementation {
                 return vscode.window.showQuickPick([...root, ...tags], {
                     title: vscode.l10n.t('Select base branch'),
                 });
-            });
+            }
+            : async () => vscode.window.showQuickPick(
+                ctx.listBranches.filter(el => el.split('/').length < 2),
+                { title: vscode.l10n.t('Select base branch') }
+            ));
 
         const base =  await fn();
         if (base === undefined) {
@@ -284,16 +284,17 @@ export class GitFlowAVH extends GitFlowImplementation {
 
     private async _startOp(type: string, ctx: OperationContext): Promise<void> {
         const prefix = '[avh]';
-        this.logger.log(`${prefix} Starting ${type} branch...`, 'git flow ${type} start', LogLevels.info);
+        this.logger.log(`${prefix} Starting ${type} branch...`, `git flow ${type} start`, LogLevels.info);
 
+        const version = type === 'release' || type === 'hotfix' ? this._getPkgVersion(ctx) : '';
         const name = await vscode.window.showInputBox({
-            title: vscode.l10n.t('Enter a valid {0} branch name', this._ucf(type)),
+            title: vscode.l10n.t('Enter a valid {0} branch name', this._ucf('release')),
+            value: version,
         });
         if (name === undefined) {
             this.logger.log(`${prefix} ${this._ucf(type)} start cancelled by user`, '', LogLevels.info);
             return;
         }
-        const version = type === 'release' ? this._getPkgVersion(ctx) : '';
         const config = vscode.workspace.getConfiguration('gitflow');
         const safeName = name.replace(/\s/g, config.get('replaceSymbol') || '_');
         const checked = this.util.execSync(`"${this.util.path}" check-ref-format --branch ${safeName}`).trim();
@@ -331,7 +332,7 @@ export class GitFlowAVH extends GitFlowImplementation {
             this.logger.log(`${prefix} ${this._ucf(type)} start completed`, '', LogLevels.info);
             ctx.onComplete();
             vscode.commands.executeCommand('gitflow.refreshT');
-            if(type === 'release') this._bumpVersion(ctx, safeName);
+            if(type === 'release' || type === 'hotfix') this._bumpVersion(ctx, safeName);
         });
     }
 
@@ -367,12 +368,11 @@ export class GitFlowAVH extends GitFlowImplementation {
         }
         const flags = this._parseOptionFlags(options);
         const cmd = `${this.util.flowPath} ${type} delete ${flags} ${name}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, `git flow ${type} delete`, LogLevels.info);
 
         if (type === 'support') {
             const option = options?.includes(forceDel) ? '-D' : '-d';
             this.util.execSync(`"${this.util.path}" checkout -d ${ctx.branches.develop}`);
-            this.util.execSync(`"${this.util.path}" branch ${option} ${name}`);
+            this.util.execSync(`"${this.util.path}" branch ${option} ${branch}`);
 
             if (options?.includes(remoteDel)) {
                 this.util.exec(`"${this.util.path}" push --delete origin ${name}`, true, () => {
@@ -383,6 +383,7 @@ export class GitFlowAVH extends GitFlowImplementation {
             }
             ctx.onComplete();
         } else {
+            this.logger.log(`${prefix} CMD: ${cmd}`, `git flow ${type} delete`, LogLevels.info);
             this.util.exec(cmd, progress, () => {
                 this.logger.log(`${prefix} ${this._ucf(type)} delete completed`, '', LogLevels.info);
                 ctx.onComplete();
