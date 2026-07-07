@@ -120,7 +120,10 @@ Thus your `master` or `main` branch contain most recent version of your product 
 1. VS Code should be open on a folder not file
 2. Git must be installed.
 3. Root folder must be a git repository. If not run `git init` command in the terminal.
-4. [Git Flow](https://github.com/petervanderdoes/gitflow-avh/wiki/Installation) must be installed.
+4. Git Flow must be installed. Two implementations are supported:
+   - [git-flow AVH](https://github.com/petervanderdoes/gitflow-avh/wiki/Installation) (traditional)
+   - [git-flow-next](https://github.com/jaspernbrouwer/git-flow-next) (modern, written in Rust)
+   Use the `gitflow.variant` setting to choose or let auto-detection pick.
 5. You have to initialize git flow in the root of your repository with `git flow init` command.
 
 ### Working remotely
