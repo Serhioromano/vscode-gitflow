@@ -18,3 +18,8 @@ strictModeWhiteList:
   - ^VERSION=\b
   - ^git log\b
   - ^grep\b
+  - ^curl\b
+  - ^mkdir\b
+  - ^docker build\b
+  - ^tar\b
+  - ^docker run\b
