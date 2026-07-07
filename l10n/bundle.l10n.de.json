@@ -20,6 +20,7 @@
   "Sync all root branches": "Alle Root-Branches synchronisieren",
   "Select branch": "Branch auswählen",
   "Could not find any {0}": "Keine {0} gefunden",
+  "Force rebase strategy": "Rebase-Strategie erzwingen",
   "Enter a valid {0} branch name": "Gültigen {0}-Branch-Namen eingeben",
   "Error creating a branch: {0}": "Fehler beim Erstellen des Branches: {0}",
   "Yes": "Ja",

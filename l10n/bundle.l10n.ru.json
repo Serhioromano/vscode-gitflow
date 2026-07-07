@@ -20,6 +20,7 @@
   "Sync all root branches": "Синхронизировать все корневые ветки",
   "Select branch": "Выберите ветку",
   "Could not find any {0}": "Не удалось найти {0}",
+  "Force rebase strategy": "Принудительно использовать стратегию rebase",
   "Enter a valid {0} branch name": "Введите корректное имя ветки {0}",
   "Error creating a branch: {0}": "Ошибка создания ветки: {0}",
   "Yes": "Да",

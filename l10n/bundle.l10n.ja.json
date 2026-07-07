@@ -20,6 +20,7 @@
   "Sync all root branches": "すべてのルートブランチを同期",
   "Select branch": "ブランチを選択",
   "Could not find any {0}": "{0} が見つかりません",
+  "Force rebase strategy": "リベース戦略を強制",
   "Enter a valid {0} branch name": "有効な {0} ブランチ名を入力",
   "Error creating a branch: {0}": "ブランチ作成エラー: {0}",
   "Yes": "はい",

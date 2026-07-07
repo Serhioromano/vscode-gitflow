@@ -53,5 +53,5 @@
   "gitflow.autoBumpVersion.description": "Incrémenter la version du paquet après le démarrage d'une release/hotfix.",
   "gitflow.disableOnRepo.description": "Désactiver la vérification GitFlow sur ce dépôt",
   "gitflow.usePowerShell.description": "Utiliser PowerShell au lieu de CMD.exe sous Windows pour prendre en charge les chemins UNC (\\\\server\\share).",
-  "gitflow.variant.description": "Implémentation Git Flow : 'auto' détecte automatiquement, 'avh' force AVH Edition."
+  "gitflow.variant.description": "Implémentation Git Flow : 'auto' détecte automatiquement, 'avh' force AVH Edition, 'next' force git-flow-next."
 }

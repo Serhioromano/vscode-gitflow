@@ -5,7 +5,7 @@ All notable changes to the "gitflow" extension will be documented in this file.
 ## [Unreleased] 07/07/2026
 
 - enhance: extract git-flow operations into abstract `GitFlowImplementation` with `GitFlowAVH` backend — enables future `git-flow-next` support without touching core routing (#78)
-- add: `gitflow.variant` setting (`auto`/`avh`) to control which git-flow implementation is used (#78)
+- add: `gitflow.variant` setting (`auto`/`avh`/`next`) to control which git-flow implementation is used (#78)
 - add: `GitFlowNext` implementation with Next-compatible flags (`--fetch` instead of `-F`, `--messagefile` instead of `-f`, `update --rebase` instead of `rebase`, hides unsupported flags) — completes git-flow-next support (#78)
 
 ## [1.5.1] 07/06/2026

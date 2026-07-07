@@ -53,5 +53,5 @@
   "gitflow.autoBumpVersion.description": "Автоматически повышать версию пакета при старте release/hotfix.",
   "gitflow.disableOnRepo.description": "Отключить проверку GitFlow для этого репозитория",
   "gitflow.usePowerShell.description": "Использовать PowerShell вместо CMD.exe на Windows для поддержки UNC путей (\\\\server\\share).",
-  "gitflow.variant.description": "Реализация Git Flow: 'auto' определяет автоматически, 'avh' принудительно использует AVH Edition."
+  "gitflow.variant.description": "Реализация Git Flow: 'auto' определяет автоматически, 'avh' принудительно использует AVH Edition, 'next' принудительно использует git-flow-next."
 }
