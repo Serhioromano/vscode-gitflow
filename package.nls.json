@@ -52,5 +52,6 @@
     "gitflow.replaceSymbol.description": "Replace whitespace in branch names with this symbol",
     "gitflow.autoBumpVersion.description": "Bump package version post start release/hotfix.",
     "gitflow.disableOnRepo.description": "Disable GitFlow check on this repo",
-    "gitflow.usePowerShell.description": "Use PowerShell instead of CMD.exe on Windows. Enable this for UNC path (\\\\server\\share) support."
+    "gitflow.usePowerShell.description": "Use PowerShell instead of CMD.exe on Windows. Enable this for UNC path (\\\\server\\share) support.",
+    "gitflow.variant.description": "Git Flow implementation to use: 'auto' detects automatically, 'avh' forces AVH Edition, 'next' forces git-flow-next."
 }

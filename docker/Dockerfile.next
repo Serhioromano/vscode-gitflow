@@ -1,0 +1,39 @@
+# Git Flow Next (git-flow.sh) - Alpine
+FROM alpine:3.21
+
+RUN apk add --no-cache \
+    git \
+    bash \
+    openssh-client \
+    curl \
+    util-linux \
+    nodejs \
+    npm
+
+# Install git-flow-next from GitHub releases (Go binary)
+# https://github.com/gittower/git-flow-next
+RUN arch=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') && \
+    curl -sL "https://github.com/gittower/git-flow-next/releases/download/v1.1.0/git-flow-next-v1.1.0-linux-${arch}.tar.gz" \
+        -o /tmp/git-flow-next.tar.gz && \
+    tar xzf /tmp/git-flow-next.tar.gz -C /usr/local/bin/ && \
+    mv /usr/local/bin/git-flow-v1.1.0-linux-${arch} /usr/local/bin/git-flow && \
+    chmod +x /usr/local/bin/git-flow && \
+    rm /tmp/git-flow-next.tar.gz
+
+# Allow all mounted directories (dev container workspace)
+RUN git config --global --add safe.directory '*'
+
+# Create a test repo with git flow initialized
+# git-flow-next defaults to 'main' as the production branch
+RUN mkdir -p /repo && \
+    cd /repo && \
+    git init && \
+    git config user.email "test@gitflow-next.local" && \
+    git config user.name "Git Flow Next Tester" && \
+    git commit --allow-empty -m "Initial commit" && \
+    git checkout -b develop && \
+    git flow init -d && \
+    git checkout main
+
+# Keep container alive
+CMD ["tail", "-f", "/dev/null"]

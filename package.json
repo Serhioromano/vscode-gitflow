@@ -91,6 +91,12 @@
                     "default": false,
                     "description": "%gitflow.usePowerShell.description%",
                     "scope": "machine-overridable"
+                },
+                "gitflow.variant": {
+                    "type": "string",
+                    "enum": ["auto", "avh", "next"],
+                    "default": "auto",
+                    "description": "%gitflow.variant.description%"
                 }
             }
         },

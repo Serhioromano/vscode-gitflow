@@ -12,7 +12,7 @@
         "experimentalDecorators": true,
         "esModuleInterop": true,
 		"strict": true,
-		"types": ["node"]  
+		"types": ["node"]
 	},
 	"exclude": [
 		"node_modules",

@@ -59,6 +59,7 @@ All basic operations you need to do in a single place.
 - `gitflow.path` - Allow manually set path for Git Flow executable including `flow`. For instance `/usr/bit/git flow`.
 - `gitflow.autoBumpVersion` - Either it should automatically bump a version in `package.json` file on `feature` or `hotfix` creation, and commit it to git.
 - `gitflow.usePowerShell` - (Windows only) Use PowerShell instead of CMD.exe. Enable this to work with repositories in a workspace under a UNC path (e.g., `\\server\share\repo`). Defaults to `false`.
+- `gitflow.variant` - Git Flow implementation to use. `auto` (default) detects automatically, `avh` forces [git-flow AVH](https://github.com/petervanderdoes/gitflow-avh), `next` forces [git-flow-next](https://github.com/jaspernbrouwer/git-flow-next).
 
 ## Feature Details
 
@@ -119,7 +120,10 @@ Thus your `master` or `main` branch contain most recent version of your product 
 1. VS Code should be open on a folder not file
 2. Git must be installed.
 3. Root folder must be a git repository. If not run `git init` command in the terminal.
-4. [Git Flow](https://github.com/petervanderdoes/gitflow-avh/wiki/Installation) must be installed.
+4. Git Flow must be installed. Two implementations are supported:
+   - [git-flow AVH](https://github.com/petervanderdoes/gitflow-avh/wiki/Installation) (traditional)
+   - [git-flow-next](https://github.com/jaspernbrouwer/git-flow-next) (modern, written in Rust)
+   Use the `gitflow.variant` setting to choose or let auto-detection pick.
 5. You have to initialize git flow in the root of your repository with `git flow init` command.
 
 ### Working remotely

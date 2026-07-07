@@ -1,0 +1,28 @@
+services:
+  gitflow-next:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.next
+    container_name: vscode-gitflow-next
+    hostname: gitflow-next
+    volumes:
+      - gitflow_next_repo:/repo
+      - ./test-workspaces/next-repo-mount:/mnt/repo:rw
+      - .:/workspace:cached
+    init: true
+
+  gitflow-avh:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.avh
+    container_name: vscode-gitflow-avh
+    hostname: gitflow-avh
+    volumes:
+      - gitflow_avh_repo:/repo
+      - ./test-workspaces/avh-repo-mount:/mnt/repo:rw
+      - .:/workspace:cached
+    init: true
+
+volumes:
+  gitflow_next_repo:
+  gitflow_avh_repo:
