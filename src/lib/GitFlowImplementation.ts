@@ -40,6 +40,9 @@ export abstract class GitFlowImplementation {
     abstract parseConfigList(output: string): BranchConfig;
     abstract isNotInitialized(output: string): boolean;
 
+    /** Returns the --showcommands flag string or a single space depending on variant and config. */
+    abstract showCommands(): string;
+
     // ── Feature ──────────────────────────────────────────
     abstract startFeature(ctx: OperationContext): Promise<void>;
     abstract finishFeature(node: Flow | undefined, ctx: OperationContext): Promise<void>;

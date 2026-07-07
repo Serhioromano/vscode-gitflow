@@ -1,0 +1,45 @@
+# Git Flow "nvie" (original/next) - Alpine
+FROM alpine:3.21
+
+RUN apk add --no-cache \
+    git \
+    bash \
+    openssh-client \
+    curl \
+    make \
+    util-linux \
+    nodejs \
+    npm
+
+# Install git-flow (nvie/original) from source
+# git:// is blocked in some networks; rewrite to https://
+# Allow all mounted directories (dev container workspace)
+RUN git config --global --add safe.directory '*' && \
+    git config --global url."https://github.com/".insteadOf git://github.com/ && \
+    git clone --depth 1 https://github.com/nvie/gitflow.git /opt/gitflow && \
+    cd /opt/gitflow && \
+    git submodule update --init && \
+    make install && \
+    rm -rf /opt/gitflow && \
+    # Patch: git-flow calls 'init' which is a function in subcommand scripts
+    # (feature, release, hotfix, support) but resolves to /sbin/init on Alpine
+    # for scripts without init() (like version), producing a PID 1 warning.
+    # Fix: only call init if it is a shell function, not a binary.
+    sed -i 's/^    init$/    if type init 2>\/dev\/null | grep -q "is a function"; then init; fi/' /usr/local/bin/git-flow
+
+# Create a test repo with git flow initialized
+# nvie/gitflow defaults to 'master'; rename to 'main' for consistency
+RUN mkdir -p /repo && \
+    cd /repo && \
+    git init && \
+    git config user.email "test@gitflow-next.local" && \
+    git config user.name "Git Flow Next Tester" && \
+    git commit --allow-empty -m "Initial commit" && \
+    git checkout -b develop && \
+    git flow init -d && \
+    git branch -m master main && \
+    git config gitflow.branch.master main && \
+    git checkout main
+
+# Keep container alive
+CMD ["tail", "-f", "/dev/null"]

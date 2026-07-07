@@ -88,7 +88,7 @@ export class GitFlowAVH extends GitFlowImplementation {
             .join(' ');
     }
 
-    private _showCommands(): string {
+    showCommands(): string {
         const config = vscode.workspace.getConfiguration('gitflow');
         return config.get('showAllCommands') === true ? ' --showcommands ' : ' ';
     }
@@ -148,7 +148,7 @@ export class GitFlowAVH extends GitFlowImplementation {
             return;
         }
 
-        const cmd = `${this.util.flowPath} ${type} rebase${this._showCommands()}${flags} ${name} ${base}`;
+        const cmd = `${this.util.flowPath} ${type} rebase${this.showCommands()}${flags} ${name} ${base}`;
         this.logger.log(`${plog} CMD: ${cmd}`, `git flow ${type} rebase`, LogLevels.info);
         this.util.exec(cmd, false, () => {
             this.logger.log(`${plog} ${this._ucf(type)} rebase completed`, '', LogLevels.info);
@@ -325,7 +325,7 @@ export class GitFlowAVH extends GitFlowImplementation {
             }
         }
 
-        const cmd = `${this.util.flowPath} ${type} start${this._showCommands()}${safeName} ${base}`;
+        const cmd = `${this.util.flowPath} ${type} start${this.showCommands()}${safeName} ${base}`;
         this.logger.log(`${prefix} CMD: ${cmd}`, `git flow ${type} start`, LogLevels.info);
 
         this.util.exec(cmd, false, () => {
@@ -445,7 +445,7 @@ export class GitFlowAVH extends GitFlowImplementation {
             this._updateChangelog(ctx, name);
         }
 
-        const cmd = `${this.util.flowPath} ${type} finish${this._showCommands()}${flags} ${name}`;
+        const cmd = `${this.util.flowPath} ${type} finish${this.showCommands()}${flags} ${name}`;
         this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow ${type} finish', LogLevels.info);
 
         this.util.exec(cmd, progress, () => {

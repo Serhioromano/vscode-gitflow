@@ -1,0 +1,38 @@
+# Git Flow AVH (petervanderdoes) - Alpine
+FROM alpine:3.21
+
+RUN apk add --no-cache \
+    git \
+    bash \
+    openssh-client \
+    curl \
+    make \
+    build-base \
+    coreutils \
+    nodejs \
+    npm
+
+# Install git-flow-avh from source
+# Allow all mounted directories (dev container workspace)
+RUN git config --global --add safe.directory '*' && \
+    git clone --depth 1 --branch develop https://github.com/petervanderdoes/gitflow-avh.git /opt/gitflow-avh && \
+    cd /opt/gitflow-avh && \
+    make && \
+    make install && \
+    rm -rf /opt/gitflow-avh
+
+# Create a test repo with git flow initialized
+RUN mkdir -p /repo && \
+    cd /repo && \
+    git init && \
+    git config user.email "test@gitflow-avh.local" && \
+    git config user.name "Git Flow AVH Tester" && \
+    git commit --allow-empty -m "Initial commit" && \
+    git checkout -b develop && \
+    git flow init -d && \
+    git branch -m master main && \
+    git config gitflow.branch.master main && \
+    git checkout main
+
+# Keep container alive
+CMD ["tail", "-f", "/dev/null"]

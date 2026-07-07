@@ -187,7 +187,7 @@ export class GitFlowNext extends GitFlowImplementation {
     /**
      * Next does not support --showcommands, so this always returns a single space.
      */
-    private _showCommands(): string {
+    showCommands(): string {
         return ' ';
     }
 
@@ -250,7 +250,7 @@ export class GitFlowNext extends GitFlowImplementation {
         }
 
         // Next uses `update --rebase` command, not `rebase`
-        const cmd = `${this.util.flowPath} ${type} update${this._showCommands()}${flags} ${name} ${base}`;
+        const cmd = `${this.util.flowPath} ${type} update${this.showCommands()}${flags} ${name} ${base}`;
         this.logger.log(`${plog} CMD: ${cmd}`, `git flow ${type} update`, LogLevels.info);
         this.util.exec(cmd, false, () => {
             this.logger.log(`${plog} ${this._ucf(type)} update completed`, '', LogLevels.info);
@@ -405,7 +405,7 @@ export class GitFlowNext extends GitFlowImplementation {
             }
         }
 
-        const cmd = `${this.util.flowPath} ${type} start${this._showCommands()}${safeName} ${base}`;
+        const cmd = `${this.util.flowPath} ${type} start${this.showCommands()}${safeName} ${base}`;
         this.logger.log(`${prefix} CMD: ${cmd}`, `git flow ${type} start`, LogLevels.info);
 
         this.util.exec(cmd, false, () => {
@@ -521,7 +521,7 @@ export class GitFlowNext extends GitFlowImplementation {
             this._updateChangelog(ctx, name);
         }
 
-        const cmd = `${this.util.flowPath} ${type} finish${this._showCommands()}${flags} ${name}`;
+        const cmd = `${this.util.flowPath} ${type} finish${this.showCommands()}${flags} ${name}`;
         this.logger.log(`${prefix} CMD: ${cmd}`, `git flow ${type} finish`, LogLevels.info);
 
         this.util.exec(cmd, progress, () => {

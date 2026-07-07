@@ -426,11 +426,9 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
         }
         if (name === undefined) { return; }
 
-        const config = vscode.workspace.getConfiguration('gitflow');
-        const command = config.get('showAllCommands') === true ? ' --showcommands ' : ' ';
         const feature = name.split('/')[0];
         const branchName = name.substring(name.indexOf('/') + 1);
-        const cmd = `${this.util.flowPath} ${feature} ${what}${command}${branchName}`;
+        const cmd = `${this.util.flowPath} ${feature} ${what}${this.impl.showCommands()}${branchName}`;
 
         this.util.exec(cmd, progress, () => {
             this._onDidChangeTreeData.fire();

@@ -1,6 +1,9 @@
 .vscode/**
 .github/**
 .pi/**
+scripts/**
+docker/**
+.devcontainer/**
 plans/**
 .vscode-test/**
 src/**

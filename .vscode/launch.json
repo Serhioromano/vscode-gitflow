@@ -42,6 +42,49 @@
                 "${workspaceFolder}/out/test/**/*.js"
             ],
             "preLaunchTask": "${defaultBuildTask}"
+        },
+        {
+            "name": "Local: Git Flow Next (wrapper)",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--profile=GitFlowNextTest",
+                "--disable-workspace-trust",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/test-workspaces/gitflow-next.code-workspace"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "preLaunchTask": "npm: compile"
+        },
+        {
+            "name": "Local: Git Flow AVH (wrapper)",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--profile=GitFlowAVHTest",
+                "--disable-workspace-trust",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/test-workspaces/gitflow-avh.code-workspace"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "preLaunchTask": "npm: compile"
+        },
+        {
+            "name": "Dev Container: Launch Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "/repo"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "preLaunchTask": "npm: compile"
         }
     ]
 }

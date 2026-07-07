@@ -1,0 +1,21 @@
+{
+    "name": "Git Flow Next (nvie)",
+    "dockerComposeFile": ["../../docker-compose.yml"],
+    "service": "gitflow-next",
+    "workspaceFolder": "/workspace",
+    "shutdownAction": "none",
+    "additionalWorkspaceFolders": [
+        {
+            "name": "test-repo",
+            "path": "/repo"
+        }
+    ],
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "gitflow.showNotification": true,
+                "gitflow.showAllCommands": true
+            }
+        }
+    }
+}
