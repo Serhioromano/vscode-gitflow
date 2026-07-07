@@ -282,22 +282,18 @@ export class GitFlowAVH extends GitFlowImplementation {
         return JSON.parse(readFileSync(ctx.workspaceRoot + '/package.json', 'utf8')).version || '';
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // Feature
-    // ═══════════════════════════════════════════════════════════
-
-    async startFeature(ctx: OperationContext): Promise<void> {
+    private async _startOp(type: string, ctx: OperationContext): Promise<void> {
         const prefix = '[avh]';
-        this.logger.log(`${prefix} Starting feature branch...`, 'git flow feature start', LogLevels.info);
+        this.logger.log(`${prefix} Starting ${type} branch...`, 'git flow ${type} start', LogLevels.info);
 
         const name = await vscode.window.showInputBox({
-            title: vscode.l10n.t('Enter a valid {0} branch name', this._ucf('feature')),
+            title: vscode.l10n.t('Enter a valid {0} branch name', this._ucf(type)),
         });
         if (name === undefined) {
-            this.logger.log(`${prefix} Feature start cancelled by user`, '', LogLevels.info);
+            this.logger.log(`${prefix} ${this._ucf(type)} start cancelled by user`, '', LogLevels.info);
             return;
         }
-
+        const version = type === 'release' ? this._getPkgVersion(ctx) : '';
         const config = vscode.workspace.getConfiguration('gitflow');
         const safeName = name.replace(/\s/g, config.get('replaceSymbol') || '_');
         const checked = this.util.execSync(`"${this.util.path}" check-ref-format --branch ${safeName}`).trim();
@@ -306,60 +302,49 @@ export class GitFlowAVH extends GitFlowImplementation {
             return;
         }
 
-        const cmd = `${this.util.flowPath} feature start${this._showCommands()}${safeName}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow feature start', LogLevels.info);
+        let base : string | undefined = '';
+        if (ctx.curBranch.search(ctx.branches.support) !== -1 && type === 'release') {
+            const b = await vscode.window.showQuickPick([vscode.l10n.t('Yes'), vscode.l10n.t('No')], {
+                title: vscode.l10n.t('Start release based on {0}?', ctx.curBranch),
+            }) || vscode.l10n.t('No');
+            base = b === vscode.l10n.t('Yes') ? ctx.curBranch : '';
+        }
+        if (type === 'support') {
+            base = await vscode.window.showQuickPick(
+                this.util
+                    .execSync(`"${this.util.path}" tag --sort=-v:refname`)
+                    .split('\n')
+                    .map(el => el.trim().replace('* ', ''))
+                    .filter(el => el !== ''),
+                { title: vscode.l10n.t('Start support branch based on a tag') }
+            );
+            if (base === undefined) {
+                this.logger.log(`${prefix} Support start cancelled by user`, '', LogLevels.info);
+                return;
+            }
+        }
+
+        const cmd = `${this.util.flowPath} ${type} start${this._showCommands()}${safeName} ${base}`;
+        this.logger.log(`${prefix} CMD: ${cmd}`, `git flow ${type} start`, LogLevels.info);
 
         this.util.exec(cmd, false, () => {
-            this.logger.log(`${prefix} Feature start completed`, '', LogLevels.info);
+            this.logger.log(`${prefix} ${this._ucf(type)} start completed`, '', LogLevels.info);
             ctx.onComplete();
+            vscode.commands.executeCommand('gitflow.refreshT');
+            if(type === 'release') this._bumpVersion(ctx, safeName);
         });
     }
 
-    async finishFeature(node: Flow | undefined, ctx: OperationContext): Promise<void> {
+    private async _deleteOp(type: string, node: Flow | undefined, ctx: OperationContext): Promise<void> {
         const prefix = '[avh]';
         let branch = node?.full;
         if (branch === undefined) {
-            const picked = await this._pickBranch(ctx, ctx.branches.feature, vscode.l10n.t('Select branch'));
+            const picked = await this._pickBranch(ctx, ctx.branches[type as keyof BranchConfig], vscode.l10n.t('Select branch'));
             if (picked === undefined) { return; }
             branch = picked;
         }
         const name = branch.substring(branch.indexOf('/') + 1);
-        this.logger.log(`${prefix} Starting feature finish for "${branch}"...`, 'git flow feature finish', LogLevels.info);
-
-        const options = await this._getFinishOptions('feature');
-        if (options === undefined) {
-            this.logger.log(`${prefix} Feature finish cancelled by user`, '', LogLevels.info);
-            return;
-        }
-
-        let progress = false;
-        if (
-            ctx.listRemoteBranches.includes(branch) &&
-            !options.includes(`[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`)
-        ) {
-            progress = true;
-        }
-
-        const flags = this._parseOptionFlags(options);
-        const cmd = `${this.util.flowPath} feature finish${this._showCommands()}${flags} ${name}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow feature finish', LogLevels.info);
-
-        this.util.exec(cmd, progress, () => {
-            this.logger.log(`${prefix} Feature finish completed`, '', LogLevels.info);
-            ctx.onComplete();
-        });
-    }
-
-    async deleteFeature(node: Flow | undefined, ctx: OperationContext): Promise<void> {
-        const prefix = '[avh]';
-        let branch = node?.full;
-        if (branch === undefined) {
-            const picked = await this._pickBranch(ctx, ctx.branches.feature, vscode.l10n.t('Select branch'));
-            if (picked === undefined) { return; }
-            branch = picked;
-        }
-        const name = branch.substring(branch.indexOf('/') + 1);
-        this.logger.log(`${prefix} Starting feature delete for "${branch}"...`, 'git flow feature delete', LogLevels.info);
+        this.logger.log(`${prefix} Starting ${type} delete for "${branch}"...`, `git flow ${type} delete`, LogLevels.info);
 
         const forceDel = `[-f] ${vscode.l10n.t('Force deletion')}`;
         const remoteDel = `[-r] ${vscode.l10n.t('Delete remote branch')}`;
@@ -372,7 +357,7 @@ export class GitFlowAVH extends GitFlowImplementation {
             canPickMany: true,
         });
         if (options === undefined) {
-            this.logger.log(`${prefix} Feature delete cancelled by user`, '', LogLevels.info);
+            this.logger.log(`${prefix} ${this._ucf(type)} delete cancelled by user`, '', LogLevels.info);
             return;
         }
 
@@ -381,13 +366,108 @@ export class GitFlowAVH extends GitFlowImplementation {
             progress = true;
         }
         const flags = this._parseOptionFlags(options);
-        const cmd = `${this.util.flowPath} feature delete ${flags} ${name}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow feature delete', LogLevels.info);
+        const cmd = `${this.util.flowPath} ${type} delete ${flags} ${name}`;
+        this.logger.log(`${prefix} CMD: ${cmd}`, `git flow ${type} delete`, LogLevels.info);
+
+        if (type === 'support') {
+            const option = options?.includes(forceDel) ? '-D' : '-d';
+            this.util.execSync(`"${this.util.path}" checkout -d ${ctx.branches.develop}`);
+            this.util.execSync(`"${this.util.path}" branch ${option} ${name}`);
+
+            if (options?.includes(remoteDel)) {
+                this.util.exec(`"${this.util.path}" push --delete origin ${name}`, true, () => {
+                    this.logger.log(`${prefix} Support delete completed`, '', LogLevels.info);
+                    ctx.onComplete();
+                });
+                return;
+            }
+            ctx.onComplete();
+        } else {
+            this.util.exec(cmd, progress, () => {
+                this.logger.log(`${prefix} ${this._ucf(type)} delete completed`, '', LogLevels.info);
+                ctx.onComplete();
+            });
+        }
+
+    }
+
+    private async _finishOp(type: string, node: Flow | undefined, ctx: OperationContext): Promise<void> {
+        const prefix = '[avh]';
+        let branch = node?.full;
+        if (branch === undefined) {
+            const picked = await this._pickBranch(ctx, ctx.branches[type as keyof BranchConfig], vscode.l10n.t('Select branch'));
+            if (picked === undefined) { return; }
+            branch = picked;
+        }
+        const name = branch.substring(branch.indexOf('/') + 1);
+        this.logger.log(`${prefix} Starting ${type} finish for "${branch}"...`, `git flow ${type} finish`, LogLevels.info);
+
+        const options = await this._getFinishOptions(type);
+        if (options === undefined) {
+            this.logger.log(`${prefix} ${this._ucf(type)} finish cancelled by user`, '', LogLevels.info);
+            return;
+        }
+
+        let progress = false;
+        if (
+            ctx.listRemoteBranches.includes(branch) &&
+            !options.includes(`[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`)
+        ) {
+            progress = true;
+        }
+
+        let flags = this._parseOptionFlags(options);
+
+        if (type === 'release' || type === 'hotfix') {
+            // Tag message
+            let msg = await vscode.window.showInputBox({
+                title: vscode.l10n.t('Message'),
+                value: vscode.l10n.t('Finish {0}: {1}', this._ucf(type), name),
+            });
+            if (msg === undefined) {
+                this.logger.log(`${prefix} ${this._ucf(type)} finish cancelled by user`, '', LogLevels.info);
+                return;
+            }
+            msg = `${msg}`.trim();
+            if (msg === '') {
+                msg = vscode.l10n.t('Finish {0}: {1}', this._ucf(type), name);
+            }
+
+            const tmpMsgFile = path.join(
+                `${os.tmpdir()}`,
+                `vscode-git-flow-${Math.floor(Math.random() * 10000000)}.msg`
+            );
+            writeFileSync(tmpMsgFile, msg, 'utf-8');
+            flags = `${flags} -f ${tmpMsgFile} -T "${name}"`;
+
+            // Changelog
+            this._updateChangelog(ctx, name);
+        }
+
+        const cmd = `${this.util.flowPath} ${type} finish${this._showCommands()}${flags} ${name}`;
+        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow ${type} finish', LogLevels.info);
 
         this.util.exec(cmd, progress, () => {
-            this.logger.log(`${prefix} Feature delete completed`, '', LogLevels.info);
+            this.logger.log(`${prefix} ${this._ucf(type)} finish completed`, '', LogLevels.info);
             ctx.onComplete();
+            vscode.commands.executeCommand('gitflow.refreshT');
         });
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // Feature
+    // ═══════════════════════════════════════════════════════════
+
+    async startFeature(ctx: OperationContext): Promise<void> {
+        return this._startOp('feature', ctx);
+    }
+
+    async finishFeature(node: Flow | undefined, ctx: OperationContext): Promise<void> {
+        return this._finishOp('feature', node, ctx);
+    }
+
+    async deleteFeature(node: Flow | undefined, ctx: OperationContext): Promise<void> {
+        return this._deleteOp('feature', node, ctx);
     }
 
     async rebaseFeature(node: Flow | undefined, ctx: OperationContext): Promise<void> {
@@ -399,145 +479,15 @@ export class GitFlowAVH extends GitFlowImplementation {
     // ═══════════════════════════════════════════════════════════
 
     async startRelease(ctx: OperationContext): Promise<void> {
-        const prefix = '[avh]';
-        this.logger.log(`${prefix} Starting release branch...`, 'git flow release start', LogLevels.info);
-
-        let version = this._getPkgVersion(ctx);
-        const name = await vscode.window.showInputBox({
-            title: vscode.l10n.t('Enter a valid {0} branch name', this._ucf('release')),
-            value: version,
-        });
-        if (name === undefined) {
-            this.logger.log(`${prefix} Release start cancelled by user`, '', LogLevels.info);
-            return;
-        }
-
-        const config = vscode.workspace.getConfiguration('gitflow');
-        const safeName = name.replace(/\s/g, config.get('replaceSymbol') || '_');
-        const checked = this.util.execSync(`"${this.util.path}" check-ref-format --branch ${safeName}`).trim();
-        if (checked !== safeName) {
-            vscode.window.showErrorMessage(vscode.l10n.t('Error creating a branch: {0}', checked));
-            return;
-        }
-
-        let base = '';
-        if (ctx.curBranch.search(ctx.branches.support) !== -1) {
-            const b = await vscode.window.showQuickPick([vscode.l10n.t('Yes'), vscode.l10n.t('No')], {
-                title: vscode.l10n.t('Start release based on {0}?', ctx.curBranch),
-            }) || vscode.l10n.t('No');
-            base = b === vscode.l10n.t('Yes') ? ctx.curBranch : '';
-        }
-
-        const cmd = `${this.util.flowPath} release start${this._showCommands()}${safeName} ${base}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow release start', LogLevels.info);
-
-        this.util.exec(cmd, false, () => {
-            this.logger.log(`${prefix} Release start completed`, '', LogLevels.info);
-            ctx.onComplete();
-            vscode.commands.executeCommand('gitflow.refreshT');
-            this._bumpVersion(ctx, safeName);
-        });
+        return this._startOp('release', ctx);
     }
 
     async finishRelease(node: Flow | undefined, ctx: OperationContext): Promise<void> {
-        const prefix = '[avh]';
-        let branch = node?.full;
-        if (branch === undefined) {
-            const picked = await this._pickBranch(ctx, ctx.branches.release, vscode.l10n.t('Select branch'));
-            if (picked === undefined) { return; }
-            branch = picked;
-        }
-        const name = branch.substring(branch.indexOf('/') + 1);
-        this.logger.log(`${prefix} Starting release finish for "${branch}"...`, 'git flow release finish', LogLevels.info);
-
-        const options = await this._getFinishOptions('release');
-        if (options === undefined) {
-            this.logger.log(`${prefix} Release finish cancelled by user`, '', LogLevels.info);
-            return;
-        }
-
-        let progress = false;
-        if (
-            ctx.listRemoteBranches.includes(branch) &&
-            !options.includes(`[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`)
-        ) {
-            progress = true;
-        }
-
-        let flags = this._parseOptionFlags(options);
-
-        // Tag message
-        let msg = await vscode.window.showInputBox({
-            title: vscode.l10n.t('Message'),
-            value: vscode.l10n.t('Finish {0}: {1}', this._ucf('release'), name),
-        });
-        if (msg === undefined) {
-            this.logger.log(`${prefix} Release finish cancelled by user`, '', LogLevels.info);
-            return;
-        }
-        msg = `${msg}`.trim();
-        if (msg === '') {
-            msg = vscode.l10n.t('Finish {0}: {1}', this._ucf('release'), name);
-        }
-
-        const tmpMsgFile = path.join(
-            `${os.tmpdir()}`,
-            `vscode-git-flow-${Math.floor(Math.random() * 10000000)}.msg`
-        );
-        writeFileSync(tmpMsgFile, msg, 'utf-8');
-        flags = `${flags} -f ${tmpMsgFile} -T "${name}"`;
-
-        // Changelog
-        this._updateChangelog(ctx, name);
-
-        const cmd = `${this.util.flowPath} release finish${this._showCommands()}${flags} ${name}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow release finish', LogLevels.info);
-
-        this.util.exec(cmd, progress, () => {
-            this.logger.log(`${prefix} Release finish completed`, '', LogLevels.info);
-            ctx.onComplete();
-            vscode.commands.executeCommand('gitflow.refreshT');
-        });
+        return this._finishOp('release', node, ctx);
     }
 
     async deleteRelease(node: Flow | undefined, ctx: OperationContext): Promise<void> {
-        const prefix = '[avh]';
-        let branch = node?.full;
-        if (branch === undefined) {
-            const picked = await this._pickBranch(ctx, ctx.branches.release, vscode.l10n.t('Select branch'));
-            if (picked === undefined) { return; }
-            branch = picked;
-        }
-        const name = branch.substring(branch.indexOf('/') + 1);
-        this.logger.log(`${prefix} Starting release delete for "${branch}"...`, 'git flow release delete', LogLevels.info);
-
-        const forceDel = `[-f] ${vscode.l10n.t('Force deletion')}`;
-        const remoteDel = `[-r] ${vscode.l10n.t('Delete remote branch')}`;
-        const list: string[] = [forceDel];
-        if (ctx.listRemoteBranches.includes(branch)) {
-            list.push(remoteDel);
-        }
-        const options = await vscode.window.showQuickPick(list, {
-            title: vscode.l10n.t('Select options'),
-            canPickMany: true,
-        });
-        if (options === undefined) {
-            this.logger.log(`${prefix} Release delete cancelled by user`, '', LogLevels.info);
-            return;
-        }
-
-        let progress = false;
-        if (options.includes(remoteDel)) {
-            progress = true;
-        }
-        const flags = this._parseOptionFlags(options);
-        const cmd = `${this.util.flowPath} release delete ${flags} ${name}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow release delete', LogLevels.info);
-
-        this.util.exec(cmd, progress, () => {
-            this.logger.log(`${prefix} Release delete completed`, '', LogLevels.info);
-            ctx.onComplete();
-        });
+        return this._deleteOp('release', node, ctx);
     }
 
     async rebaseRelease(node: Flow | undefined, ctx: OperationContext): Promise<void> {
@@ -549,137 +499,15 @@ export class GitFlowAVH extends GitFlowImplementation {
     // ═══════════════════════════════════════════════════════════
 
     async startHotfix(ctx: OperationContext): Promise<void> {
-        const prefix = '[avh]';
-        this.logger.log(`${prefix} Starting hotfix branch...`, 'git flow hotfix start', LogLevels.info);
-
-        let version = this._getPkgVersion(ctx);
-        const name = await vscode.window.showInputBox({
-            title: vscode.l10n.t('Enter a valid {0} branch name', this._ucf('hotfix')),
-            value: version,
-        });
-        if (name === undefined) {
-            this.logger.log(`${prefix} Hotfix start cancelled by user`, '', LogLevels.info);
-            return;
-        }
-
-        const config = vscode.workspace.getConfiguration('gitflow');
-        const safeName = name.replace(/\s/g, config.get('replaceSymbol') || '_');
-        const checked = this.util.execSync(`"${this.util.path}" check-ref-format --branch ${safeName}`).trim();
-        if (checked !== safeName) {
-            vscode.window.showErrorMessage(vscode.l10n.t('Error creating a branch: {0}', checked));
-            return;
-        }
-
-        const cmd = `${this.util.flowPath} hotfix start${this._showCommands()}${safeName}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow hotfix start', LogLevels.info);
-
-        this.util.exec(cmd, false, () => {
-            this.logger.log(`${prefix} Hotfix start completed`, '', LogLevels.info);
-            ctx.onComplete();
-            vscode.commands.executeCommand('gitflow.refreshT');
-            this._bumpVersion(ctx, safeName);
-        });
+        return this._startOp('hotfix', ctx);
     }
 
     async finishHotfix(node: Flow | undefined, ctx: OperationContext): Promise<void> {
-        const prefix = '[avh]';
-        let branch = node?.full;
-        if (branch === undefined) {
-            const picked = await this._pickBranch(ctx, ctx.branches.hotfix, vscode.l10n.t('Select branch'));
-            if (picked === undefined) { return; }
-            branch = picked;
-        }
-        const name = branch.substring(branch.indexOf('/') + 1);
-        this.logger.log(`${prefix} Starting hotfix finish for "${branch}"...`, 'git flow hotfix finish', LogLevels.info);
-
-        const options = await this._getFinishOptions('hotfix');
-        if (options === undefined) {
-            this.logger.log(`${prefix} Hotfix finish cancelled by user`, '', LogLevels.info);
-            return;
-        }
-
-        let progress = false;
-        if (
-            ctx.listRemoteBranches.includes(branch) &&
-            !options.includes(`[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`)
-        ) {
-            progress = true;
-        }
-
-        let flags = this._parseOptionFlags(options);
-
-        // Tag message
-        let msg = await vscode.window.showInputBox({
-            title: vscode.l10n.t('Message'),
-            value: vscode.l10n.t('Finish {0}: {1}', this._ucf('hotfix'), name),
-        });
-        if (msg === undefined) {
-            this.logger.log(`${prefix} Hotfix finish cancelled by user`, '', LogLevels.info);
-            return;
-        }
-        msg = `${msg}`.trim();
-        if (msg === '') {
-            msg = vscode.l10n.t('Finish {0}: {1}', this._ucf('hotfix'), name);
-        }
-
-        const tmpMsgFile = path.join(
-            `${os.tmpdir()}`,
-            `vscode-git-flow-${Math.floor(Math.random() * 10000000)}.msg`
-        );
-        writeFileSync(tmpMsgFile, msg, 'utf-8');
-        flags = `${flags} -f ${tmpMsgFile} -T "${name}"`;
-
-        // Changelog
-        this._updateChangelog(ctx, name);
-
-        const cmd = `${this.util.flowPath} hotfix finish${this._showCommands()}${flags} ${name}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow hotfix finish', LogLevels.info);
-
-        this.util.exec(cmd, progress, () => {
-            this.logger.log(`${prefix} Hotfix finish completed`, '', LogLevels.info);
-            ctx.onComplete();
-            vscode.commands.executeCommand('gitflow.refreshT');
-        });
+        return this._finishOp('hotfix', node, ctx);
     }
 
     async deleteHotfix(node: Flow | undefined, ctx: OperationContext): Promise<void> {
-        const prefix = '[avh]';
-        let branch = node?.full;
-        if (branch === undefined) {
-            const picked = await this._pickBranch(ctx, ctx.branches.hotfix, vscode.l10n.t('Select branch'));
-            if (picked === undefined) { return; }
-            branch = picked;
-        }
-        const name = branch.substring(branch.indexOf('/') + 1);
-        this.logger.log(`${prefix} Starting hotfix delete for "${branch}"...`, 'git flow hotfix delete', LogLevels.info);
-
-        const forceDel = `[-f] ${vscode.l10n.t('Force deletion')}`;
-        const remoteDel = `[-r] ${vscode.l10n.t('Delete remote branch')}`;
-        const list: string[] = [forceDel];
-        if (ctx.listRemoteBranches.includes(branch)) {
-            list.push(remoteDel);
-        }
-        const options = await vscode.window.showQuickPick(list, {
-            title: vscode.l10n.t('Select options'),
-            canPickMany: true,
-        });
-        if (options === undefined) {
-            this.logger.log(`${prefix} Hotfix delete cancelled by user`, '', LogLevels.info);
-            return;
-        }
-
-        let progress = false;
-        if (options.includes(remoteDel)) {
-            progress = true;
-        }
-        const flags = this._parseOptionFlags(options);
-        const cmd = `${this.util.flowPath} hotfix delete ${flags} ${name}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow hotfix delete', LogLevels.info);
-
-        this.util.exec(cmd, progress, () => {
-            this.logger.log(`${prefix} Hotfix delete completed`, '', LogLevels.info);
-            ctx.onComplete();
-        });
+        return this._deleteOp('hotfix', node, ctx);
     }
 
     async rebaseHotfix(node: Flow | undefined, ctx: OperationContext): Promise<void> {
@@ -691,107 +519,15 @@ export class GitFlowAVH extends GitFlowImplementation {
     // ═══════════════════════════════════════════════════════════
 
     async startBugfix(ctx: OperationContext): Promise<void> {
-        const prefix = '[avh]';
-        this.logger.log(`${prefix} Starting bugfix branch...`, 'git flow bugfix start', LogLevels.info);
-
-        const name = await vscode.window.showInputBox({
-            title: vscode.l10n.t('Enter a valid {0} branch name', this._ucf('bugfix')),
-        });
-        if (name === undefined) {
-            this.logger.log(`${prefix} Bugfix start cancelled by user`, '', LogLevels.info);
-            return;
-        }
-
-        const config = vscode.workspace.getConfiguration('gitflow');
-        const safeName = name.replace(/\s/g, config.get('replaceSymbol') || '_');
-        const checked = this.util.execSync(`"${this.util.path}" check-ref-format --branch ${safeName}`).trim();
-        if (checked !== safeName) {
-            vscode.window.showErrorMessage(vscode.l10n.t('Error creating a branch: {0}', checked));
-            return;
-        }
-
-        const cmd = `${this.util.flowPath} bugfix start${this._showCommands()}${safeName}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow bugfix start', LogLevels.info);
-
-        this.util.exec(cmd, false, () => {
-            this.logger.log(`${prefix} Bugfix start completed`, '', LogLevels.info);
-            ctx.onComplete();
-        });
+        return this._startOp('bugfix', ctx);
     }
 
     async finishBugfix(node: Flow | undefined, ctx: OperationContext): Promise<void> {
-        const prefix = '[avh]';
-        let branch = node?.full;
-        if (branch === undefined) {
-            const picked = await this._pickBranch(ctx, ctx.branches.bugfix, vscode.l10n.t('Select branch'));
-            if (picked === undefined) { return; }
-            branch = picked;
-        }
-        const name = branch.substring(branch.indexOf('/') + 1);
-        this.logger.log(`${prefix} Starting bugfix finish for "${branch}"...`, 'git flow bugfix finish', LogLevels.info);
-
-        const options = await this._getFinishOptions('bugfix');
-        if (options === undefined) {
-            this.logger.log(`${prefix} Bugfix finish cancelled by user`, '', LogLevels.info);
-            return;
-        }
-
-        let progress = false;
-        if (
-            ctx.listRemoteBranches.includes(branch) &&
-            !options.includes(`[--keepremote] ${vscode.l10n.t('Keep the remote branch')}`)
-        ) {
-            progress = true;
-        }
-
-        const flags = this._parseOptionFlags(options);
-        const cmd = `${this.util.flowPath} bugfix finish${this._showCommands()}${flags} ${name}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow bugfix finish', LogLevels.info);
-
-        this.util.exec(cmd, progress, () => {
-            this.logger.log(`${prefix} Bugfix finish completed`, '', LogLevels.info);
-            ctx.onComplete();
-        });
+        return this._finishOp('bugfix', node, ctx);
     }
 
     async deleteBugfix(node: Flow | undefined, ctx: OperationContext): Promise<void> {
-        const prefix = '[avh]';
-        let branch = node?.full;
-        if (branch === undefined) {
-            const picked = await this._pickBranch(ctx, ctx.branches.bugfix, vscode.l10n.t('Select branch'));
-            if (picked === undefined) { return; }
-            branch = picked;
-        }
-        const name = branch.substring(branch.indexOf('/') + 1);
-        this.logger.log(`${prefix} Starting bugfix delete for "${branch}"...`, 'git flow bugfix delete', LogLevels.info);
-
-        const forceDel = `[-f] ${vscode.l10n.t('Force deletion')}`;
-        const remoteDel = `[-r] ${vscode.l10n.t('Delete remote branch')}`;
-        const list: string[] = [forceDel];
-        if (ctx.listRemoteBranches.includes(branch)) {
-            list.push(remoteDel);
-        }
-        const options = await vscode.window.showQuickPick(list, {
-            title: vscode.l10n.t('Select options'),
-            canPickMany: true,
-        });
-        if (options === undefined) {
-            this.logger.log(`${prefix} Bugfix delete cancelled by user`, '', LogLevels.info);
-            return;
-        }
-
-        let progress = false;
-        if (options.includes(remoteDel)) {
-            progress = true;
-        }
-        const flags = this._parseOptionFlags(options);
-        const cmd = `${this.util.flowPath} bugfix delete ${flags} ${name}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow bugfix delete', LogLevels.info);
-
-        this.util.exec(cmd, progress, () => {
-            this.logger.log(`${prefix} Bugfix delete completed`, '', LogLevels.info);
-            ctx.onComplete();
-        });
+        return this._deleteOp('bugfix', node, ctx);
     }
 
     async rebaseBugfix(node: Flow | undefined, ctx: OperationContext): Promise<void> {
@@ -803,87 +539,10 @@ export class GitFlowAVH extends GitFlowImplementation {
     // ═══════════════════════════════════════════════════════════
 
     async startSupport(ctx: OperationContext): Promise<void> {
-        const prefix = '[avh]';
-        this.logger.log(`${prefix} Starting support branch...`, 'git flow support start', LogLevels.info);
-
-        const name = await vscode.window.showInputBox({
-            title: vscode.l10n.t('Enter a valid {0} branch name', this._ucf('support')),
-        });
-        if (name === undefined) {
-            this.logger.log(`${prefix} Support start cancelled by user`, '', LogLevels.info);
-            return;
-        }
-
-        const config = vscode.workspace.getConfiguration('gitflow');
-        const safeName = name.replace(/\s/g, config.get('replaceSymbol') || '_');
-        const checked = this.util.execSync(`"${this.util.path}" check-ref-format --branch ${safeName}`).trim();
-        if (checked !== safeName) {
-            vscode.window.showErrorMessage(vscode.l10n.t('Error creating a branch: {0}', checked));
-            return;
-        }
-
-        const base = await vscode.window.showQuickPick(
-            this.util
-                .execSync(`"${this.util.path}" tag --sort=-v:refname`)
-                .split('\n')
-                .map(el => el.trim().replace('* ', ''))
-                .filter(el => el !== ''),
-            { title: vscode.l10n.t('Start support branch based on a tag') }
-        );
-        if (base === undefined) {
-            this.logger.log(`${prefix} Support start cancelled by user`, '', LogLevels.info);
-            return;
-        }
-
-        const cmd = `${this.util.flowPath} support start${this._showCommands()}${safeName} ${base}`;
-        this.logger.log(`${prefix} CMD: ${cmd}`, 'git flow support start', LogLevels.info);
-
-        this.util.exec(cmd, false, () => {
-            this.logger.log(`${prefix} Support start completed`, '', LogLevels.info);
-            ctx.onComplete();
-        });
+        return this._startOp('support', ctx);
     }
-
     async deleteSupport(node: Flow | undefined, ctx: OperationContext): Promise<void> {
-        const prefix = '[avh]';
-        let branch = node?.full;
-        if (branch === undefined) {
-            const picked = await this._pickBranch(ctx, ctx.branches.support, vscode.l10n.t('Select support'));
-            if (picked === undefined) { return; }
-            branch = picked;
-        }
-        const name = branch;
-        this.logger.log(`${prefix} Starting support delete for "${name}"...`, 'git flow support delete', LogLevels.info);
-
-        const sForceDel = `[-f] ${vscode.l10n.t('Force deletion')}`;
-        const sRemoteDel = `[-r] ${vscode.l10n.t('Delete remote branch')}`;
-        const list: string[] = [sForceDel];
-        if (ctx.listRemoteBranches.includes(name)) {
-            list.push(sRemoteDel);
-        }
-        const options = await vscode.window.showQuickPick(list, {
-            title: vscode.l10n.t('Select options'),
-            canPickMany: true,
-        });
-        if (options === undefined) {
-            this.logger.log(`${prefix} Support delete cancelled by user`, '', LogLevels.info);
-            return;
-        }
-        const option = options?.includes(sForceDel) ? '-D' : '-d';
-
-        this.util.execSync(`"${this.util.path}" checkout -d ${ctx.branches.develop}`);
-        this.util.execSync(`"${this.util.path}" branch ${option} ${name}`);
-
-        if (options?.includes(sRemoteDel)) {
-            this.util.exec(`"${this.util.path}" push --delete origin ${name}`, true, () => {
-                this.logger.log(`${prefix} Support delete completed`, '', LogLevels.info);
-                ctx.onComplete();
-            });
-            return;
-        }
-
-        this.logger.log(`${prefix} Support delete completed`, '', LogLevels.info);
-        ctx.onComplete();
+        return this._deleteOp('support', node, ctx);
     }
     async rebaseSupport(node: Flow | undefined, ctx: OperationContext): Promise<void> {
         await this._rebaseOp('support', node, ctx, ctx.branches.support);
