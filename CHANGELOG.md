@@ -2,6 +2,11 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [Unreleased] 07/07/2026
+
+- enhance: extract git-flow operations into abstract `GitFlowImplementation` with `GitFlowAVH` backend — enables future `git-flow-next` support without touching core routing (#78)
+- add: `gitflow.variant` setting (`auto`/`avh`) to control which git-flow implementation is used (#78)
+
 ## [1.5.1] 07/06/2026
 
 - fix: robust `git flow config list` parser — handles both human-readable and git-config-style output formats, preventing "Cannot read properties of undefined (reading 'trim')" crash (#56)

@@ -71,9 +71,11 @@ export class CommandManager extends Disposable {
                 return;
             }
             if (action.id.search("new") !== -1) {
-                await viewBranches.general("start", action.id.replace("new", "").toLowerCase());
+                const type = action.id.replace("new", "").toLowerCase() as
+                    'feature' | 'bugfix' | 'release' | 'hotfix' | 'support';
+                await (viewBranches as any)['start' + ucf(type)]();
             } else {
-                await viewBranches.general(action.id, action.description);
+                await viewBranches.generalOp(action.id, action.description || '');
             }
             commands.executeCommand("workbench.view.scm");
 

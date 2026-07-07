@@ -52,5 +52,6 @@
   "gitflow.replaceSymbol.description": "用此符号替换分支名称中的空格",
   "gitflow.autoBumpVersion.description": "开始 release/hotfix 后自动提升包版本。",
   "gitflow.disableOnRepo.description": "在此仓库上禁用 GitFlow 检查",
-  "gitflow.usePowerShell.description": "在 Windows 上使用 PowerShell 代替 CMD.exe，以支持 UNC 路径 (\\\\server\\share)。"
+  "gitflow.usePowerShell.description": "在 Windows 上使用 PowerShell 代替 CMD.exe，以支持 UNC 路径 (\\\\server\\share)。",
+  "gitflow.variant.description": "Git Flow 实现：'auto' 自动检测，'avh' 强制使用 AVH 版本。"
 }
