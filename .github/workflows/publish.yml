@@ -28,21 +28,23 @@ jobs:
       id: prerelease
       run: |
         if [ "$(jq -r '.preview // false' package.json)" = "true" ]; then
-          echo "flag=--pre-release" >> $GITHUB_OUTPUT
+          echo "vsce_flags=--pre-release" >> $GITHUB_OUTPUT
+          echo "gh_flags=--prerelease" >> $GITHUB_OUTPUT
           echo "::notice::Pre-release channel detected (preview: true)"
         else
-          echo "flag=" >> $GITHUB_OUTPUT
+          echo "vsce_flags=" >> $GITHUB_OUTPUT
+          echo "gh_flags=" >> $GITHUB_OUTPUT
           echo "::notice::Stable release channel"
         fi
     - name: Create Package
-      run: vsce package ${{ steps.prerelease.outputs.flag }}
+      run: vsce package ${{ steps.prerelease.outputs.vsce_flags }}
     - name: Publish Package
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         file=$(realpath $(ls -t *.vsix | head -1))
-        vsce publish -i $file ${{ steps.prerelease.outputs.flag }} -p ${{ secrets.VSCE_TOKEN }}
-        npx ovsx publish $file -p ${{ secrets.OVSX_TOKEN }}
+        vsce publish -i $file ${{ steps.prerelease.outputs.vsce_flags }} -p ${{ secrets.VSCE_TOKEN }}
+        npx ovsx publish $file ${{ steps.prerelease.outputs.vsce_flags }} -p ${{ secrets.OVSX_TOKEN }}
         VERSION=$(echo '${{ github.ref_name }}' | sed 's/^v//')
         # Extract changelog notes: first try the exact version section, then fall back to [Unreleased]
         awk -v ver="$VERSION" '
@@ -61,4 +63,4 @@ jobs:
         if [ ! -s /tmp/release-body.md ]; then
           echo "See [Changelog](https://github.com/Serhioromano/vscode-gitflow/blob/master/CHANGELOG.md) for details." > /tmp/release-body.md
         fi
-        gh release create '${{ github.ref_name }}' ${{ steps.prerelease.outputs.flag }} --notes-file /tmp/release-body.md $file
+        gh release create '${{ github.ref_name }}' ${{ steps.prerelease.outputs.gh_flags }} --notes-file /tmp/release-body.md $file
