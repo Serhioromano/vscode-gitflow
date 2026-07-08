@@ -18,6 +18,7 @@ export class TreeViewVersions implements vscode.TreeDataProvider<Tag> {
     }
 
     refresh(): void {
+        this._remotesFetched = false;
         this._onDidChangeTreeData.fire();
     }
 

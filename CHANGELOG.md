@@ -2,6 +2,10 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [1.6.6] 07/08/2026
+
+- fix: refresh tags view now re-fetches remote tags so published tags no longer stuck showing as "local" after refresh (#98)
+
 ## [1.6.5] 07/08/2026
 
 - change: upgrade TypeScript to 6.0.3, switch `moduleResolution` to `bundler`, add `skipLibCheck`
