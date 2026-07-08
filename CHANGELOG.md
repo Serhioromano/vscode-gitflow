@@ -2,7 +2,7 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [Unreleased] 07/08/2026
+## [1.6.5] 07/08/2026
 
 - change: upgrade TypeScript to 6.0.3, switch `moduleResolution` to `bundler`, add `skipLibCheck`
 - fix: move `git flow init` command into `GitFlowImplementation.initCommand()` so AVH keeps `-f` and git-flow-next omits it — fixes "unknown shorthand flag: 'f'" error for Next users (#97)
