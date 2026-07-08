@@ -43,6 +43,9 @@ export abstract class GitFlowImplementation {
     /** Returns the --showcommands flag string or a single space depending on variant and config. */
     abstract showCommands(): string;
 
+    /** Returns the shell command string to run git flow init in a terminal. */
+    abstract initCommand(): string;
+
     // ── Feature ──────────────────────────────────────────
     abstract startFeature(ctx: OperationContext): Promise<void>;
     abstract finishFeature(node: Flow | undefined, ctx: OperationContext): Promise<void>;

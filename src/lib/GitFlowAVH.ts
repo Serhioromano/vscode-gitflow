@@ -93,6 +93,10 @@ export class GitFlowAVH extends GitFlowImplementation {
         return config.get('showAllCommands') === true ? ' --showcommands ' : ' ';
     }
 
+    initCommand(): string {
+        return 'git flow init -f';
+    }
+
     /**
      * Shared rebase logic for feature, bugfix, release, hotfix, and support.
      * The only variant-specific piece is how base candidates are selected;

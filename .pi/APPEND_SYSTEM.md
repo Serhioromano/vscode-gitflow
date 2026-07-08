@@ -1,5 +1,3 @@
-After every change to TypeScript source files in `src/`:
-
 ## Verification
 
 Run both checks to confirm the code is correct:
@@ -11,8 +9,7 @@ npm run compile && npm run lint
 - `compile` — TypeScript type-check (`tsc -p ./`). Must pass with zero errors.
 - `lint` — ESLint (`eslint src --ext ts`). Must pass with zero warnings/errors.
 - If either fails, fix the issues before proceeding.
-- The full test suite (`npm test`) requires the VS Code Electron runtime
-  and cannot run in a plain terminal; at minimum compilation + lint must pass.
+- Full test suite (`npm test`) requires VS Code Electron runtime; at minimum compilation + lint must pass.
 
 ## Changelog
 
@@ -57,11 +54,33 @@ Whenever user-facing text is added or changed:
 
 ## Commit summary
 
-After every change, output a short summary suitable for a commit message
-(what changed, why). Never commit changes — the user commits manually.
+After every change, output a short commit-message summary to the user.
+
+- Describe what changed and why — one to three lines.
+- Format it as a ready-to-use commit message.
+- Display it prominently so the user can copy-paste.
+- Never commit changes — the user commits manually.
 
 ## GitHub CLI
 
 Use `gh` CLI for all GitHub interactions (issues, pull requests, labels,
 milestones). Never use web APIs or browser-based workflows for GitHub
 operations.
+
+When an issue is fixed, a PR is merged, or an investigation completes:
+
+- **Add a comment** on the issue with the resolution or findings.
+- **If fixed**, close the issue with `gh issue close <number>` and include
+  the fix summary in the closing comment.
+- **If a PR fixes an issue**, link them with `gh pr edit <number> --body`
+  or use `Fixes #<number>` in the PR description so GitHub auto-closes on
+  merge.
+
+## Plans directory
+
+When the user asks to create a plan or design document, save it in `plans/`.
+
+## Project SYSTEM.md
+
+When project-level configuration changes (TypeScript version, build tooling,
+project conventions), update `.pi/SYSTEM.md`.
