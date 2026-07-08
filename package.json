@@ -94,7 +94,11 @@
                 },
                 "gitflow.variant": {
                     "type": "string",
-                    "enum": ["auto", "avh", "next"],
+                    "enum": [
+                        "auto",
+                        "avh",
+                        "next"
+                    ],
                     "default": "auto",
                     "description": "%gitflow.variant.description%"
                 }
@@ -798,7 +802,7 @@
         "glob": "^7.2.0",
         "mocha": "^11.7.2",
         "ovsx": "^0.5.1",
-        "typescript": "^4.6.3",
+        "typescript": "^6.0.3",
         "vsce": "^2.6.4"
     },
     "dependencies": {

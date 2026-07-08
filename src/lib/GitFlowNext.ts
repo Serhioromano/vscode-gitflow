@@ -191,6 +191,10 @@ export class GitFlowNext extends GitFlowImplementation {
         return ' ';
     }
 
+    initCommand(): string {
+        return 'git flow init';
+    }
+
     // ── Next-specific rebase (update --rebase) ───────────
 
     /**

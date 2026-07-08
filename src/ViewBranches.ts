@@ -534,7 +534,7 @@ export class TreeViewBranches implements vscode.TreeDataProvider<Flow | FolderNo
     }
 
     init() {
-        this._runTerminal("git flow init -f");
+        this._runTerminal(this.impl.initCommand());
     }
 
     _initTerminal() {
