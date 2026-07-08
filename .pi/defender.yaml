@@ -30,3 +30,4 @@ strictModeWhiteList:
   - ^docker compose\b
   - ^docker ps\b
   - ^docker exec\b
+  - ^npx vsce\b

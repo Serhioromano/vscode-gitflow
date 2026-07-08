@@ -6,6 +6,7 @@ docker/**
 .devcontainer/**
 plans/**
 .vscode-test/**
+test-workspaces/**
 src/**
 out/test/**
 .gitignore
@@ -18,6 +19,8 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 node_modules/**
+Makefile
+docker-compose.yml
 resources/media/icon.psd
 resources/media/mfw.png
 resources/media/ss.png

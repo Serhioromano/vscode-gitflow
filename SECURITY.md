@@ -1,13 +1,14 @@
 # Security Policy
 
-## Supported Versions
+## Reporting a Vulnerability
 
-Versions are currently being supported with security updates.
+Please **do not** open a public issue for security vulnerabilities.
+
+Instead, use GitHub's [private vulnerability reporting](https://github.com/Serhioromano/vscode-gitflow/security/advisories/new) — this creates a confidential advisory visible only to maintainers. Expect a response within 48 hours.
+
+## Supported Versions
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.2.9   | :white_check_mark: |
-
-## Reporting a Vulnerability
-
-To report a vulnerability, please open an issue.
+| 1.6.x   | :white_check_mark: |
+| < 1.6   | :x:                |

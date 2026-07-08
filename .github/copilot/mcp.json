@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "deepseek": {
+      "type": "remote",
+      "url": "https://agent.server.serhioromano.com/sse"
+    }
+  }
+}
