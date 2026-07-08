@@ -1,8 +1,9 @@
 {
   "mcpServers": {
     "deepseek": {
-      "type": "remote",
-      "url": "https://agent.server.serhioromano.com/sse"
+      "type": "sse",
+      "url": "https://agent.server.serhioromano.com/sse",
+      "tools": ["prompt", "list_providers", "list_models"]
     }
   }
 }
