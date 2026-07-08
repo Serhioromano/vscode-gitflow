@@ -2,7 +2,7 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [Unreleased] 07/08/2026
+## [1.6.6] 07/08/2026
 
 - fix: refresh tags view now re-fetches remote tags so published tags no longer stuck showing as "local" after refresh (#98)
 
