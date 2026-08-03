@@ -31,3 +31,7 @@ strictModeWhiteList:
   - ^docker ps\b
   - ^docker exec\b
   - ^npx vsce\b
+  - ^git clone\b
+  - ^ls\b
+  - ^readlink\b
+defaultMode: strict
