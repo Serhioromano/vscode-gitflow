@@ -34,4 +34,9 @@ strictModeWhiteList:
   - ^git clone\b
   - ^ls\b
   - ^readlink\b
+  - ^cd\b
+  - ^echo\b
+  - ^git branch\b
+  - ^git remote\b
+  - ^git stash\b
 defaultMode: strict
