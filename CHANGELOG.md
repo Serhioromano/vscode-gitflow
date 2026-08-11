@@ -2,6 +2,10 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
+## [Unreleased] 08/11/2026
+
+- fix: remove unused runtime dependency `npm` — eliminates bundled `brace-expansion@5.0.7` (GHSA-rgw5-rvv9-x895, DoS) from the dependency tree and shrinks the published VSIX (#105)
+
 ## [1.6.6] 07/08/2026
 
 - fix: refresh tags view now re-fetches remote tags so published tags no longer stuck showing as "local" after refresh (#98)
