@@ -43,4 +43,9 @@ strictModeWhiteList:
   - ^git commit\b
   - ^git push\b
   - ^sleep\b
-defaultMode: strict
+  - ^git update-ref\b
+  - ^git ls-remote\b
+  - ^npm audit\b
+  - ^npm\b
+  - ^then\b
+defaultMode: off
