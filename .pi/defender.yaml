@@ -42,4 +42,5 @@ strictModeWhiteList:
   - ^git add\b
   - ^git commit\b
   - ^git push\b
+  - ^sleep\b
 defaultMode: strict
