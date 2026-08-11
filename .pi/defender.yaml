@@ -39,4 +39,7 @@ strictModeWhiteList:
   - ^git branch\b
   - ^git remote\b
   - ^git stash\b
+  - ^git add\b
+  - ^git commit\b
+  - ^git push\b
 defaultMode: strict
