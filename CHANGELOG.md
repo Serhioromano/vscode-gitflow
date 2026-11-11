@@ -2,8 +2,9 @@
 
 All notable changes to the "gitflow" extension will be documented in this file.
 
-## [Unreleased] 08/11/2026
+## [Unreleased] 11/11/2026
 
+- fix: bump vulnerable transitive dependencies — `undici` → 7.30.2, `markdown-it` → 14.3.3, `follow-redirects` → 1.16.3, `brace-expansion` → 1.1.21 / 2.1.7 / 5.0.12, `js-yaml` → 4.3.2 — closing the remaining Dependabot alerts (#112)
 - fix: remove unused runtime dependency `npm` — eliminates bundled `brace-expansion@5.0.7` (GHSA-rgw5-rvv9-x895, DoS) from the dependency tree and shrinks the published VSIX (#105)
 
 ## [1.6.6] 07/08/2026
