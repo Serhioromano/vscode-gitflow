@@ -4,6 +4,7 @@ All notable changes to the "gitflow" extension will be documented in this file.
 
 ## [Unreleased] 11/11/2026
 
+- fix: patch `minimatch` → 11.0.7, `qs` → 6.17.1 and `serialize-javascript` → 7.1.4; `glob` raised to 14.0.4 because glob@10 silently matches nothing with minimatch@11 (#115)
 - fix: bump vulnerable transitive dependencies — `undici` → 7.30.2, `markdown-it` → 14.3.3, `follow-redirects` → 1.16.3, `brace-expansion` → 1.1.21 / 2.1.7 / 5.0.12, `js-yaml` → 4.3.2 — closing the remaining Dependabot alerts (#112)
 - fix: remove unused runtime dependency `npm` — eliminates bundled `brace-expansion@5.0.7` (GHSA-rgw5-rvv9-x895, DoS) from the dependency tree and shrinks the published VSIX (#105)
 
